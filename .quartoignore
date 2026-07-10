@@ -1,0 +1,31 @@
+# Everything in this repo that supports the website or development, and which
+# should NOT be copied into a user's project by
+# `quarto use template jhelvy/quarto-lexis`. Providing this file replaces
+# Quarto's built-in defaults, so the dot-files and README have to be listed too.
+#
+# What's left — `_extensions/`, `template.qmd`, `images/` — is the template.
+
+.git/
+.gitignore
+.quartoignore
+.nojekyll
+.quarto/
+.Rproj.user/
+
+README.md
+README.qmd
+PROJECT-BRIEF.md
+build.R
+
+index.qmd
+index.css
+index.html
+index_files/
+
+_description.qmd
+_install.qmd
+_conventions.qmd
+_footer.qmd
+
+lexis-template/
+starting-assets/

@@ -1,0 +1,475 @@
+/*-- scss:defaults --*/
+
+/*
+Lexis theme for Quarto reveal.js — Week 1 (Getting Started).
+Ported from the xaringan (remark.js) `lexis.css` + `lexis-fonts.css` used in
+EMSE 4572/6572 through 2025. Extends the shared W2 base with the few idioms the
+W1 deck leans on: full-slide `.center`/`.left` alignment and `.blackborder`
+image framing. The goal is visual parity with the old decks while
+moving to Quarto reveal.js. Two-part structure:
+  - scss:defaults  = fonts, colors, and reveal Sass variables (the "settings")
+  - scss:rules     = retargeted custom rules + the helper classes decks rely on
+
+Original xaringan css adapted from Allison Hill & Silvia Canelón.
+*/
+
+// ---- Fonts ----------------------------------------------------------------
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lobster+Two:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+$font-body:   Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+$font-header: "Fira Sans Condensed", Tahoma, "Helvetica Neue", Helvetica, Arial, sans-serif;
+$font-mono:   SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+$font-fancy:  "Lobster Two", cursive;
+
+// ---- Color palette (mirrors the old :root vars) ---------------------------
+$color-white:      #FFFFFF;
+$color-red:        #E74A2F;
+$color-orange:     #fa7b3c;
+$color-yellow:     #EFB73E;
+$color-gold:       #e5bf00;
+$color-green:      #38B44A;
+$color-darkgreen:  #2c8475;
+$color-blue:       #007bff;
+$color-lightblue:  #cce5ff;
+$color-dodgerblue: #1E90FF;
+$color-darkblue:   #003087;
+$color-purple:     #772953;
+$color-black:      #121212;
+$color-graylight:  #EAE9EA;
+$color-gray:       #696969;
+$color-tan:        #d9d9d9;
+
+// ---- Reveal.js theme variables --------------------------------------------
+// Slide surface + text
+$body-bg:    $color-graylight;
+$body-color: #000000;
+
+// Links
+$link-color:       $color-blue;
+$link-color-hover: $color-purple;
+$selection-bg:     rgba(97, 172, 240, .5);
+
+// Type
+$font-family-sans-serif: $font-body;
+$font-family-monospace:  $font-mono;
+
+// Root size. reveal scales the slide canvas to fit, so this is the anchor the
+// heading sizes below are expressed against. Old deck used ~20pt body text.
+$presentation-font-size-root: 34px;
+$presentation-line-height:    1.35;
+
+// Headings (Fira Sans Condensed). Sizes are em-multiples of the body size,
+// preserving the old 42 / 34 / 27 / 24 pt vs 20 pt body ratios.
+$presentation-heading-font:        $font-header;
+$presentation-heading-color:       #000000;
+$presentation-heading-font-weight: 400;
+$presentation-heading-line-height: 1.1;
+$presentation-h1-font-size: 2.10em;
+$presentation-h2-font-size: 1.70em;
+$presentation-h3-font-size: 1.35em;
+$presentation-h4-font-size: 1.20em;
+
+// Code
+$code-color:           $color-darkgreen;   // inline code
+$code-block-font-size: 0.85em;
+$code-block-bg:        #ffffff;
+
+// Default gutter between `.col` columns (override per-row with `gap=`).
+$cols-gap: 1.5em;
+
+// Reveal's bottom progress-bar fill color (its default is plain white).
+// To turn the bar off entirely, no theme edit needed: set `progress: false`
+// in the document's YAML — it's a native Quarto/reveal.js option.
+$progress-color: $color-blue;
+
+
+/*-- scss:rules --*/
+
+// ---- Links ----------------------------------------------------------------
+.reveal a {
+  border-bottom: none;
+  &:hover, &:focus {
+    color: $color-purple;
+    background: rgba(97, 172, 240, .5);
+  }
+}
+
+// ---- Inline code (not code blocks) ----------------------------------------
+.reveal :not(pre) > code {
+  color: $color-darkgreen;
+  background-color: transparent;
+  border-radius: 5px;
+}
+
+// ---- Source code blocks: white bg, thin black border ----------------------
+.reveal div.sourceCode {
+  background: #fff;
+  border-radius: 5px;
+  border: 1px solid #000;
+}
+.reveal pre {
+  border-radius: 5px;
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 0.5em 0;
+  box-shadow: none;
+}
+
+// ---- Printed code OUTPUT: white text on gray (mirrors .remark-code) --------
+.reveal .cell-output pre,
+.reveal .cell-output-stdout pre,
+.reveal pre.text-output {
+  color: #fff;
+  background: $color-gray;
+  border: none;
+}
+
+// ---- Blockquotes ----------------------------------------------------------
+.reveal blockquote {
+  width: auto;
+  padding: 0.5em 1em;
+  border: 3px solid $color-blue;
+  border-radius: 10px;
+  background-color: $color-lightblue;
+  font-family: $font-header;
+  box-shadow: 4px 4px 8px 0 rgba(0, 0, 0, .2);
+  font-style: normal;
+}
+
+// ---- Tables: zebra striping in tan (mirrors old remark tables) ------------
+.reveal table {
+  border-collapse: collapse;
+  thead th { border-bottom: 1px solid #666; }
+  thead, tfoot, tr:nth-child(even) { background: $color-tan; }
+}
+.reveal .table-blank tr:nth-child(even) { background: transparent; }
+
+// ===========================================================================
+// INVERSE SLIDES
+// Pair with reveal's native full-bleed background, e.g.
+//   ## Title {.inverse background-color="#121212"}
+// The class flips text / code / link / strong colors; the background attribute
+// paints the whole slide.
+// ===========================================================================
+.reveal section.inverse,
+.reveal .inverse {
+  color: $color-white;
+
+  h1, h2, h3, h4, h5, h6,
+  .h1, .h2, .h3, .h4, .h5, .h6 { color: $color-white; }
+  strong { color: $color-white; }
+
+  a, a:visited {
+    color: $color-dodgerblue;
+    text-decoration: underline;
+  }
+  a:hover, a:focus { color: $color-purple; }
+
+  :not(pre) > code { color: $color-orange; background-color: transparent; }
+}
+
+// ===========================================================================
+// HELPER CLASSES (used inline as [text]{.class} or around blocks as ::: {.class})
+// ===========================================================================
+
+// ---- Alignment ------------------------------------------------------------
+// `.center` mirrors xaringan's `class: center` — applied to a whole slide
+// (## Title {.center}) it centers everything; applied to a block/span it
+// centers that. `.left` is the escape hatch for code inside a centered slide.
+.reveal .center { text-align: center; }
+.reveal .center img,
+.reveal .center table { margin-left: auto; margin-right: auto; }
+.reveal .left  { text-align: left; }
+.reveal .right { text-align: right; }
+
+// Center/align just a HEADING (xaringan `# .center[Title]`) without touching
+// the rest of the slide: written `# [Title]{.center}`, the class lands on a
+// span inside the heading, so promote it to a full-width aligned block.
+.reveal {
+  h1, h2, h3, h4, h5, h6,
+  .h1, .h2, .h3, .h4, .h5, .h6 {
+    > .center { display: block; text-align: center; }
+    > .left   { display: block; text-align: left; }
+    > .right  { display: block; text-align: right; }
+  }
+}
+
+// ---- Black border around plot output --------------------------------------
+// The old deck wrapped rendered ggplots in `.blackborder[...]`. Alias of
+// `.border` above, kept by name so ported slides read like the originals.
+.reveal .blackborder img { border: 2px solid #000; }
+
+// ---- Synthetic slide-title heading -----------------------------------------
+// lexis.lua prepends an empty `.lexis-slide-title` heading to a modified
+// slide that doesn't already open with one (see its comment for why). Purely
+// structural — never shown.
+.reveal .lexis-slide-title { display: none; }
+
+// ---- Heading-as-text classes ----------------------------------------------
+// The lexis.lua filter rewrites headings nested inside Divs (columns, etc.)
+// into `.h1`..`.h6` so they render as sized text without becoming their own
+// slide. Sizes/colors mirror the real reveal heading variables.
+.reveal {
+  .h1, .h2, .h3, .h4, .h5, .h6 {
+    display: block;
+    font-family: $font-header;
+    color: $presentation-heading-color;
+    font-weight: $presentation-heading-font-weight;
+    line-height: $presentation-heading-line-height;
+    margin: 0.2em 0 0.4em;
+  }
+  .h1 { font-size: $presentation-h1-font-size; }
+  .h2 { font-size: $presentation-h2-font-size; }
+  .h3 { font-size: $presentation-h3-font-size; }
+  .h4 { font-size: $presentation-h4-font-size; }
+  .h5 { font-size: 1.0em; }
+  .h6 { font-size: 0.9em; }
+}
+
+// ---- Fancy display font ---------------------------------------------------
+.reveal .fancy {
+  font-family: $font-fancy;
+  font-weight: 400;
+  font-style: italic;
+}
+.reveal .fira { font-family: $font-header; }
+
+// ---- Text colors ----------------------------------------------------------
+.reveal .white     { color: $color-white; }
+.reveal .red       { color: $color-red; }
+.reveal .orange    { color: $color-orange; }
+.reveal .yellow    { color: $color-yellow; }
+.reveal .green     { color: $color-green; }
+.reveal .darkgreen { color: $color-darkgreen; }
+.reveal .blue      { color: $color-blue; }
+.reveal .darkblue  { color: $color-darkblue; }
+.reveal .purple    { color: $color-purple; }
+.reveal .black     { color: $color-black; }
+.reveal .gray      { color: $color-gray; }
+
+// ---- Relative text sizes --------------------------------------------------
+.reveal .small { font-size: 70%; }
+.reveal .large { font-size: 160%; }
+.reveal .font10  { font-size: 10%; }
+.reveal .font20  { font-size: 20%; }
+.reveal .font30  { font-size: 30%; }
+.reveal .font40  { font-size: 40%; }
+.reveal .font50  { font-size: 50%; }
+.reveal .font60  { font-size: 60%; }
+.reveal .font70  { font-size: 70%; }
+.reveal .font80  { font-size: 80%; }
+.reveal .font90  { font-size: 90%; }
+.reveal .font100 { font-size: 100%; }
+.reveal .font110 { font-size: 110%; }
+.reveal .font120 { font-size: 120%; }
+.reveal .font130 { font-size: 130%; }
+.reveal .font140 { font-size: 140%; }
+.reveal .font150 { font-size: 150%; }
+.reveal .font160 { font-size: 160%; }
+.reveal .font170 { font-size: 170%; }
+.reveal .font180 { font-size: 180%; }
+.reveal .font190 { font-size: 190%; }
+.reveal .font200 { font-size: 200%; }
+
+// ---- Code-block sizes: wrap a code chunk in ::: {.code70} etc. -------------
+@each $pct in 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 {
+  .reveal .code#{$pct} {
+    pre, pre code, .sourceCode, .cell-output pre { font-size: #{$pct * 1%}; }
+  }
+}
+
+// ---- Image treatments -----------------------------------------------------
+.reveal img { border: 0 solid #000; box-shadow: none; }
+.reveal .border img        { border: 2px solid #000; }
+.reveal .borderthick img   { border: 7px solid #000; }
+.reveal .whiteborder img   { border: 2px solid #fff; }
+.reveal .whiteborderthick img { border: 7px solid #fff; }
+.reveal .noborder img      { border: 0 solid #000; }
+.reveal .circle img        { border-radius: 50%; }
+.reveal .polaroid img {
+  border: 10px solid #fff;
+  border-bottom: 45px solid #fff;
+  box-shadow: 3px 3px 3px #111;
+}
+.reveal .thumbnail img {
+  width: 15%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+// ---- Tabset panels ----------------------------------------------------------
+// Quarto's native `.panel-tabset` (xaringan `.panelset`) ships with a boxed
+// nav-tab look (bordered box around the active tab). Replace it with the old
+// lexis-panelset style: plain gray labels, a bold black label + thick
+// underline for the active tab, sitting on a thin baseline rule. Quarto's
+// tabby plugin adds the ARIA roles at runtime, so we target those instead of
+// nav-tabs/nav-link classes.
+.reveal .panel-tabset {
+  [role="tablist"] {
+    border-bottom: 1px solid $color-tan;
+    margin-bottom: 0.6em;
+  }
+  [role="tab"] {
+    border: none;
+    background: transparent;
+    margin: 0 1.4em 0 0;
+    padding: 0.2em 0 0.5em;
+    font-family: $font-header;
+    font-size: 1.1em;
+    color: $color-gray;
+    border-bottom: 3px solid transparent;
+  }
+  [role="tab"]:hover:not([aria-selected="true"]) {
+    color: $body-color;
+    border-bottom-color: $color-tan;
+  }
+  [role="tab"][aria-selected="true"] {
+    color: $body-color;
+    font-weight: 700;
+    border-bottom-color: $body-color;
+  }
+}
+.reveal section.inverse .panel-tabset,
+.reveal .inverse .panel-tabset {
+  [role="tablist"] { border-bottom-color: $color-gray; }
+  [role="tab"] { color: $color-tan; }
+  [role="tab"]:hover:not([aria-selected="true"]) {
+    color: $color-white;
+    border-bottom-color: $color-gray;
+  }
+  [role="tab"][aria-selected="true"] {
+    color: $color-white;
+    border-bottom-color: $color-white;
+  }
+}
+
+// ---- Footnote -------------------------------------------------------------
+.reveal .footnote {
+  position: absolute;
+  bottom: 2em;
+  padding-right: 4em;
+  font-size: 70%;
+  line-height: 1em;
+}
+
+// ---- Slimtitle (title-slide helper) ---------------------------------------
+.reveal .slimtitle {
+  font-family: $font-header;
+  font-weight: 500;
+  font-size: 55px;
+  margin-block-start: 0;
+  margin-block-end: 0.1em;
+}
+
+// ===========================================================================
+// SLIDE-LEVEL MODIFIERS (set by the {{< inverse >}} / {{< center >}} /
+// {{< middle >}} shortcodes, which lexis.lua hoists onto the slide <section>)
+// ===========================================================================
+
+// `middle` — vertically center the slide's content (xaringan `class: middle`).
+// The slide <section> is the reveal-managed flex container; stretch it to the
+// full canvas height and center its children on the cross axis.
+.reveal .slides section.middle {
+  height: 100%;
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+}
+
+// `no-slide-number` — reveal mirrors a slide's `data-state` onto the
+// `.reveal-viewport` element while that slide is active, so we can hide the
+// slide number just for this slide.
+.reveal-viewport.no-slide-number .slide-number { display: none !important; }
+
+// ===========================================================================
+// COLUMN LAYOUTS
+// `::: {.col width="60%" gap="2em" valign="middle"}`. lexis.lua's group_cols
+// wraps any run of 2+ consecutive `.col` Divs in a `.cols-row` flex
+// container and turns `width` into that column's flex-basis — no outer
+// wrapper div to write, no fixed set of splits to memorize. `width` is
+// optional; columns without it share the remaining space evenly. `gap`/
+// `valign` are read off whichever `.col` in the row sets them.
+// ===========================================================================
+.reveal .cols-row {
+  display: flex;
+  gap: $cols-gap;
+  align-items: flex-start;
+
+  > .col {
+    flex: 1 1 0;
+    min-width: 0;
+    text-align: left;
+  }
+}
+
+// ===========================================================================
+// FOOTERS (xaringan `.footer-small` link bar / `.footer-large` block).
+//
+// The repeated link bar is Quarto's native `footer:` (one persistent `.footer`
+// element shown on every slide) restyled as the lexis black bar. `.footer-small`
+// is kept as an alias so hand-written bars read like the originals.
+// `.footer-large` is placed inline on the title/closing slides.
+//
+// IMPORTANT: stay `position: fixed` (reveal's own default for `.footer`), not
+// `absolute` — fixed correctly anchors to the real browser viewport (verified
+// empirically: neither `.reveal` nor any of its ancestors carry a transform/
+// perspective/filter, so nothing hijacks the containing block here).
+//
+// IMPORTANT: the selector needs the repeated `.reveal.reveal` specificity
+// bump. Quarto's own bundled `plugin/quarto-support/footer.css` ships its
+// OWN `.reveal .footer { position: fixed; bottom: 18px; text-align: center;
+// margin: 0 auto; z-index: 2; font-size: 18px; }` and that stylesheet <link>
+// is emitted AFTER our theme's in <head>. Equal specificity + later source
+// order means IT wins each of those properties, not us — verified by
+// rendering, headless-screenshotting, and reading getComputedStyle: our
+// plain `.reveal .footer` rule was silently losing `bottom` (18px, not 0 —
+// a visible gap below the bar) and `text-align`/`margin`/`z-index`/
+// `font-size` too. One extra `.reveal` class outweighs their rule
+// regardless of link order, without resorting to `!important`.
+// ===========================================================================
+.reveal.reveal .footer,
+.reveal.reveal div.footer-small {
+  background-color: $color-black;
+  position: fixed;
+  bottom: 0; left: 0;
+  height: 20px; width: 100%;
+  margin: 0; padding: 0;
+  // Per-document override: set `footer-align: center` (or `left`/`right`)
+  // in the YAML front matter; lexis.lua turns that into this custom
+  // property. Defaults to the original left-aligned xaringan look.
+  text-align: var(--lexis-footer-align, left);
+  z-index: 10;
+  color: $color-white;
+  font-size: 10pt;
+  line-height: 20px;
+
+  p, span { margin: 0; padding-left: var(--lexis-footer-pad, 15px); color: $color-white; }
+  a { color: $color-white; text-decoration: none; }
+}
+
+// The slide number defaults to `bottom: 10px` (set by the same
+// footer.css plugin), which sits inside our 20px footer bar's vertical span.
+// Keep it clear of the bar, above the footer line, whenever a footer is
+// present. `:has()` already out-specifies footer.css's plain `.reveal
+// .slide-number`, but match the `.reveal.reveal` bump above for consistency.
+.reveal.reveal:has(> .footer) .slide-number {
+  bottom: 26px;
+}
+
+.reveal div.footer-large {
+  position: absolute;
+  bottom: 150px; right: 50px;
+  height: 100px; width: 100%;
+  margin-bottom: 0;
+}
+
+// ---- Progress bar -----------------------------------------------------
+// `.progress span` (the fill) uses `background-color: currentColor`, so
+// setting `color` here is enough to recolor it; the track underneath it
+// keeps reveal's own default translucent-black.
+.reveal .progress {
+  color: $progress-color;
+}

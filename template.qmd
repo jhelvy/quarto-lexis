@@ -1,0 +1,636 @@
+---
+title: "λέξις"
+subtitle: "a Quarto theme"
+author: "John Paul Helveston"
+date: "2026-07-08"
+format: lexis-revealjs
+progress: false
+footer: "<https://github.com/jhelvy/quarto-lexis>"
+footer-align: center
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+<!--
+Title slide: just a normal lexis slide. Quarto's built-in `meta` shortcode
+pulls values straight from the YAML front matter above, so there's nothing to
+duplicate — edit the metadata and this slide updates. Drop/add lines for
+whichever of subtitle/author/institute/date you're using; nothing here is
+conditional.
+-->
+
+{{< inverse >}}
+{{< center >}}
+{{< middle >}}
+{{< no-slide-number >}}
+
+# {{< meta title >}}
+
+## [{{< meta subtitle >}}]{.fancy}
+
+<br>
+
+[{{< meta author >}}]{.large}
+
+{{< meta date >}}
+
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(fontawesome)
+knitr::opts_chunk$set(
+  fig.width = 7.252,
+  fig.height = 4,
+  fig.retina = 3,
+  comment = "#>",
+  dev = "png"
+)
+```
+
+---
+
+# [Text styling]{.center}
+
+::: {.col}
+# Header level 1
+
+## Header level 2
+
+### Header level 3
+
+#### Header level 4
+
+##### Header level 5
+
+###### Header level 6
+:::
+
+::: {.col}
+Regular
+
+_Italics_
+
+**Bold**
+
+***Bold italics***
+
+~~Strikethrough~~
+
+[Fancy text]{.fancy}
+
+[external link](https://github.com/jhelvy/lexis)<br>
+
+`Inline code`
+:::
+
+---
+
+{{< inverse >}}
+
+# [Inverse text styling]{.center}
+
+::: {.col}
+# Header level 1
+
+## Header level 2
+
+### Header level 3
+
+#### Header level 4
+
+##### Header level 5
+
+###### Header level 6
+:::
+
+::: {.col}
+Regular
+
+_Italics_
+
+**Bold**
+
+***Bold italics***
+
+~~Strikethrough~~
+
+[Fancy text]{.fancy}
+
+[external link](https://github.com/jhelvy/lexis)<br>
+
+`Inline code`
+:::
+
+---
+
+# [Colors!]{.center}
+
+::: {.col}
+Use this...
+
+- `[text]{.red}`
+- `[text]{.orange}`
+- `[text]{.yellow}`
+- `[text]{.green}`
+- `[text]{.darkgreen}`
+- `[text]{.blue}`
+- `[text]{.darkblue}`
+- `[text]{.purple}`
+- `[text]{.black}`
+:::
+
+::: {.col}
+...to get this
+
+- **[text]{.red}**
+- **[text]{.orange}**
+- **[text]{.yellow}**
+- **[text]{.green}**
+- **[text]{.darkgreen}**
+- **[text]{.blue}**
+- **[text]{.darkblue}**
+- **[text]{.purple}**
+- **[text]{.black}**
+:::
+
+---
+
+# Tables
+
+```{r}
+knitr::kable(head(mpg))
+```
+
+---
+
+# Block quotes
+
+Use the `>` to make block quotes:
+
+```markdown
+> This is what a block quote looks like.
+```
+
+> This is what a block quote looks like.
+
+---
+
+# [Github code chunk highlighting]{.center}
+
+::: {.col width="80%"}
+```r
+# function args are keywords c; function names are keywords d
+foo <- function(arg1 = 100, arg2 = "character string") {
+  if (TRUE) {
+    x = NULL  # if, function, NULL are keywords a
+    for (i in 1:10) x = c(x, mean(3 * rnorm(100) + 1))
+  }
+}
+
+1 + "a"  # error
+```
+:::
+
+---
+
+# Line highlighting
+
+Highlight lines with the `code-line-numbers` cell option:
+
+::: {.col}
+### Code
+
+````{.markdown}
+```{{r}}
+#| code-line-numbers: "4,5"
+
+library(ggplot2)
+
+ggplot(mtcars) +
+  aes(mpg, disp) +
+  geom_point() +
+  geom_smooth()
+```
+````
+:::
+
+::: {.col}
+### Output
+
+```{r}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "4,5"
+
+library(ggplot2)
+
+ggplot(mtcars) +
+  aes(mpg, disp) +
+  geom_point() +
+  geom_smooth()
+```
+:::
+
+---
+
+{{< inverse >}}
+{{< middle >}}
+{{< center >}}
+
+# Layouts!
+
+---
+
+# Tabset panels!
+
+::: {.panel-tabset}
+
+### R Code
+
+```{r}
+#| label: ggplot-mtcars
+#| echo: true
+#| fig-show: hide
+ggplot(mtcars, aes(x = mpg, y = hp)) +
+  geom_point() +
+  theme_bw() +
+  labs(color = "Cylinders")
+```
+
+### Plot
+
+```{r}
+#| echo: false
+#| fig-height: 3
+#| fig-width: 4
+#| out-width: 60%
+#| fig-align: center
+
+ggplot(mtcars, aes(x = mpg, y = hp)) +
+  geom_point() +
+  theme_bw() +
+  labs(color = "Cylinders")
+```
+
+:::
+
+---
+
+## [Three (or more) equal columns]{.center}
+
+::: {.col}
+`.col`, no `width`
+
+Any number of `.col` divs in a row auto-splits the space evenly — no separate class for 2 vs 3 vs 4 columns.
+:::
+
+::: {.col}
+`.col`, no `width`
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+:::
+
+::: {.col}
+`.col`, no `width`
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+:::
+
+---
+
+## [Two equal columns]{.center}
+
+::: {.col}
+`.col`
+
+Two consecutive `.col` divs with no `width` split 50/50 automatically. No outer `::: {.columns}` wrapper needed either — just write the columns.
+:::
+
+::: {.col}
+`.col`
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+:::
+
+---
+
+## [Any split you want]{.center}
+
+::: {.col width="65%"}
+`.col width="65%"`
+
+`width` takes any percentage — 65/35, 42/58, whatever the content needs. No fixed set of splits to remember.
+:::
+
+::: {.col width="35%"}
+`.col width="35%"`
+
+Only one side needs a `width`; a column left without one just takes whatever space remains.
+:::
+
+---
+
+## [Uneven columns, custom gap \& alignment]{.center}
+
+::: {.col width="50%" gap="3em" valign="middle"}
+### `gap` and `valign`
+
+Set `gap` or `valign` on any `.col` in the row and it applies to the whole row — handy here since this column's text is shorter than the code beside it, so `valign="middle"` centers them against each other.
+:::
+
+::: {.col width="25%"}
+```r
+foo <- function(x) {
+  x + 1
+}
+```
+:::
+
+::: {.col width="25%"}
+```r
+bar <- function(y) {
+  y * 2
+}
+```
+:::
+
+---
+
+{{< center >}}
+
+{{< bg-image "images/blue_ridge_mountains.jpg" >}}
+
+# [Full image background]{.fancy}{.white}
+
+<br><br>
+
+::: {.col width="70%"}
+
+```r
+{{{< bg-image "images/blue_ridge_mountains.jpg" >}}}
+```
+
+:::
+
+---
+
+{{< center >}}
+{{< bg-color "#909099" >}}
+
+# [[Full background color]{.white}]{.fancy}
+
+<br><br><br>
+
+::: {.col width="40%"}
+
+```r
+{{{< bg-color "#909099" >}}}
+```
+
+:::
+
+---
+
+{{< inverse >}}
+{{< middle >}}
+{{< center >}}
+
+# Images!
+
+---
+
+# Images have no border by default
+
+::: {.col width="60%"}
+This code produces the image on the right:
+
+```markdown
+![](images/blue_ridge_sunset.jpg)
+```
+:::
+
+::: {.col width="40%"}
+![](images/blue_ridge_sunset.jpg)
+:::
+
+---
+
+# Add a thin border with `.border`
+
+::: {.col width="60%"}
+This code produces the image on the right:
+
+```markdown
+::: {.border}
+![](images/blue_ridge_sunset.jpg)
+:::
+```
+:::
+
+::: {.col width="40%"}
+::: {.border}
+![](images/blue_ridge_sunset.jpg)
+:::
+:::
+
+---
+
+## Or modify the border: `.borderthick`
+
+::: {.col width="60%"}
+This code produces the image on the right:
+
+```markdown
+::: {.borderthick}
+![](images/blue_ridge_sunset.jpg)
+:::
+```
+:::
+
+::: {.col width="40%"}
+::: {.borderthick}
+![](images/blue_ridge_sunset.jpg)
+:::
+:::
+
+---
+
+{{< inverse >}}
+
+## Or modify the border: `.whiteborder`
+
+::: {.col width="60%"}
+This code produces the image on the right:
+
+```markdown
+::: {.whiteborder}
+![](images/blue_ridge_sunset.jpg)
+:::
+```
+:::
+
+::: {.col width="40%"}
+::: {.whiteborder}
+![](images/blue_ridge_sunset.jpg)
+:::
+:::
+
+---
+
+{{< inverse >}}
+
+## Or modify the border: `.whiteborderthick`
+
+::: {.col width="60%"}
+This code produces the image on the right:
+
+```markdown
+::: {.whiteborderthick}
+![](images/blue_ridge_sunset.jpg)
+:::
+```
+:::
+
+::: {.col width="40%"}
+::: {.whiteborderthick}
+![](images/blue_ridge_sunset.jpg)
+:::
+:::
+
+---
+
+# Make a polaroid image: `.polaroid`
+
+::: {.col width="60%"}
+This code produces the image on the right:
+
+```markdown
+::: {.polaroid}
+![](images/blue_ridge_sunset.jpg)
+:::
+```
+:::
+
+::: {.col width="40%"}
+::: {.polaroid}
+![](images/blue_ridge_sunset.jpg){width="400"}
+:::
+:::
+
+---
+
+# Make a circle image: `.circle`
+
+::: {.col width="60%"}
+This code produces the image on the right:
+
+```markdown
+::: {.circle}
+![](images/blue_ridge_sunset.jpg)
+:::
+```
+:::
+
+::: {.col width="40%"}
+::: {.circle}
+![](images/blue_ridge_sunset.jpg){width="400"}
+:::
+:::
+
+---
+
+# Make a thumbnail image: `.thumbnail`
+
+::: {.col width="60%"}
+This code produces the image on the right:
+
+```markdown
+::: {.thumbnail}
+![](images/blue_ridge_sunset.jpg)
+:::
+```
+:::
+
+::: {.col width="40%"}
+<br><br><br><br>
+
+::: {.thumbnail}
+![](images/blue_ridge_sunset.jpg)
+:::
+:::
+
+---
+
+# Image classes work on rendered charts too
+
+::: {.col}
+````markdown
+::: {.border}
+
+```{{r}}
+ggplot(mtcars, aes(mpg, hp)) +
+  geom_point()
+```
+
+:::
+````
+
+::: {.border}
+```{r}
+#| echo: false
+#| fig-height: 3
+#| fig-width: 4
+#| fig-align: center
+ggplot(mtcars, aes(x = mpg, y = hp)) +
+  geom_point() +
+  theme_bw()
+```
+:::
+:::
+
+::: {.col}
+````markdown
+::: {.circle}
+
+```{{r}}
+ggplot(mtcars, aes(mpg, hp)) +
+  geom_point()
+```
+
+:::
+````
+
+::: {.circle}
+```{r}
+#| echo: false
+#| fig-height: 3
+#| fig-width: 4
+#| fig-align: center
+ggplot(mtcars, aes(x = mpg, y = hp)) +
+  geom_point() +
+  theme_bw()
+```
+:::
+:::
+
+---
+
+{{< center >}}
+{{< middle >}}
+{{< inverse >}}
+{{< no-slide-number >}}
+
+# Thanks!
+
+::: {.footer-large}
+::: {.right}
+[jhelvy.com `r fa("link", fill = "white")`](https://www.jhelvy.com)<br>
+[jph@gwu.edu `r fa("paper-plane", fill = "white")`](mailto:jph@gwu.edu)<br>
+[@jhelvy `r fa("github", fill = "white")`](http://github.com/jhelvy)
+:::
+:::

@@ -1,0 +1,57 @@
+---
+format: gfm
+---
+
+<!-- README.md is generated from README.qmd. Please edit that file, then run build.R -->
+
+# λέξις: a Quarto slide template
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+dateWritten <- format(as.Date('2026-07-08'), format = "%B %d %Y")
+today <- format(Sys.Date(), format = "%B %d %Y")
+```
+
+{{< include _description.qmd >}}
+
+### Demo
+
+- [Preview](https://jhelvy.github.io/quarto-lexis/lexis-template/lexis-demo.html) a live demo.
+- [Download](https://jhelvy.github.io/quarto-lexis/lexis-template/lexis-template.zip) the files to create the demo.
+- Read the [full documentation](https://jhelvy.github.io/quarto-lexis).
+
+### Installation
+
+{{< include _install.qmd >}}
+
+The zip lives at
+<https://jhelvy.github.io/quarto-lexis/lexis-template/lexis-template.zip>.
+
+## Authoring conventions
+
+{{< include _conventions.qmd >}}
+
+## What's in the extension
+
+```
+_extensions/lexis/
+  _extension.yml         # contributes format: lexis-revealjs (slide-level: 0, theme, filter)
+  lexis.scss             # the theme (fonts, palette, helper classes)
+  lexis.lua              # slide-modifier filter (the core mechanism)
+  lexis-shortcodes.lua   # the inverse / center / middle / … shortcodes
+  title-slide.html       # empty — suppresses Quarto's built-in title slide
+template.qmd             # the starter deck: a full port of the lexis demo
+```
+
+## Notes
+
+- This deliberately diverges from Quarto's standard `##`-per-slide convention in
+  order to match the xaringan paradigm.
+- Because a `---` slide has no heading to hang attributes on, the modifier
+  shortcodes leave invisible markers that a Lua filter
+  ([`_extensions/lexis/lexis.lua`](_extensions/lexis/lexis.lua)) hoists onto the
+  slide's `<section>` element.
+- Headings placed *inside* a fenced div, such as a column, are rendered as
+  `.h1`…`.h6` styled text so they can't accidentally start a new slide.
+
+{{< include _footer.qmd >}}

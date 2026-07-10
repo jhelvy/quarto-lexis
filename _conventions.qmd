@@ -1,0 +1,147 @@
+### Slides
+
+Every `---` starts a new slide. Headings are **styled text**, not slide breaks:
+
+```markdown
+# Big text
+
+## Smaller text
+
+Regular body text.
+
+---
+
+# The next slide
+```
+
+This is the one place lexis deliberately diverges from stock Quarto reveal.js,
+which makes every `##` a new slide. The extension sets `slide-level: 0` to get
+the xaringan/remark behavior back.
+
+### Slide modifiers
+
+Put these shortcodes anywhere on a slide (their own line is cleanest). They
+replace xaringan's `class:` / `background-*` lines:
+
+| Shortcode | Effect |
+|---|---|
+| `{{{< inverse >}}}` | Dark slide: `#121212` background, white text, orange inline code |
+| `{{{< center >}}}` | Center all content horizontally |
+| `{{{< middle >}}}` | Center all content vertically |
+| `{{{< bg-color "#909099" >}}}` | Full-slide background color |
+| `{{{< bg-image "images/x.jpg" >}}}` | Full-slide background image (optional `size=` / `position=`) |
+| `{{{< no-slide-number >}}}` | Hide the slide number on this slide |
+
+They stack, so a section-divider slide is just:
+
+```markdown
+{{{< inverse >}}}
+{{{< center >}}}
+{{{< middle >}}}
+
+# Section title
+```
+
+### Inline text styling
+
+xaringan's `.class[text]` becomes a Quarto span, `[text]{.class}`:
+
+- `[text]{.fancy}` — Lobster Two display font
+- colors: `.red` `.orange` `.yellow` `.green` `.darkgreen` `.blue` `.darkblue` `.purple` `.black` `.white` `.gray`
+- sizes: `.small` `.large`, or `.font10` through `.font200` for exact percentages
+- standard markdown `_italic_`, `**bold**`, `~~strike~~`, `` `code` ``
+
+To center just a heading rather than the whole slide, put the class on a span
+inside it: `# [Title]{.center}` (also `.left`, `.right`).
+
+### Columns
+
+Write consecutive `::: {.col}` divs — no outer wrapper. Any run of two or more
+in a row is grouped automatically and splits the space evenly:
+
+```markdown
+::: {.col}
+Left half.
+:::
+
+::: {.col}
+Right half.
+:::
+```
+
+For an uneven split, give a column a `width`. Columns without one share what's
+left, so usually you only need to set it on one side:
+
+```markdown
+::: {.col width="65%"}
+:::
+
+::: {.col width="35%"}
+:::
+```
+
+`width` takes any percentage, so there is no fixed set of splits to remember
+(this replaces xaringan's `.leftcol55`, `.rightcol70`, `.cols3`, and friends).
+You can also set `gap="3em"` or `valign="middle"` on any `.col` in a row and it
+applies to the whole row.
+
+### Images
+
+Wrap an image in a treatment div:
+
+```markdown
+::: {.border}
+![](images/photo.jpg)
+:::
+```
+
+Available treatments are `.border` `.borderthick` `.whiteborder`
+`.whiteborderthick` `.polaroid` `.circle` `.thumbnail` `.noborder` (the default
+is no border). Each one works the same way around a rendered plot — wrap the
+code cell instead of the `![]()`.
+
+### Panels / tabs
+
+xaringan's `.panelset` becomes Quarto's native `::: {.panel-tabset}`, with a
+`###` heading naming each tab.
+
+### Title slide
+
+There is no auto-generated title slide. You author it like any other slide,
+using Quarto's built-in `meta` shortcode to pull values from your YAML front
+matter instead of retyping them:
+
+```markdown
+{{{< inverse >}}}
+{{{< center >}}}
+{{{< middle >}}}
+{{{< no-slide-number >}}}
+
+# {{{< meta title >}}}
+
+## [{{{< meta subtitle >}}}]{.fancy}
+
+<br>
+
+[{{{< meta author >}}}]{.large}
+
+{{{< meta date >}}}
+```
+
+Drop any line you don't need and restyle the rest — it's just markdown.
+
+### Footers
+
+Set `footer: "..."` in the YAML header for the repeated link bar, which is
+styled as the lexis black bar. Use `::: {.footer-large}` for the block footer
+on title and closing slides.
+
+### Code line highlighting
+
+xaringan's trailing `#<<` comment becomes the `code-line-numbers` cell option:
+
+````markdown
+```{{r}}
+#| code-line-numbers: "4,5"
+```
+````

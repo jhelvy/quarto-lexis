@@ -46,6 +46,10 @@ the arrow keys, or open it [full screen](lexis-template/lexis-demo.html).
 
 {{< include _conventions.qmd >}}
 
+## Claude Code skill
+
+{{< include _claude.qmd >}}
+
 ## Notes
 
 - Because a `---` slide has no heading to hang attributes on, the modifier

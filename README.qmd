@@ -43,6 +43,10 @@ _extensions/lexis/
 template.qmd             # the starter deck: a full port of the lexis demo
 ```
 
+## Using with Claude Code
+
+{{< include _claude.qmd >}}
+
 ## Notes
 
 - This deliberately diverges from Quarto's standard `##`-per-slide convention in

@@ -3,7 +3,9 @@
 # `quarto use template jhelvy/quarto-lexis`. Providing this file replaces
 # Quarto's built-in defaults, so the dot-files and README have to be listed too.
 #
-# What's left — `_extensions/`, `template.qmd`, `images/` — is the template.
+# What's left — `_extensions/`, `template.qmd`, `images/`, and the Claude Code
+# skill in `.claude/skills/` — is the template. (`.claude/` is intentionally NOT
+# listed so the lexis skill travels with `quarto use template`.)
 
 .git/
 .gitignore
@@ -25,6 +27,7 @@ index_files/
 _description.qmd
 _install.qmd
 _conventions.qmd
+_claude.qmd
 _footer.qmd
 
 lexis-template/

@@ -244,6 +244,36 @@ option:
       title-slide.html       # empty — suppresses Quarto's built-in title slide
     template.qmd             # the starter deck: a full port of the lexis demo
 
+## Using with Claude Code
+
+The repo ships a **Claude Code skill** at `.claude/skills/lexis/` that
+teaches Claude the lexis authoring paradigm — the `---`-per-slide model,
+the shortcodes, the styling classes, and the knitr/fragment gotchas — so
+that “write me a lexis slide about X” produces correct markup instead of
+stock Quarto `##`-per-slide decks.
+
+You get it automatically in two situations:
+
+- **Working in this repo** — Claude Code auto-discovers project skills
+  in `.claude/skills/`, so it’s active whenever you develop the template
+  here.
+- **A deck created from the template** —
+  `quarto use template jhelvy/quarto-lexis` copies
+  `.claude/skills/lexis/` alongside the extension, so every new deck
+  comes with the skill and Claude picks it up when you open that folder.
+
+To use it across **all** your decks regardless of how they were made,
+copy the folder into your user-level skills once:
+
+``` bash
+cp -r .claude/skills/lexis ~/.claude/skills/
+```
+
+The skill is a single self-contained `SKILL.md` — nothing to build or
+install — so copying the file is all it takes. It’s only relevant if you
+use Claude Code; if you don’t, the `.claude/` directory is inert and can
+be deleted.
+
 ## Notes
 
 - This deliberately diverges from Quarto’s standard `##`-per-slide

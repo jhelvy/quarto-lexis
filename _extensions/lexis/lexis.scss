@@ -122,10 +122,17 @@ $progress-color: $color-blue;
 
 // Inverse slides are a dark CARD with the gray letterbox preserved, NOT a
 // full-window bleed. lexis.lua no longer sets `data-background-color` for
-// `.inverse`, so paint the card here instead. reveal marks the current slide
-// (and, for the nested single-item stacks lexis emits, its inner section)
-// `.present`, so this only darkens the card while an inverse slide is showing.
-.reveal .slides:has(section.present.inverse) { background-color: $color-black; }
+// `.inverse`, so paint the card here instead. Painted directly on the
+// section (not gated by `.present` on the shared `.slides` parent, as a
+// previous version did): `.slides` is ONE element shared by every slide, so
+// keying its background off "whichever slide is currently present" broke
+// down in overview (`o`) and scroll (`r`) modes, where reveal shows multiple
+// sections at once — the whole shared backdrop would flip color based on
+// just one of them instead of each slide keeping its own. A background on
+// the section itself is intrinsic to that slide and stays correct in every
+// mode, and reveal already sizes the section to fill exactly the 1600x900
+// card, so it still stops at the gray letterbox.
+.reveal .slides section.inverse { background-color: $color-black; }
 
 // Explicit full-bleed slides ({{< bg-color >}} / {{< bg-image >}}) DO use
 // reveal's own edge-to-edge background layer (behind `.slides`); reveal flags

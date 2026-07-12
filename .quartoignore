@@ -20,9 +20,7 @@ PROJECT-BRIEF.md
 build.R
 
 index.qmd
-index.css
 index.html
-index_files/
 
 _description.qmd
 _install.qmd

@@ -6,7 +6,7 @@ format:
     highlight-style: tango
     toc: true
     toc-depth: 2
-    css: index.css
+    embed-resources: true
 ---
 
 ```{r setup, include=FALSE}
@@ -14,6 +14,65 @@ library(fontawesome)
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 dateWritten <- format(as.Date('2026-07-08'), format = "%B %d %Y")
 today <- format(Sys.Date(), format = "%B %d %Y")
+```
+
+```{=html}
+<style>
+/* Styles for the landing page (index.qmd) only — not part of the slide theme. */
+
+.github-corner:hover .octo-arm {
+  animation: octocat-wave 560ms ease-in-out;
+}
+
+@keyframes octocat-wave {
+  0%, 100% { transform: rotate(0); }
+  20%, 60% { transform: rotate(-25deg); }
+  40%, 80% { transform: rotate(10deg); }
+}
+
+@media (max-width: 500px) {
+  .github-corner:hover .octo-arm { animation: none; }
+  .github-corner .octo-arm { animation: octocat-wave 560ms ease-in-out; }
+}
+
+.button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 10px;
+  box-shadow: 4px 4px 8px 0 rgba(0, 0, 0, 0.2);
+  text-align: center;
+  vertical-align: middle;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+.button:hover {
+  color: white;
+  text-decoration: none;
+}
+
+/* Responsive 16:9 box holding the embedded demo deck. */
+.demo-frame {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  margin-bottom: 1rem;
+}
+
+.demo-frame iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+</style>
 ```
 
 <!-- The little github logo in the corner, from https://github.com/tholman/github-corners -->

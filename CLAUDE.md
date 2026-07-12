@@ -86,9 +86,10 @@ deck already uses) — but exhaust the filter approach first, since it's the who
 
 ## The lexis conventions to replicate (from the demo deck)
 
-Reference: `starting-assets/lexis-demo-16-9-ORIGINAL.Rmd` (the canonical demo to port),
-`starting-assets/lexis-original-xaringan.css` (original styles), and the live demo at
-https://jhelvy.github.io/lexis/lexis-theme/lexis-demo-16-9.html
+Reference: the live xaringan demo at
+https://jhelvy.github.io/lexis/lexis-theme/lexis-demo-16-9.html (the original source
+material — `starting-assets/` held a local copy of this deck and its CSS during the
+port; it's been removed now that the port is complete).
 
 **Slide modifiers** (xaringan `class:` after `---`) → Quarto shortcodes to design:
 - `center` — center all content horizontally
@@ -161,23 +162,6 @@ Lobster Two (`.fancy`), SFMono (code). Palette in `lexis.scss` `scss:defaults`.
 
 ---
 
-## Starting assets (in `starting-assets/`, copied from the EDA deck)
-
-- `lexis.scss` — the SCSS theme already ported from `lexis.css`+`lexis-fonts.css`
-  (scss:defaults = fonts/colors/reveal vars; scss:rules = retargeted rules + helper
-  classes: `.fancy`, colors, `.font10..200`, `.code10..100`, image treatments,
-  `.inverse`, `.center`/`.left`, `.blackborder`, `.footnote`, `.slimtitle`). Solid base.
-- `title-slide.html` — the dark title-slide partial (logo + icons + fancy title).
-- `inverse-bg.lua` — current filter: adds `background-color="#121212"` to headers with
-  class `inverse` (works at slide-level 2 only; **generalize this** for slide-level 0).
-- `demo.qmd` — Convention A demo (slide-level 2, `##` = slides). Renders correctly.
-- `demoB.qmd` — Convention B demo (slide-level 0, `---` = slides). Renders, structure
-  matches A, **but inverse slide is light** — this is the exact problem to solve.
-- `lexis-demo-16-9-ORIGINAL.Rmd` — the xaringan demo to fully replicate in Quarto.
-- `lexis-original-xaringan.css` — original lexis styles for reference.
-
----
-
 ## Suggested deliverable & structure
 
 A **Quarto format extension** so decks use `format: lexis-revealjs`:
@@ -187,7 +171,7 @@ _extensions/lexis/
   _extension.yml        # contributes a revealjs-based format:
                         #   theme: lexis.scss, slide-level: 0,
                         #   filters: [lexis.lua], template-partials, defaults
-  lexis.scss            # the theme (from starting-assets, refined)
+  lexis.scss            # the theme
   lexis.lua             # the slide-modifier filter (inverse/center/middle/bg)
   title-slide.html      # title partial
   shortcodes...         # if shortcodes are separate .lua files
@@ -205,14 +189,9 @@ format extensions (https://quarto.org/docs/extensions/formats.html), shortcodes
 (https://quarto.org/docs/extensions/shortcodes.html), Lua filters/`at:` phases,
 reveal.js format reference. Use the `quarto-authoring` skill.
 
-## Immediate next steps for the fresh session
+## Status
 
-1. **Prototype the Lua-filter mechanism** for setting a `---`-slide's background+class
-   at `slide-level: 0` (use `demoB.qmd` as the test bed — make its Outline slide go
-   dark via a `{{< inverse >}}` shortcode + filter). Nothing else matters until this works.
-2. Once proven, design the shortcode set (`inverse`/`center`/`middle`/`background-*`).
-3. Scaffold the `_extensions/lexis/` format extension; move `lexis.scss` in.
-4. Port `lexis-demo-16-9` slide-by-slide as the acceptance test.
-5. Port the EDA Getting Started deck onto the extension as the real-world test.
-
-Everything above the "next steps" is context; start at step 1.
+The steps above described the original design brief; the extension is now built and
+live at `_extensions/lexis/` (shortcode-driven Lua filter, `lexis.scss` theme,
+`title-slide.html` partial), with `template.qmd` as the finished demo deck and
+`README.md`/`index.qmd` documenting authoring conventions for users.

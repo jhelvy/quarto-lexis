@@ -122,17 +122,25 @@ $progress-color: $color-blue;
 
 // Inverse slides are a dark CARD with the gray letterbox preserved, NOT a
 // full-window bleed. lexis.lua no longer sets `data-background-color` for
-// `.inverse`, so paint the card here instead. Painted directly on the
-// section (not gated by `.present` on the shared `.slides` parent, as a
-// previous version did): `.slides` is ONE element shared by every slide, so
-// keying its background off "whichever slide is currently present" broke
-// down in overview (`o`) and scroll (`r`) modes, where reveal shows multiple
-// sections at once — the whole shared backdrop would flip color based on
-// just one of them instead of each slide keeping its own. A background on
-// the section itself is intrinsic to that slide and stays correct in every
-// mode, and reveal already sizes the section to fill exactly the 1600x900
-// card, so it still stops at the gray letterbox.
-.reveal .slides section.inverse { background-color: $color-black; }
+// `.inverse`, so paint the card here instead.
+//
+// Painted on the SECTION itself, not the shared `.slides` parent. A prior
+// version painted `.slides:has(section.present.inverse)` — but `.slides` is
+// ONE element shared by every slide, and every individual `<section>` is
+// transparent by default, so that shared background is literally the only
+// color visible behind ANY slide. Gating it on `:present` made it correct
+// for single-slide viewing (only one slide visible at a time) but wrong the
+// moment more than one slide renders at once: in overview (`o`) and scroll
+// (`r`) mode reveal shows many sections simultaneously, so every tile ended
+// up sharing whichever ONE color `:present` last resolved to (verified
+// empirically — navigate to a non-inverse slide, then open overview, and
+// every `.inverse` tile including the current one turns light). Painting
+// the section directly makes the color intrinsic to that slide, correct in
+// every mode. `height: 100%` is required alongside it: outside overview
+// mode (where reveal forces this itself) a section is only as tall as its
+// content, not the full 900px card, so without it a short inverse slide
+// left a gap of `.slides`'s own light background showing beneath the text.
+.reveal .slides section.inverse { background-color: $color-black; height: 100%; }
 
 // Explicit full-bleed slides ({{< bg-color >}} / {{< bg-image >}}) DO use
 // reveal's own edge-to-edge background layer (behind `.slides`); reveal flags

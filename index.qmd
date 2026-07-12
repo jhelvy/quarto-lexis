@@ -5,8 +5,7 @@ format:
     theme: united
     highlight-style: tango
     toc: true
-    toc-depth: 2
-    embed-resources: true
+    toc-depth: 3
 ---
 
 ```{r setup, include=FALSE}

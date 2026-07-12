@@ -188,11 +188,21 @@ local function collect(blocks)
   })
 
   -- Markers usually sit alone on their own line; once stripped, drop the now
-  -- empty/whitespace-only wrapper paragraph so it leaves no blank gap.
+  -- empty/whitespace-only wrapper paragraph so it leaves no blank gap. BUT a
+  -- paragraph can stringify to "" and still be visible: an image with empty alt
+  -- text (`![](img.png)`) or a raw inline (`<img ...>`). stringify only sees
+  -- TEXT, so guard against dropping those — otherwise a bare top-level image
+  -- silently vanishes from the slide.
   local cleaned = pandoc.List({})
   for _, b in ipairs(walked.content) do
     local blank = (b.t == "Para" or b.t == "Plain")
       and #pandoc.utils.stringify(b):gsub("%s", "") == 0
+    if blank then
+      pandoc.walk_block(b, {
+        Image     = function() blank = false end,
+        RawInline = function() blank = false end,
+      })
+    end
     if not blank then cleaned:insert(b) end
   end
 
@@ -285,10 +295,11 @@ function Pandoc(doc)
       -- Rewrite Div-nested headings to styled text so columns/panels that
       -- contain `#`-headings don't fracture into extra slides.
       blocks = demote(blocks, false)
-      -- inverse implies a dark background layer unless one was given explicitly.
-      if seen["inverse"] and not attrs["background-color"] and not attrs["background-image"] then
-        attrs["background-color"] = INVERSE_BG
-      end
+      -- Inverse slides are styled as a dark CARD in lexis.scss (a `.slides`
+      -- background keyed off `section.present.inverse`), NOT a reveal
+      -- full-bleed background — that keeps the gray letterbox around the slide
+      -- like the old xaringan deck. So the `.inverse` class alone carries the
+      -- dark look; we deliberately do not set a `data-background-color` here.
 
       if emitted then out:insert(pandoc.HorizontalRule()) end
       if #classes > 0 or next(attrs) ~= nil then

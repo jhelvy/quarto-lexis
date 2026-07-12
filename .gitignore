@@ -3,3 +3,5 @@
 .Rhistory
 /.quarto/
 lexis-template/.quarto/
+
+/.luarc.json

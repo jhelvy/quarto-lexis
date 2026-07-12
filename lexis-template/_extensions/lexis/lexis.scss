@@ -87,6 +87,72 @@ $progress-color: $color-blue;
 
 /*-- scss:rules --*/
 
+// ---- Slide letterbox (xaringan "card" look) -------------------------------
+// reveal scales `.reveal .slides` to exactly the deck's 16:9 box and centers
+// it; with `margin: 0` (set in _extension.yml) that box fills the window on
+// one axis and leaves a letterbox on the other. Paint the box as the light
+// "card" and fill the surrounding `.reveal-viewport` with the darker gray, so
+// the margins read like the old xaringan deck — a gray band on top/bottom OR
+// left/right, never all four sides at once.
+.reveal-viewport {
+  background-color: $color-gray;
+  // Size of the gray letterbox band on each axis, in real window px. reveal
+  // scales the 1600x900 deck by margin:0 to exactly
+  //   min(100vw, 177.78vh) x min(100vh, 56.25vw)   (16/9 = 1.7778, 9/16 = .5625)
+  // and centers it, so half the leftover on each axis is the band width. The UI
+  // chrome (slide number, menu button, footer bar) is positioned against the
+  // full window, which drops it into that gray band — off the slide. Expose the
+  // band size so those elements can be nudged back onto the card, like the old
+  // xaringan deck where the page number lived inside the slide.
+  --lexis-lb-x: calc((100vw - min(100vw, 177.78vh)) / 2);
+  --lexis-lb-y: calc((100vh - min(100vh,  56.25vw)) / 2);
+}
+.reveal .slides  { background-color: $body-bg; }
+
+// ---- Slide content insets (xaringan's roomy `.remark-slide-content`) --------
+// reveal ships its sections with no padding, so content sits flush against the
+// card edges (and wide code appears to run off). Restore breathing room. Target
+// only leaf sections (`:not(.stack)`) so the wrapper <section> reveal builds for
+// lexis's modified slides doesn't double the inset. box-sizing keeps the 1600x900
+// canvas intact while insetting the content.
+.reveal .slides section:not(.stack) {
+  box-sizing: border-box;
+  padding: 45px 90px 60px;
+}
+
+// Inverse slides are a dark CARD with the gray letterbox preserved, NOT a
+// full-window bleed. lexis.lua no longer sets `data-background-color` for
+// `.inverse`, so paint the card here instead. reveal marks the current slide
+// (and, for the nested single-item stacks lexis emits, its inner section)
+// `.present`, so this only darkens the card while an inverse slide is showing.
+.reveal .slides:has(section.present.inverse) { background-color: $color-black; }
+
+// Explicit full-bleed slides ({{< bg-color >}} / {{< bg-image >}}) DO use
+// reveal's own edge-to-edge background layer (behind `.slides`); reveal flags
+// them on `.reveal`, so drop the card there to let that layer show through.
+.reveal.has-dark-background  .slides,
+.reveal.has-light-background .slides { background-color: transparent; }
+
+// ...but reveal's background layer (`.backgrounds`) fills the whole `.reveal`
+// element, i.e. the whole WINDOW, so {{< bg-color >}} / {{< bg-image >}} bleed
+// across the gray letterbox too. Inset the layer by the letterbox band so the
+// fill covers only the card and the gray margins survive, matching the letterbox
+// look of every other slide.
+.reveal.reveal .backgrounds {
+  top:    var(--lexis-lb-y);
+  left:   var(--lexis-lb-x);
+  width:  calc(100% - 2 * var(--lexis-lb-x));
+  height: calc(100% - 2 * var(--lexis-lb-y));
+}
+
+// ---- Clip content to the card ---------------------------------------------
+// Content taller/wider than the 1600x900 canvas (e.g. a long printed tibble)
+// otherwise spills past the card edge into the gray, because reveal leaves
+// `.slides` overflow visible. Clip it to the card. Excluded in overview mode
+// (`o`), where reveal deliberately lays the slides out in a grid larger than
+// `.slides` and needs the overflow to show.
+.reveal:not(.overview) .slides { overflow: hidden; }
+
 // ---- Links ----------------------------------------------------------------
 .reveal a {
   border-bottom: none;
@@ -118,9 +184,15 @@ $progress-color: $color-blue;
 }
 
 // ---- Printed code OUTPUT: white text on gray (mirrors .remark-code) --------
+// The inner <code> must be targeted too: Quarto's default
+// `.reveal pre code { background-color:#eae9ea; color:#000 }` otherwise paints
+// a light box + black text on top of the gray <pre>, washing this out.
 .reveal .cell-output pre,
 .reveal .cell-output-stdout pre,
-.reveal pre.text-output {
+.reveal pre.text-output,
+.reveal .cell-output pre code,
+.reveal .cell-output-stdout pre code,
+.reveal pre.text-output code {
   color: #fff;
   background: $color-gray;
   border: none;
@@ -433,9 +505,14 @@ $progress-color: $color-blue;
 .reveal.reveal .footer,
 .reveal.reveal div.footer-small {
   background-color: $color-black;
+  // Anchored to the card, not the window: bottom/left/right are inset by the
+  // letterbox band (see --lexis-lb-* on .reveal-viewport) so the bar hugs the
+  // slide's bottom edge and spans the slide width, instead of the window's.
   position: fixed;
-  bottom: 0; left: 0;
-  height: 20px; width: 100%;
+  bottom: var(--lexis-lb-y);
+  left:  var(--lexis-lb-x);
+  right: var(--lexis-lb-x);
+  height: 20px; width: auto;
   margin: 0; padding: 0;
   // Per-document override: set `footer-align: center` (or `left`/`right`)
   // in the YAML front matter; lexis.lua turns that into this custom
@@ -450,13 +527,64 @@ $progress-color: $color-blue;
   a { color: $color-white; text-decoration: none; }
 }
 
-// The slide number defaults to `bottom: 10px` (set by the same
-// footer.css plugin), which sits inside our 20px footer bar's vertical span.
-// Keep it clear of the bar, above the footer line, whenever a footer is
-// present. `:has()` already out-specifies footer.css's plain `.reveal
-// .slide-number`, but match the `.reveal.reveal` bump above for consistency.
+// reveal's slide number is positioned against the full window (right/bottom
+// 8px), so it too lands in the gray letterbox band. Push it back onto the card
+// by the band size + a small margin, so it sits in the slide's bottom-right
+// corner like the old xaringan page number. The `.reveal.reveal` bump is
+// REQUIRED: quarto-support's footer.css (loaded after this theme) also sets
+// `.reveal .slide-number { bottom; right }` at equal specificity, so a plain
+// `.reveal .slide-number` here silently loses on source order.
+.reveal.reveal .slide-number {
+  right:  calc(var(--lexis-lb-x) + 14px);
+  bottom: calc(var(--lexis-lb-y) + 12px);
+  font-size: 20px;    // a touch larger than footer.css's default 16px
+  color: $color-gray; // #696969, matching the old xaringan page number
+}
+
+// When a footer bar is present the number defaults to sitting inside the bar's
+// 20px vertical span; lift it clear, still card-anchored. `:has()` already
+// out-specifies footer.css's plain `.reveal .slide-number`, but match the
+// `.reveal.reveal` bump above for consistency.
 .reveal.reveal:has(> .footer) .slide-number {
-  bottom: 26px;
+  bottom: calc(var(--lexis-lb-y) + 28px);
+}
+
+// The reveal.js-menu hamburger button is `position: fixed` against the window —
+// same gray-band problem. Nudge it onto the card. footer.css also re-positions
+// it as `.reveal .slide-menu-button { left; bottom }` (equal specificity, loaded
+// later), so the `.reveal.reveal` bump is REQUIRED here too.
+.reveal.reveal .slide-menu-button {
+  left:   calc(var(--lexis-lb-x) + 22px);
+  bottom: calc(var(--lexis-lb-y) + 18px);
+}
+// Recolor the bars to match the slide number (was theme link-blue). The `<a>`
+// color / hover-box come from `.reveal a`, so gray the anchor and kill the blue
+// hover background here...
+.reveal.reveal .slide-menu-button a {
+  color: $color-gray;
+  &:hover, &:focus { color: $color-gray; background: transparent; }
+}
+// ...BUT the three bars themselves are not a font glyph — Quarto's reveal-menu
+// integration renders them as a background-image SVG with `$link-color` baked
+// into `fill=`, so `color`/`currentColor` can't reach them. Override the whole
+// image with the identical icon, gray fill. (Beats the theme's
+// `.reveal .slide-menu-button .fa-bars::before` with the `.reveal.reveal` bump.)
+.reveal.reveal .slide-menu-button .fa-bars::before {
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(105,105,105)" class="bi bi-list" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg>');
+}
+// Flip BOTH the hamburger and the slide number to white on inverse / dark-
+// background slides so they stay visible (and matching) on dark cards — the
+// hardcoded gray above would otherwise be invisible there.
+.reveal:has(.slides section.present.inverse) .slide-number,
+.reveal.reveal.has-dark-background .slide-number { color: #fff; }
+.reveal:has(.slides section.present.inverse) .slide-menu-button a,
+.reveal.reveal.has-dark-background .slide-menu-button a {
+  color: #fff;
+  &:hover, &:focus { color: #fff; }
+}
+.reveal:has(.slides section.present.inverse) .slide-menu-button .fa-bars::before,
+.reveal.reveal.has-dark-background .slide-menu-button .fa-bars::before {
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(255,255,255)" class="bi bi-list" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg>');
 }
 
 .reveal div.footer-large {

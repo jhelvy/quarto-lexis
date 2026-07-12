@@ -16,6 +16,11 @@ contributes:
       highlight-style: github
       width: 1600
       height: 900
+      # Scale the slide to fully "contain" the window (like xaringan) instead of
+      # reveal's default ~10% margin, which insets the slide on all four sides.
+      # With margin 0 the 16:9 slide fills one axis and the gray letterbox
+      # (see lexis.scss) shows only on the other — never all the way around.
+      margin: 0
       # Quarto's reveal template unconditionally emits a title slide whenever
       # `title:` is set ($if(title)$$title-slide.html()$$endif$ — there's no
       # YAML switch to disable it). title-slide.html is a no-op partial that

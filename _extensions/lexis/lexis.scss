@@ -109,6 +109,54 @@ $progress-color: $color-blue;
 }
 .reveal .slides  { background-color: $body-bg; }
 
+// ---- Overview mode (`o`) ---------------------------------------------------
+// The card color above lives on `.slides` — ONE element, not the sections —
+// so in overview, where reveal spreads the sections out in a grid far beyond
+// the `.slides` box, every non-inverse tile was a transparent section against
+// the dark gray viewport (verified: getComputedStyle showed
+// `rgba(0,0,0,0)` on every non-inverse section while `.inverse` tiles, which
+// paint their own section, looked right). Paint the tiles directly here.
+// Exclusions: `.stack` (the wrapper reveal builds around lexis's modified
+// slides — painting the leaf inside is enough), `.inverse` (already dark;
+// this rule's higher specificity would otherwise turn it light), and slides
+// with an explicit {{< bg-color >}} / {{< bg-image >}} background (their
+// color comes from reveal's per-slide background tile, which the section
+// must stay transparent to reveal). `height: 100%` for the same reason as
+// `.inverse` below: sections are only as tall as their content.
+.reveal.overview .slides section:not(.stack):not(.inverse):not([data-background-color]):not([data-background-image]) {
+  background-color: $body-bg;
+  height: 100%;
+}
+
+// ---- Scroll view (`r`) -----------------------------------------------------
+// reveal 5's scroll view (`.reveal-scroll` on the viewport) restacks every
+// slide into full-window `.scroll-page`s inside `.slides` and scrolls the
+// viewport. Two of our rules broke it (verified headlessly by toggling `r`
+// and reading scrollHeight):
+//   1. Our `.reveal:not(.overview) .slides { overflow: hidden }` clip rule
+//      (below) out-specifies reveal's own `.reveal-scroll .slides
+//      { overflow: visible }`, clipping all pages inside the 900px `.slides`
+//      box — scrollHeight collapsed to one page, so scrolling was dead and
+//      activation "jumped to the title slide" (reveal couldn't scroll down
+//      to the current slide's page).
+//   2. The `.slides` card background painted a stray light band across the
+//      top of the scroll strip.
+// In scroll view each section is forced to the full slide box by reveal
+// (width/height/transform !important), so the card color can live on the
+// sections themselves — same exclusions as overview mode above. Slides with
+// {{< bg-color >}} / {{< bg-image >}} keep working via the per-page
+// `.slide-background` reveal moves into each scroll page.
+// The `.reveal-viewport.reveal-scroll` double class is REQUIRED: it lifts
+// this above the clip rule's `.reveal:not(.overview) .slides` specificity,
+// which would otherwise win on source order.
+.reveal-viewport.reveal-scroll .reveal .slides {
+  overflow: visible;
+  background-color: transparent;
+}
+.reveal-viewport.reveal-scroll .reveal .slides section:not(.stack):not(.inverse):not([data-background-color]):not([data-background-image]) {
+  background-color: $body-bg;
+}
+
 // ---- Slide content insets (xaringan's roomy `.remark-slide-content`) --------
 // reveal ships its sections with no padding, so content sits flush against the
 // card edges (and wide code appears to run off). Restore breathing room. Target
@@ -152,8 +200,12 @@ $progress-color: $color-blue;
 // element, i.e. the whole WINDOW, so {{< bg-color >}} / {{< bg-image >}} bleed
 // across the gray letterbox too. Inset the layer by the letterbox band so the
 // fill covers only the card and the gray margins survive, matching the letterbox
-// look of every other slide.
-.reveal.reveal .backgrounds {
+// look of every other slide. Scoped out of overview mode (`o`): there reveal
+// lays the background tiles out in the same grid as the sections, and
+// offsetting the whole layer by the letterbox band would shift every
+// background tile off its slide whenever the window isn't exactly 16:9.
+// (Scroll view needs no exclusion — reveal hides `.backgrounds` there.)
+.reveal.reveal:not(.overview) .backgrounds {
   top:    var(--lexis-lb-y);
   left:   var(--lexis-lb-x);
   width:  calc(100% - 2 * var(--lexis-lb-x));

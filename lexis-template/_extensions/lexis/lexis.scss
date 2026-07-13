@@ -191,10 +191,19 @@ $progress-color: $color-blue;
 .reveal .slides section.inverse { background-color: $color-black; height: 100%; }
 
 // Explicit full-bleed slides ({{< bg-color >}} / {{< bg-image >}}) DO use
-// reveal's own edge-to-edge background layer (behind `.slides`); reveal flags
-// them on `.reveal`, so drop the card there to let that layer show through.
+// reveal's own edge-to-edge background layer (behind `.slides`); drop the
+// card there to let that layer show through. Two selectors are needed
+// because reveal only flags COLOR backgrounds on `.reveal` (it reads the
+// color's brightness to pick has-dark/has-light); an image background gets
+// no flag at all — verified: on a {{< bg-image >}} slide the image layer
+// was loaded and visible but sat hidden behind the opaque `.slides` card,
+// while overview mode (tiles spread beyond the `.slides` box) showed it
+// fine. The `:has()` clause catches those image slides directly.
 .reveal.has-dark-background  .slides,
-.reveal.has-light-background .slides { background-color: transparent; }
+.reveal.has-light-background .slides,
+.reveal:has(.slides section.present[data-background-image]) .slides {
+  background-color: transparent;
+}
 
 // ...but reveal's background layer (`.backgrounds`) fills the whole `.reveal`
 // element, i.e. the whole WINDOW, so {{< bg-color >}} / {{< bg-image >}} bleed

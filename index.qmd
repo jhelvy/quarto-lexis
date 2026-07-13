@@ -6,6 +6,12 @@ format:
     highlight-style: tango
     toc: true
     toc-depth: 3
+    # Inline all page assets so no index_files/ directory has to be committed.
+    # The embedded demo iframe below opts out via data-external="1" — without
+    # it, pandoc's embed step rewrites the iframe src into a data: URI
+    # snapshot of the deck's HTML, which breaks it (all of the deck's own
+    # relative js/css/image paths stop resolving).
+    embed-resources: true
 ---
 
 ```{r setup, include=FALSE}
@@ -87,7 +93,8 @@ the arrow keys, or open it [full screen](lexis-template/lexis-demo.html).
 
 ```{=html}
 <div class="demo-frame">
-  <iframe src="lexis-template/lexis-demo.html" allowfullscreen></iframe>
+  <!-- data-external keeps embed-resources from inlining the deck as a data: URI -->
+  <iframe src="lexis-template/lexis-demo.html" data-external="1" allowfullscreen></iframe>
 </div>
 ```
 

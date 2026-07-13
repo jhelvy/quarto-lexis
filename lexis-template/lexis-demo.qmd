@@ -4,6 +4,7 @@ subtitle: "a Quarto theme"
 author: "John Paul Helveston"
 date: "2026-07-08"
 format: lexis-revealjs
+mouse-wheel: true 
 progress: false
 footer: "<https://github.com/jhelvy/quarto-lexis>"
 footer-align: center

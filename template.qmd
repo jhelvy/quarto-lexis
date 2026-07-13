@@ -184,17 +184,16 @@ Use the `>` to make block quotes:
 # [Github code chunk highlighting]{.center}
 
 ::: {.col width="80%"}
+::: {.font90}
 ```r
-# function args are keywords c; function names are keywords d
 foo <- function(arg1 = 100, arg2 = "character string") {
   if (TRUE) {
     x = NULL  # if, function, NULL are keywords a
     for (i in 1:10) x = c(x, mean(3 * rnorm(100) + 1))
   }
 }
-
-1 + "a"  # error
 ```
+:::
 :::
 
 ---
@@ -239,6 +238,36 @@ ggplot(mtcars) +
 
 ---
 
+# Sizing text and code
+
+One system for everything: wrap any content in a `.fontNN` div to scale it to
+NN% of the slide's base size (5% steps, `font10`–`font200`). It works the same
+on paragraphs, lists, and code chunks — a chunk and its printed output always
+match. For inline text there's also `[text]{.fontNN}` plus the `.small` and
+`.large` shortcuts.
+
+::: {.col}
+Normal size:
+
+```{r}
+#| echo: true
+head(mtcars[, 1:4], 3)
+```
+:::
+
+::: {.col}
+Wrapped in `::: {.font70}`:
+
+::: {.font70}
+```{r}
+#| echo: true
+head(mtcars[, 1:4], 3)
+```
+:::
+:::
+
+---
+
 {{< inverse >}}
 {{< middle >}}
 {{< center >}}
@@ -269,7 +298,7 @@ ggplot(mtcars, aes(x = mpg, y = hp)) +
 #| echo: false
 #| fig-height: 3
 #| fig-width: 4
-#| out-width: 60%
+#| out-width: 50%
 #| fig-align: center
 
 ggplot(mtcars, aes(x = mpg, y = hp)) +
@@ -344,7 +373,8 @@ Only one side needs a `width`; a column left without one just takes whatever spa
 Set `gap` or `valign` on any `.col` in the row and it applies to the whole row — handy here since this column's text is shorter than the code beside it, so `valign="middle"` centers them against each other.
 :::
 
-::: {.col width="25%"}
+::: {.col width="25%" .font70}
+
 ```r
 foo <- function(x) {
   x + 1
@@ -352,12 +382,14 @@ foo <- function(x) {
 ```
 :::
 
-::: {.col width="25%"}
+::: {.col width="25%" .font70}
+
 ```r
 bar <- function(y) {
   y * 2
 }
 ```
+
 :::
 
 ---

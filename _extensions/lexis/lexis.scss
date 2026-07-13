@@ -398,34 +398,16 @@ $progress-color: $color-blue;
 .reveal .gray      { color: $color-gray; }
 
 // ---- Relative text sizes --------------------------------------------------
+// One system for everything: wrap any content — paragraphs, lists, code
+// chunks and their printed output — in ::: {.font70} etc. (or use
+// [text]{.font70} inline). All sizes inside are em/%-based and inherit, so
+// content scales proportionally and nothing compounds; code stays at
+// Quarto's usual 85%-of-surrounding-text ratio.
 .reveal .small { font-size: 70%; }
 .reveal .large { font-size: 160%; }
-.reveal .font10  { font-size: 10%; }
-.reveal .font20  { font-size: 20%; }
-.reveal .font30  { font-size: 30%; }
-.reveal .font40  { font-size: 40%; }
-.reveal .font50  { font-size: 50%; }
-.reveal .font60  { font-size: 60%; }
-.reveal .font70  { font-size: 70%; }
-.reveal .font80  { font-size: 80%; }
-.reveal .font90  { font-size: 90%; }
-.reveal .font100 { font-size: 100%; }
-.reveal .font110 { font-size: 110%; }
-.reveal .font120 { font-size: 120%; }
-.reveal .font130 { font-size: 130%; }
-.reveal .font140 { font-size: 140%; }
-.reveal .font150 { font-size: 150%; }
-.reveal .font160 { font-size: 160%; }
-.reveal .font170 { font-size: 170%; }
-.reveal .font180 { font-size: 180%; }
-.reveal .font190 { font-size: 190%; }
-.reveal .font200 { font-size: 200%; }
-
-// ---- Code-block sizes: wrap a code chunk in ::: {.code70} etc. -------------
-@each $pct in 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 {
-  .reveal .code#{$pct} {
-    pre, pre code, .sourceCode, .cell-output pre { font-size: #{$pct * 1%}; }
-  }
+@for $i from 2 through 40 {
+  $pct: $i * 5;
+  .reveal .font#{$pct} { font-size: #{$pct * 1%}; }
 }
 
 // ---- Image treatments -----------------------------------------------------

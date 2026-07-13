@@ -19,6 +19,7 @@ dir.create(out)
 file.copy("template.qmd", file.path(out, "lexis-demo.qmd"))
 file.copy("_extensions", out, recursive = TRUE)
 file.copy("images", out, recursive = TRUE)
+file.copy(".claude", out, recursive = TRUE) # Claude Code skills (lexis, lexis-clean)
 unlink(list.files(out, ".DS_Store", recursive = TRUE, all.files = TRUE, full.names = TRUE))
 
 # Render the demo deck in place
@@ -30,6 +31,7 @@ zip::zip(
   files = c(
     "_extensions",
     "images",
+    ".claude",
     "lexis-demo.qmd",
     "lexis-demo.html",
     "lexis-demo_files"

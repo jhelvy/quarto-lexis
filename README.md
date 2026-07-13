@@ -8,7 +8,7 @@
 
 Written: July 08 2026
 
-Updated: July 12 2026
+Updated: July 13 2026
 
 λέξις (lexis) is a **template** for making slides with
 [Quarto](https://quarto.org)’s
@@ -246,33 +246,39 @@ option:
 
 ## Using with Claude Code
 
-The repo ships a **Claude Code skill** at `.claude/skills/lexis/` that
-teaches Claude the lexis authoring paradigm — the `---`-per-slide model,
-the shortcodes, the styling classes, and the knitr/fragment gotchas — so
-that “write me a lexis slide about X” produces correct markup instead of
-stock Quarto `##`-per-slide decks.
+The repo ships two **Claude Code skills** in `.claude/skills/`:
 
-You get it automatically in two situations:
+- **`lexis`** teaches Claude the lexis authoring paradigm — the
+  `---`-per-slide model, the shortcodes, the styling classes, and the
+  knitr/fragment gotchas — so that “write me a lexis slide about X” or
+  “make this a two-column slide” produces correct markup instead of
+  stock Quarto `##`-per-slide decks.
+- **`lexis-clean`** is an audit command: run `/lexis-clean` on a deck
+  and Claude checks the `.qmd` for errors (unclosed divs, broken image
+  paths), silent no-ops (missing class dots), leftover xaringan syntax,
+  and markup worth simplifying — reports what it finds, then applies the
+  fixes you approve.
+
+You get them automatically in two situations:
 
 - **Working in this repo** — Claude Code auto-discovers project skills
-  in `.claude/skills/`, so it’s active whenever you develop the template
-  here.
-- **A deck created from the template** —
-  `quarto use template jhelvy/quarto-lexis` copies
-  `.claude/skills/lexis/` alongside the extension, so every new deck
-  comes with the skill and Claude picks it up when you open that folder.
+  in `.claude/skills/`, so they’re active whenever you develop the
+  template here.
+- **A deck created from the template** — both
+  `quarto use template jhelvy/quarto-lexis` and the zip download include
+  `.claude/skills/` alongside the extension, so every new deck comes
+  with the skills and Claude picks them up when you open that folder.
 
-To use it across **all** your decks regardless of how they were made,
-copy the folder into your user-level skills once:
+To use them across **all** your decks regardless of how they were made,
+copy the folders into your user-level skills once:
 
 ``` bash
-cp -r .claude/skills/lexis ~/.claude/skills/
+cp -r .claude/skills/lexis .claude/skills/lexis-clean ~/.claude/skills/
 ```
 
-The skill is a single self-contained `SKILL.md` — nothing to build or
-install — so copying the file is all it takes. It’s only relevant if you
-use Claude Code; if you don’t, the `.claude/` directory is inert and can
-be deleted.
+Each skill is a single self-contained `SKILL.md` — nothing to build or
+install. They’re only relevant if you use Claude Code; if you don’t, the
+`.claude/` directory is inert and can be deleted.
 
 ## Notes
 

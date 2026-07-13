@@ -2306,7 +2306,7 @@ border-radius: 4px;
 <section id="by-john-paul-helveston" class="level2">
 <h2 class="anchored" data-anchor-id="by-john-paul-helveston">by John Paul Helveston</h2>
 <p>Written: July 08 2026</p>
-<p>Updated: July 12 2026</p>
+<p>Updated: July 13 2026</p>
 <p>λέξις (lexis) is a <strong>template</strong> for making slides with <a href="https://quarto.org">Quarto</a>’s <a href="https://quarto.org/docs/presentations/revealjs/">reveal.js</a> format. It is a port of the original <a href="https://github.com/jhelvy/lexis">lexis xaringan theme</a>, and it preserves that theme’s authoring conventions: <strong>every <code>---</code> starts a new slide</strong>, headings are just <em>text sizes within</em> a slide, and slide modifiers like <code>inverse</code> / <code>center</code> / <code>middle</code> are short declarative shortcodes.</p>
 <p>It has a light gray background and uses <a href="https://fonts.google.com/specimen/Fira+Sans+Condensed">Fira Sans Condensed</a> for headers, <a href="https://fonts.google.com/specimen/Inter">Inter</a> for body text, <a href="https://fonts.google.com/specimen/Lobster+Two">Lobster Two</a> for fancy text, and <a href="https://developer.apple.com/fonts/">SFMono-Regular</a> for mono text (i.e. code). The theme copies ideas from several other themes, most notably from <a href="https://alison.rbind.io/">Allison Hill</a>’s xaringan <a href="https://github.com/rstudio-education/arm-workshop-rsc2019">workshop</a>.</p>
 </section>
@@ -2481,15 +2481,19 @@ border-radius: 4px;
 </section>
 <section id="claude-code-skill" class="level2">
 <h2 class="anchored" data-anchor-id="claude-code-skill">Claude Code skill</h2>
-<p>The repo ships a <strong>Claude Code skill</strong> at <code>.claude/skills/lexis/</code> that teaches Claude the lexis authoring paradigm — the <code>---</code>-per-slide model, the shortcodes, the styling classes, and the knitr/fragment gotchas — so that “write me a lexis slide about X” produces correct markup instead of stock Quarto <code>##</code>-per-slide decks.</p>
-<p>You get it automatically in two situations:</p>
+<p>The repo ships two <strong>Claude Code skills</strong> in <code>.claude/skills/</code>:</p>
 <ul>
-<li><strong>Working in this repo</strong> — Claude Code auto-discovers project skills in <code>.claude/skills/</code>, so it’s active whenever you develop the template here.</li>
-<li><strong>A deck created from the template</strong> — <code>quarto use template jhelvy/quarto-lexis</code> copies <code>.claude/skills/lexis/</code> alongside the extension, so every new deck comes with the skill and Claude picks it up when you open that folder.</li>
+<li><strong><code>lexis</code></strong> teaches Claude the lexis authoring paradigm — the <code>---</code>-per-slide model, the shortcodes, the styling classes, and the knitr/fragment gotchas — so that “write me a lexis slide about X” or “make this a two-column slide” produces correct markup instead of stock Quarto <code>##</code>-per-slide decks.</li>
+<li><strong><code>lexis-clean</code></strong> is an audit command: run <code>/lexis-clean</code> on a deck and Claude checks the <code>.qmd</code> for errors (unclosed divs, broken image paths), silent no-ops (missing class dots), leftover xaringan syntax, and markup worth simplifying — reports what it finds, then applies the fixes you approve.</li>
 </ul>
-<p>To use it across <strong>all</strong> your decks regardless of how they were made, copy the folder into your user-level skills once:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="at">-r</span> .claude/skills/lexis ~/.claude/skills/</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The skill is a single self-contained <code>SKILL.md</code> — nothing to build or install — so copying the file is all it takes. It’s only relevant if you use Claude Code; if you don’t, the <code>.claude/</code> directory is inert and can be deleted.</p>
+<p>You get them automatically in two situations:</p>
+<ul>
+<li><strong>Working in this repo</strong> — Claude Code auto-discovers project skills in <code>.claude/skills/</code>, so they’re active whenever you develop the template here.</li>
+<li><strong>A deck created from the template</strong> — both <code>quarto use template jhelvy/quarto-lexis</code> and the zip download include <code>.claude/skills/</code> alongside the extension, so every new deck comes with the skills and Claude picks them up when you open that folder.</li>
+</ul>
+<p>To use them across <strong>all</strong> your decks regardless of how they were made, copy the folders into your user-level skills once:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="at">-r</span> .claude/skills/lexis .claude/skills/lexis-clean ~/.claude/skills/</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Each skill is a single self-contained <code>SKILL.md</code> — nothing to build or install. They’re only relevant if you use Claude Code; if you don’t, the <code>.claude/</code> directory is inert and can be deleted.</p>
 </section>
 <section id="notes" class="level2">
 <h2 class="anchored" data-anchor-id="notes">Notes</h2>

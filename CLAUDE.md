@@ -41,6 +41,7 @@ _extensions/lexis/
 template.qmd              # starter deck: full port of the lexis xaringan demo
 lexis-template/           # packaged `quarto use template` output (demo + zip)
 .claude/skills/lexis/     # Claude Code skill teaching this authoring paradigm
+.claude/skills/lexis-clean/  # /lexis-clean — audits a deck for errors/legacy syntax/cleanups
 README.qmd / README.md    # user-facing docs (README.md is generated — edit README.qmd, run build.R)
 index.qmd / index.html    # published docs site
 ```

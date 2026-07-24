@@ -533,6 +533,12 @@ $progress-color: $color-blue;
     min-width: 0;
     text-align: left;
   }
+
+  // `::: {.col .center}` centers everything in that column. Without this the
+  // `> .col` rule above (specificity 0,0,3) out-ranks the generic
+  // `.reveal .center` (0,0,2) and the column stays left-aligned; `.col.center`
+  // (0,0,4) wins it back.
+  > .col.center { text-align: center; }
 }
 
 // ===========================================================================

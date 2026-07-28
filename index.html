@@ -2529,6 +2529,8 @@ border-radius: 4px;
 </tbody>
 </table>
 <p>The mouse works too: scroll to fly through the deck, hover to highlight, click a slide to jump to it.</p>
+<p>Add <code>mouse-wheel: true</code> to the YAML and the wheel steps through the deck outside the grid as well, one increment or slide per notch. (reveal.js on its own throttles this to one step per second, which drops steps as soon as you scroll at any speed; lexis replaces that handler with one that keeps up.)</p>
+<p>Leaving the deck and coming back — clicking a link, then hitting the browser’s back button — returns you to the slide <em>and</em> the increment you left off on, rather than resetting the reveals: lexis keeps the fragment index in the URL (<code>#/12/0/2</code>).</p>
 </section>
 </section>
 <section id="claude-code-skill" class="level2">

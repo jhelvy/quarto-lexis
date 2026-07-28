@@ -278,6 +278,17 @@ thumbnails that opens on wherever you are in the deck.
 The mouse works too: scroll to fly through the deck, hover to highlight,
 click a slide to jump to it.
 
+Add `mouse-wheel: true` to the YAML and the wheel steps through the deck
+outside the grid as well, one increment or slide per notch. (reveal.js
+on its own throttles this to one step per second, which drops steps as
+soon as you scroll at any speed; lexis replaces that handler with one
+that keeps up.)
+
+Leaving the deck and coming back — clicking a link, then hitting the
+browser’s back button — returns you to the slide *and* the increment you
+left off on, rather than resetting the reveals: lexis keeps the fragment
+index in the URL (`#/12/0/2`).
+
 ## What’s in the extension
 
     _extensions/lexis/
@@ -287,6 +298,7 @@ click a slide to jump to it.
       lexis-shortcodes.lua   # the inverse / center / middle / … shortcodes
       title-slide.html       # empty — suppresses Quarto's built-in title slide
       lexis-overview.html    # the slide grid (`o`), with lexis.scss
+      lexis-nav.html         # snappier mouse-wheel navigation
     template.qmd             # the starter deck: a full port of the lexis demo
 
 ## Using with Claude Code

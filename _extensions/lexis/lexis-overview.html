@@ -102,11 +102,11 @@ which is all this script is for:
     }
 
     // ---- 4. let the grid have the wheel ------------------------------------
-    // `mouse-wheel: true` decks bind a wheel handler on `document` that flips
-    // to the next slide, and reveal never guards it against overview mode — so
-    // a flick through the tiles would also navigate the deck. Swallow those
-    // events before they leave the grid (capture phase, so this runs ahead of
-    // the document listener). Not preventDefault: the scroll itself must go on
+    // `mouse-wheel: true` decks navigate from a wheel handler on `document`
+    // (lexis-nav.html, standing in for reveal's throttled one) — so a flick
+    // through the tiles would also move the deck. Swallow those events before
+    // they leave the grid (capture phase, so this runs ahead of the document
+    // listener). Not preventDefault: the scroll itself must go on
     // happening. Same story for a touch swipe, which reveal treats as a
     // navigation gesture on the wrapper.
     ["wheel", "touchstart", "touchmove"].forEach(function (type) {

@@ -295,11 +295,11 @@
       }
 
       // ---- 4. let the grid have the wheel ------------------------------------
-      // `mouse-wheel: true` decks bind a wheel handler on `document` that flips
-      // to the next slide, and reveal never guards it against overview mode — so
-      // a flick through the tiles would also navigate the deck. Swallow those
-      // events before they leave the grid (capture phase, so this runs ahead of
-      // the document listener). Not preventDefault: the scroll itself must go on
+      // `mouse-wheel: true` decks navigate from a wheel handler on `document`
+      // (lexis-nav.html, standing in for reveal's throttled one) — so a flick
+      // through the tiles would also move the deck. Swallow those events before
+      // they leave the grid (capture phase, so this runs ahead of the document
+      // listener). Not preventDefault: the scroll itself must go on
       // happening. Same story for a touch swipe, which reveal treats as a
       // navigation gesture on the wrapper.
       ["wheel", "touchstart", "touchmove"].forEach(function (type) {
@@ -405,6 +405,121 @@
         fitGrid();
         requestAnimationFrame(function () { scrollCurrentIntoView(false); });
       });
+    }
+
+    // This runs from <head>, so wait for Reveal to exist and finish booting.
+    function whenReady(callback) {
+      if (window.Reveal && window.Reveal.isReady && window.Reveal.isReady()) {
+        callback(window.Reveal);
+        return;
+      }
+      var tries = 0;
+      var timer = setInterval(function () {
+        if (window.Reveal && window.Reveal.isReady && window.Reveal.isReady()) {
+          clearInterval(timer);
+          callback(window.Reveal);
+        } else if (++tries > 600) { // ~30s, then give up quietly
+          clearInterval(timer);
+        }
+      }, 50);
+    }
+
+    whenReady(init);
+  })();
+  </script>
+  <!--
+  lexis navigation — snappier mouse-wheel stepping.
+
+  reveal's own wheel handler (js/controllers/pointer.js) is throttled to ONE step
+  per second, with a hard-coded 1000ms:
+
+      if( Date.now() - this.lastMouseWheelStep > 1000 ) { ... }
+
+  and every wheel event inside that second is thrown away rather than queued. So
+  scrolling at any normal speed silently drops steps — most obviously on a slide
+  of incremental bullets, where the reveals just refuse to keep up with the hand.
+
+  There's no config for the throttle, so this replaces the handler outright:
+  accumulate wheel delta, step as soon as a notch's worth has arrived, and rate
+  limit at MIN_INTERVAL instead of a full second. Only touches decks that asked
+  for `mouse-wheel: true`.
+  -->
+  <script>
+  (function () {
+    "use strict";
+
+    // A wheel "notch" is worth ~100px of deltaY on a notched mouse but only a
+    // few px per event on a trackpad, hence accumulating to a threshold rather
+    // than stepping per event. MIN_INTERVAL is then what keeps a flick with
+    // momentum behind it from running away with the deck: it caps stepping at
+    // 1/MIN_INTERVAL per second no matter how hard the wheel is spun.
+    // Both are tunable per deck: set window.lexisMouseWheel = { threshold: 30,
+    // interval: 200 } from a <script> before reveal boots.
+    var opts = window.lexisMouseWheel || {};
+    var THRESHOLD = opts.threshold > 0 ? opts.threshold : 30;      // px of delta per step
+    var MIN_INTERVAL = opts.interval >= 0 ? opts.interval : 200;   // ms between steps
+    var IDLE_RESET = 500;                                          // ms of quiet = new gesture
+
+    // Wheel events come in three flavours of unit; normalize everything to px.
+    function deltaOf(event) {
+      var d = event.deltaY;
+      if (typeof d !== "number" || d === 0) return 0;
+      if (event.deltaMode === 1) return d * 16;                    // lines
+      if (event.deltaMode === 2) return d * window.innerHeight;    // pages
+      return d;
+    }
+
+    function init(Reveal) {
+      if (!Reveal.getConfig().mouseWheel) return; // author didn't ask for wheel nav
+
+      // Hand the wheel over from reveal to us. pointer.js binds and unbinds its
+      // document listener from configure(), so flipping the flag off is what
+      // removes it — after this the handler below is the only one navigating.
+      Reveal.configure({ mouseWheel: false });
+
+      var accumulated = 0;
+      var lastStep = 0;
+      var lastEvent = 0;
+
+      document.addEventListener("wheel", function (event) {
+        var now = Date.now();
+
+        // Delta left over from a gesture that already ended isn't part of this
+        // one, so don't let it count toward the next step.
+        if (now - lastEvent > IDLE_RESET) accumulated = 0;
+        lastEvent = now;
+
+        // The overview grid scrolls itself, and scroll view IS page scrolling —
+        // in neither case does the wheel mean "next slide". (lexis-overview.html
+        // also stops these events inside the grid, which is what used to keep
+        // reveal's handler out; this guard covers the letterboxed margins too.)
+        if (Reveal.isOverview() || (Reveal.isScrollView && Reveal.isScrollView())) {
+          accumulated = 0;
+          return;
+        }
+
+        var delta = deltaOf(event);
+        if (delta === 0) return;
+
+        // Reversing direction mid-scroll starts the count over rather than
+        // cancelling out against delta already spent.
+        if (accumulated !== 0 && (delta > 0) !== (accumulated > 0)) accumulated = 0;
+        accumulated += delta;
+
+        if (Math.abs(accumulated) < THRESHOLD) return;
+
+        if (now - lastStep < MIN_INTERVAL) {
+          // Hold at exactly one step's worth while waiting out the interval.
+          // Without the clamp a momentum tail banks hundreds of px and then
+          // cashes them all in at once, jumping several slides.
+          accumulated = accumulated > 0 ? THRESHOLD : -THRESHOLD;
+          return;
+        }
+
+        accumulated = 0;
+        lastStep = now;
+        if (delta > 0) Reveal.next(); else Reveal.prev();
+      }, false);
     }
 
     // This runs from <head>, so wait for Reveal to exist and finish booting.
@@ -1233,7 +1348,7 @@ Output
 
         // Flags whether to include the current fragment in the URL,
         // so that reloading brings you to the same fragment position
-        fragmentInURL: false,
+        fragmentInURL: true,
 
         // Flags if the presentation is running in an embedded mode,
         // i.e. contained within a limited portion of the screen

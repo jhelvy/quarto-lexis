@@ -133,6 +133,53 @@ local function group_cols(blocks)
   return out
 end
 
+-- `. . .` — Quarto/Pandoc's "pause", which reveals the rest of the slide as a
+-- fragment. Pandoc implements this in its HTML slide writer, but only over a
+-- slide's own top-level block list — and at `slide-level: 0` a heading makes
+-- the writer wrap everything after it in a section, putting the pause one level
+-- down where the writer never looks (verified: a `. . .` on a heading-LESS
+-- slide still becomes a `.fragment` even here, one with a heading never does).
+-- Since a lexis slide almost always opens with a heading, `. . .` silently
+-- rendered as a literal "..." paragraph. Do the split ourselves, before the
+-- writer ever sees it: content after each pause becomes a sibling
+-- `.fragment` Div, exactly the markup Pandoc emits for a `##`-per-slide deck.
+-- Recurses into Divs, so a pause also works inside a `::: {.col}`.
+local function is_pause(b)
+  if b.t ~= "Para" or #b.content ~= 5 then return false end
+  local c = b.content
+  return c[1].t == "Str" and c[1].text == "."
+    and c[2].t == "Space"
+    and c[3].t == "Str" and c[3].text == "."
+    and c[4].t == "Space"
+    and c[5].t == "Str" and c[5].text == "."
+end
+
+local function split_pauses(blocks)
+  local out = pandoc.List({})
+  local frag = nil -- blocks accumulating into the current fragment, nil before the first pause
+
+  local function flush()
+    if frag then
+      out:insert(pandoc.Div(frag, pandoc.Attr("", { "fragment" })))
+      frag = nil
+    end
+  end
+
+  for _, b in ipairs(blocks) do
+    if b.t == "Div" then b = pandoc.Div(split_pauses(b.content), b.attr) end
+    if is_pause(b) then
+      flush()
+      frag = pandoc.List({})
+    elseif frag then
+      frag:insert(b)
+    else
+      out:insert(b)
+    end
+  end
+  flush()
+  return out
+end
+
 -- Quarto appends housekeeping Divs after the last slide (footnotes/refs, hidden
 -- content). They must stay at the top level, never folded into a slide.
 local SKIP_CLASSES = {
@@ -295,6 +342,8 @@ function Pandoc(doc)
       -- Rewrite Div-nested headings to styled text so columns/panels that
       -- contain `#`-headings don't fracture into extra slides.
       blocks = demote(blocks, false)
+      -- Turn `. . .` pauses into `.fragment` Divs (Pandoc can't, at level 0).
+      blocks = split_pauses(blocks)
       -- Inverse slides are styled as a dark CARD in lexis.scss (a `.slides`
       -- background keyed off `section.present.inverse`), NOT a reveal
       -- full-bleed background — that keeps the gray letterbox around the slide

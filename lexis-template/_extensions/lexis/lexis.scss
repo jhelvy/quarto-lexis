@@ -241,6 +241,19 @@ $progress-color: $color-blue;
 // tile, so clicks have to fall through the wrapper to reach it.
 .reveal.overview .slides > section.stack { overflow: hidden; }
 
+// A thumbnail should show the WHOLE slide, fragments included — otherwise a
+// slide built out of `. . .` pauses is mostly blank space in the grid. reveal's
+// own overview rule only sets `opacity: 1` on fragments and leaves the
+// `visibility: hidden` from `.reveal .fragment:not(.custom)` in place, so they
+// stay invisible. This is the same override reveal itself applies when printing
+// (`html:not(.print-pdf) .reveal .slides section .fragment`), for the same
+// reason: one static image of the finished slide.
+.reveal.overview .slides section .fragment {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+}
+
 // The card color lives on `.slides` — ONE element, not the sections — which is
 // the backdrop here, so every tile has to paint its own. Exclusions:
 // `.inverse` (dark already, and this rule's specificity would flip it light),

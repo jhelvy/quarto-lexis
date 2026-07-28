@@ -2218,6 +2218,7 @@ vertical-align: -.125em;
   <li><a href="#columns" id="toc-columns" class="nav-link" data-scroll-target="#columns">Columns</a></li>
   <li><a href="#images" id="toc-images" class="nav-link" data-scroll-target="#images">Images</a></li>
   <li><a href="#panels-tabs" id="toc-panels-tabs" class="nav-link" data-scroll-target="#panels-tabs">Panels / tabs</a></li>
+  <li><a href="#incremental-content" id="toc-incremental-content" class="nav-link" data-scroll-target="#incremental-content">Incremental content</a></li>
   <li><a href="#title-slide" id="toc-title-slide" class="nav-link" data-scroll-target="#title-slide">Title slide</a></li>
   <li><a href="#footers" id="toc-footers" class="nav-link" data-scroll-target="#footers">Footers</a></li>
   <li><a href="#code-line-highlighting" id="toc-code-line-highlighting" class="nav-link" data-scroll-target="#code-line-highlighting">Code line highlighting</a></li>
@@ -2450,23 +2451,37 @@ border-radius: 4px;
 <h3 class="anchored" data-anchor-id="panels-tabs">Panels / tabs</h3>
 <p>xaringan’s <code>.panelset</code> becomes Quarto’s native <code>::: {.panel-tabset}</code>, with a <code>###</code> heading naming each tab.</p>
 </section>
+<section id="incremental-content" class="level3">
+<h3 class="anchored" data-anchor-id="incremental-content">Incremental content</h3>
+<p><code>. . .</code> on its own line is xaringan’s <code>--</code>: everything after it on the slide arrives on the next click. Use it as many times as you want steps.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Findings</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>The headline number.</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>. . .</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu"># But look closer</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>The caveat.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Headings step just like anything else, since in lexis they’re only text. For finer control, <code>::: {.incremental}</code> around a list steps through its items, and <code>::: {.fragment}</code> reveals one specific block.</p>
+</section>
 <section id="title-slide" class="level3">
 <h3 class="anchored" data-anchor-id="title-slide">Title slide</h3>
 <p>There is no auto-generated title slide. You author it like any other slide, using Quarto’s built-in <code>meta</code> shortcode to pull values from your YAML front matter instead of retyping them:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>{{&lt; inverse &gt;}}</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>{{&lt; center &gt;}}</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>{{&lt; middle &gt;}}</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>{{&lt; no-slide-number &gt;}}</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu"># {{&lt; meta title &gt;}}</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">## [{{&lt; meta subtitle &gt;}}]{.fancy}</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">{{&lt; meta author &gt;}}</span><span class="co">]</span>{.large}</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>{{&lt; meta date &gt;}}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>{{&lt; inverse &gt;}}</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>{{&lt; center &gt;}}</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>{{&lt; middle &gt;}}</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>{{&lt; no-slide-number &gt;}}</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="fu"># {{&lt; meta title &gt;}}</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="fu">## [{{&lt; meta subtitle &gt;}}]{.fancy}</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">{{&lt; meta author &gt;}}</span><span class="co">]</span>{.large}</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>{{&lt; meta date &gt;}}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Drop any line you don’t need and restyle the rest — it’s just markdown.</p>
 </section>
 <section id="footers" class="level3">
@@ -2476,9 +2491,9 @@ border-radius: 4px;
 <section id="code-line-highlighting" class="level3">
 <h3 class="anchored" data-anchor-id="code-line-highlighting">Code line highlighting</h3>
 <p>xaringan’s trailing <code>#&lt;&lt;</code> comment becomes the <code>code-line-numbers</code> cell option:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-line-numbers: &quot;4,5&quot;</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-line-numbers: &quot;4,5&quot;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="presenting" class="level3">
 <h3 class="anchored" data-anchor-id="presenting">Presenting</h3>
@@ -2529,7 +2544,7 @@ border-radius: 4px;
 <li><strong>A deck created from the template</strong> — both <code>quarto use template jhelvy/quarto-lexis</code> and the zip download include <code>.claude/skills/</code> alongside the extension, so every new deck comes with the skills and Claude picks them up when you open that folder.</li>
 </ul>
 <p>To use them across <strong>all</strong> your decks regardless of how they were made, copy the folders into your user-level skills once:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="at">-r</span> .claude/skills/lexis .claude/skills/lexis-clean ~/.claude/skills/</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="at">-r</span> .claude/skills/lexis .claude/skills/lexis-clean ~/.claude/skills/</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Each skill is a single self-contained <code>SKILL.md</code> — nothing to build or install. They’re only relevant if you use Claude Code; if you don’t, the <code>.claude/</code> directory is inert and can be deleted.</p>
 </section>
 <section id="notes" class="level2">

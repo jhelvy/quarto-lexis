@@ -274,6 +274,34 @@ plot(1:10)
 :::
 ```
 
+## Incremental content
+
+`. . .` on its own line is xaringan's `--`: everything after it on the slide
+becomes one fragment, so the slide arrives in steps. Repeat it for more steps.
+
+```markdown
+# Findings
+
+The headline number.
+
+. . .
+
+# But look closer
+
+The caveat.
+```
+
+Unlike stock Quarto — where `. . .` can't fragment a heading, because a heading
+*is* a slide break — headings fragment fine here, since in lexis they're just
+text. (The extension's Lua filter does this split itself; Pandoc's own pause
+handling doesn't reach inside a `slide-level: 0` slide.)
+
+Two related tools, for when `. . .` is too blunt:
+
+- `::: {.incremental}` around a **bare list** steps through its items.
+- `::: {.fragment}` wraps one specific block, leaving the rest of the slide
+  alone — use it when the steps aren't simply "the rest of the slide."
+
 ## Title slide
 
 **There is no auto-generated title slide** (the extension ships an empty
@@ -370,10 +398,9 @@ use the companion `lexis-clean` skill (`/lexis-clean`).
   ```` ```r ```` / ```` ```markdown ```` fence. To show a **literal** ```` ```{r} ````
   chunk, prefix the inner fence with an empty inline expr — `` `r ''` `` — right
   before the backticks (the classic knitr escape).
-- **Fragments / incremental (xaringan's `--`):** `. . .` fragments paragraphs and
-  list items but **not headings**. `::: {.incremental}` only fragments a **bare
-  list**. `::: {.fragment}` fragments **anything** — wrap each heading in its own
-  `.fragment` to step through headings.
+- **Fragments / incremental (xaringan's `--`):** use `. . .` — see *Incremental
+  content* above. Don't reach for `::: {.fragment}` around every block; that's
+  the fallback for when the step isn't "the rest of the slide."
 - **Backgrounds are attributes, not CSS:** a per-slide background is a reveal DOM
   layer set from a `<section>` attribute — that's why it's a shortcode
   (`{{< bg-color >}}` / `{{< bg-image >}}` / `{{< inverse >}}`), not something you

@@ -105,6 +105,27 @@ code cell instead of the `![]()`.
 xaringan's `.panelset` becomes Quarto's native `::: {.panel-tabset}`, with a
 `###` heading naming each tab.
 
+### Incremental content
+
+`. . .` on its own line is xaringan's `--`: everything after it on the slide
+arrives on the next click. Use it as many times as you want steps.
+
+```markdown
+# Findings
+
+The headline number.
+
+. . .
+
+# But look closer
+
+The caveat.
+```
+
+Headings step just like anything else, since in lexis they're only text. For
+finer control, `::: {.incremental}` around a list steps through its items, and
+`::: {.fragment}` reveals one specific block.
+
 ### Title slide
 
 There is no auto-generated title slide. You author it like any other slide,

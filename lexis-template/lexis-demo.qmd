@@ -181,6 +181,39 @@ Use the `>` to make block quotes:
 
 ---
 
+# Incremental content
+
+Use `. . .` on its own line (xaringan's `--`) to reveal the rest of the slide on
+the next click:
+
+::: {.col}
+```markdown
+Everyone sees this first.
+
+. . .
+
+Then this appears.
+
+. . .
+
+And finally this.
+```
+:::
+
+::: {.col}
+Everyone sees this first.
+
+. . .
+
+Then this appears.
+
+. . .
+
+And finally this.
+:::
+
+---
+
 # [Github code chunk highlighting]{.center}
 
 ::: {.col width="80%"}

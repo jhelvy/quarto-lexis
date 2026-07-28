@@ -8,7 +8,7 @@
 
 Written: July 08 2026
 
-Updated: July 13 2026
+Updated: July 28 2026
 
 λέξις (lexis) is a **template** for making slides with
 [Quarto](https://quarto.org)’s
@@ -18,6 +18,12 @@ theme](https://github.com/jhelvy/lexis), and it preserves that theme’s
 authoring conventions: **every `---` starts a new slide**, headings are
 just *text sizes within* a slide, and slide modifiers like `inverse` /
 `center` / `middle` are short declarative shortcodes.
+
+It also adds a **slide grid** that reveal.js doesn’t have. Press `o`
+and, instead of reveal’s single sideways row of slides, you get
+xaringan’s tile view: a scrollable grid of thumbnails you can spin
+through with the mouse wheel or the arrow keys, highlighting whatever is
+selected. Click a slide or press `Enter` to jump to it.
 
 It has a light gray background and uses [Fira Sans
 Condensed](https://fonts.google.com/specimen/Fira+Sans+Condensed) for
@@ -234,6 +240,23 @@ option:
 ```
 ````
 
+### Presenting
+
+Press `o` for the slide grid — lexis replaces reveal.js’s single
+sideways row of slides with xaringan’s tile view, a scrollable grid of
+thumbnails that opens on wherever you are in the deck.
+
+| Key     | In the grid                                             |
+|---------|---------------------------------------------------------|
+| `o`     | Open the grid, or close it back onto the selected slide |
+| `←` `→` | Previous / next slide                                   |
+| `↑` `↓` | Up / down a whole row                                   |
+| `Enter` | Go to the selected slide                                |
+| `Esc`   | Close the grid                                          |
+
+The mouse works too: scroll to fly through the deck, hover to highlight,
+click a slide to jump to it.
+
 ## What’s in the extension
 
     _extensions/lexis/
@@ -242,6 +265,7 @@ option:
       lexis.lua              # slide-modifier filter (the core mechanism)
       lexis-shortcodes.lua   # the inverse / center / middle / … shortcodes
       title-slide.html       # empty — suppresses Quarto's built-in title slide
+      lexis-overview.html    # the slide grid (`o`), with lexis.scss
     template.qmd             # the starter deck: a full port of the lexis demo
 
 ## Using with Claude Code

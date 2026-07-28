@@ -6,4 +6,6 @@ Updated: `r today`
 
 λέξις (lexis) is a **template** for making slides with [Quarto](https://quarto.org)'s [reveal.js](https://quarto.org/docs/presentations/revealjs/) format. It is a port of the original [lexis xaringan theme](https://github.com/jhelvy/lexis), and it preserves that theme's authoring conventions: **every `---` starts a new slide**, headings are just *text sizes within* a slide, and slide modifiers like `inverse` / `center` / `middle` are short declarative shortcodes.
 
+It also adds a **slide grid** that reveal.js doesn't have. Press `o` and, instead of reveal's single sideways row of slides, you get xaringan's tile view: a scrollable grid of thumbnails you can spin through with the mouse wheel or the arrow keys, highlighting whatever is selected. Click a slide or press `Enter` to jump to it.
+
 It has a light gray background and uses [Fira Sans Condensed](https://fonts.google.com/specimen/Fira+Sans+Condensed) for headers, [Inter](https://fonts.google.com/specimen/Inter) for body text, [Lobster Two](https://fonts.google.com/specimen/Lobster+Two) for fancy text, and [SFMono-Regular](https://developer.apple.com/fonts/) for mono text (i.e. code). The theme copies ideas from several other themes, most notably from [Allison Hill](https://alison.rbind.io/)'s xaringan [workshop](https://github.com/rstudio-education/arm-workshop-rsc2019).

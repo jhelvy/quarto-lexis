@@ -145,3 +145,20 @@ xaringan's trailing `#<<` comment becomes the `code-line-numbers` cell option:
 #| code-line-numbers: "4,5"
 ```
 ````
+
+### Presenting
+
+Press `o` for the slide grid — lexis replaces reveal.js's single sideways row
+of slides with xaringan's tile view, a scrollable grid of thumbnails that opens
+on wherever you are in the deck.
+
+| Key | In the grid |
+|---|---|
+| `o` | Open the grid, or close it back onto the selected slide |
+| `←` `→` | Previous / next slide |
+| `↑` `↓` | Up / down a whole row |
+| `Enter` | Go to the selected slide |
+| `Esc` | Close the grid |
+
+The mouse works too: scroll to fly through the deck, hover to highlight, click
+a slide to jump to it.

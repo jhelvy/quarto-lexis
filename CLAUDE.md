@@ -38,6 +38,9 @@ _extensions/lexis/
   lexis.lua              # slide-modifier filter — the core mechanism
   lexis-shortcodes.lua   # inverse / center / middle / bg-color / bg-image / no-slide-number
   title-slide.html       # empty partial — suppresses Quarto's built-in title slide
+  lexis-overview.html    # include-in-header script: xaringan tile grid for `o`
+                         # (the layout is CSS in lexis.scss; this is the few
+                         #  measurements CSS can't make — see both headers)
 template.qmd              # starter deck: full port of the lexis xaringan demo
 lexis-template/           # packaged `quarto use template` output (demo + zip)
 .claude/skills/lexis/     # Claude Code skill teaching this authoring paradigm

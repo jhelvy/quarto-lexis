@@ -89,7 +89,8 @@ today <- format(Sys.Date(), format = "%B %d %Y")
 ## Demo
 
 The deck below is the template you get when you install lexis. Click it and use
-the arrow keys, or open it [full screen](lexis-template/lexis-demo.html).
+the arrow keys, press `o` for the slide grid, or open it
+[full screen](lexis-template/lexis-demo.html).
 
 ```{=html}
 <div class="demo-frame">

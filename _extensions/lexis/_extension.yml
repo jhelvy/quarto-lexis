@@ -29,6 +29,11 @@ contributes:
       # etc. + the shortcodes below). See the top of demo.qmd for the pattern.
       template-partials:
         - title-slide.html
+      # Turns reveal's overview (`o`) into a scrollable grid of thumbnails like
+      # the xaringan tile view. The layout is CSS (lexis.scss); this is the
+      # handful of measurements CSS can't make on its own.
+      include-in-header:
+        - lexis-overview.html
       # Run AFTER Quarto expands the {{< inverse >}}/etc. shortcodes into markers.
       filters:
         - at: post-quarto

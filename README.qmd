@@ -40,6 +40,7 @@ _extensions/lexis/
   lexis.lua              # slide-modifier filter (the core mechanism)
   lexis-shortcodes.lua   # the inverse / center / middle / … shortcodes
   title-slide.html       # empty — suppresses Quarto's built-in title slide
+  lexis-overview.html    # the slide grid (`o`), with lexis.scss
 template.qmd             # the starter deck: a full port of the lexis demo
 ```
 

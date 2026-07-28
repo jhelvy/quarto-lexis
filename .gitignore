@@ -4,4 +4,8 @@
 /.quarto/
 lexis-template/.quarto/
 
+# knitr's intermediate markdown — build.R wipes lexis-template/ and re-renders,
+# and quarto cleans this up itself on a successful render
+*.knit.md
+
 /.luarc.json

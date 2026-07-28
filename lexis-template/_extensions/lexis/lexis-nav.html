@@ -87,7 +87,64 @@ which side of that line a given device falls on.
     };
   }
 
+  // ---- scroll view (`r`): one page per SLIDE, increments and all ----------
+  // reveal builds scroll view with one scroll trigger PER FRAGMENT, so a deck
+  // of incremental bullets becomes a very long page you crawl through a bullet
+  // at a time — and every slide starts out with its increments hidden. But
+  // scroll view is for reading the deck back, the same job the `o` grid does,
+  // where a slide is one tile with all of its content on it.
+  //
+  // So once scroll view has built itself, take the fragments out of the DOM it
+  // built. With no `.fragment` left to find, createFragmentTriggersForPage
+  // makes no triggers, every page collapses to exactly one viewport height, and
+  // one wheel click (see below) advances exactly one slide. Safe to mutate:
+  // scrollview.js stashes the slides' innerHTML on the way in and restores it
+  // on the way out, so presenting gets its fragments back untouched.
+  function flattenScrollView(Reveal) {
+    var viewport = Reveal.getViewportElement();
+    var slides = Reveal.getSlidesElement();
+
+    function flatten() {
+      // Quarto's line-highlight plugin implements stepped code highlighting by
+      // CLONING the whole code block once per step, each copy marked
+      // `.fragment` (plugins/line-highlight/line-highlight.js) — and it does
+      // that at runtime, so it's invisible in the rendered .html. Stripping the
+      // class off those would stack every copy of the block on top of the
+      // others, so the clones are removed instead; the original stays, carrying
+      // the first step's highlight.
+      var clones = slides.querySelectorAll("pre code.fragment");
+      var i;
+      for (i = 0; i < clones.length; i++) clones[i].parentNode.removeChild(clones[i]);
+
+      // Queried after the clones are gone, so this is everything else.
+      var fragments = slides.querySelectorAll(".fragment");
+      for (i = 0; i < fragments.length; i++) {
+        fragments[i].classList.remove("fragment", "visible", "current-fragment");
+      }
+
+      return !!(clones.length || fragments.length);
+    }
+
+    function sync() {
+      // Returning false when there's nothing left to flatten is what keeps this
+      // from recursing: Reveal.layout() can itself toggle scroll view (the
+      // responsive activation), which trips the observer again.
+      if (Reveal.isScrollView() && flatten()) Reveal.layout();
+    }
+
+    // scrollview.js dispatches no events of its own, so watch the class it puts
+    // on the viewport. That also covers `view: scroll` at load and the
+    // responsive auto-activation, neither of which goes through a keypress.
+    new MutationObserver(function () {
+      if (viewport.classList.contains("reveal-scroll")) requestAnimationFrame(sync);
+    }).observe(viewport, { attributes: true, attributeFilter: ["class"] });
+
+    if (viewport.classList.contains("reveal-scroll")) requestAnimationFrame(sync);
+  }
+
   function init(Reveal) {
+    flattenScrollView(Reveal); // independent of mouse-wheel: `r` is a keypress
+
     if (!Reveal.getConfig().mouseWheel) return; // author didn't ask for wheel nav
 
     // Hand the wheel over from reveal to us. pointer.js binds and unbinds its
@@ -117,15 +174,16 @@ which side of that line a given device falls on.
       // dregs of one swipe fire a step at the start of the next.
       if (gap >= GAP) banked = 0;
 
-      // The overview grid scrolls itself, and scroll view IS page scrolling —
-      // in neither case does the wheel mean "next slide". (lexis-overview.html
-      // also stops these events inside the grid, which is what used to keep
-      // reveal's handler out; this guard covers the letterboxed margins too.)
-      if (Reveal.isOverview() || (Reveal.isScrollView && Reveal.isScrollView())) {
+      // The overview grid scrolls itself, so the wheel there means "scroll the
+      // tiles", never "next slide". (lexis-overview.html also stops these
+      // events inside the grid, which is what used to keep reveal's handler
+      // out; this guard covers the letterboxed margins too.)
+      if (Reveal.isOverview()) {
         banked = 0;
         return;
       }
 
+      var scrolling = !!(Reveal.isScrollView && Reveal.isScrollView());
       var delta = deltaOf(event);
       if (delta === 0) return;
       var direction = delta > 0 ? 1 : -1;
@@ -134,14 +192,33 @@ which side of that line a given device falls on.
       if (readout) {
         readout(
           "deltaY=" + event.deltaY + " mode=" + event.deltaMode + " gap=" + gap + "ms  " +
-          (discrete ? "CLICK" : "stream, banked " + Math.round(banked + delta) + "/" + FINE)
+          (discrete ? "CLICK" : "stream, banked " + Math.round(banked + delta) + "/" + FINE) +
+          (scrolling ? "  [scroll view]" : "")
         );
       }
 
       // A click of the wheel, so: one step, right now. No threshold to reach
       // and nothing to wait out — the quiet gap IS the rate limit.
       if (discrete) {
+        // Scroll view (`r`) is a scrolling page, so the browser would scroll it
+        // too, on top of our step. Cancel that and let the step be the only
+        // movement: Reveal.next() routes to scrollView.next(), which advances
+        // exactly one scroll trigger — and flattenScrollView above has left one
+        // trigger per slide, so that's one whole slide. Taking the
+        // scroll is also what cures the hang-up there, which is NOT reveal's
+        // throttle but `scrollSnap: 'mandatory'`: each wheel scroll starts a
+        // snap animation, and input arriving mid-animation is swallowed. We
+        // land on trigger boundaries, which are exactly the snap points, so
+        // there is never an animation to fight.
+        if (scrolling) event.preventDefault();
         step(direction, "gap " + gap + "ms");
+        return;
+      }
+
+      // In scroll view a stream is a trackpad swipe, and gliding through the
+      // deck is the entire point of that mode — leave it to native scrolling.
+      if (scrolling) {
+        banked = 0;
         return;
       }
 
@@ -160,7 +237,9 @@ which side of that line a given device falls on.
         return;
       }
       step(direction, "streamed " + FINE + "px");
-    }, false);
+      // `passive: false` because Chromium makes document-level wheel listeners
+      // passive by default, which silently no-ops the preventDefault above.
+    }, { passive: false });
   }
 
   // This runs from <head>, so wait for Reveal to exist and finish booting.

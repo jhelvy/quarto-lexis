@@ -279,10 +279,17 @@ The mouse works too: scroll to fly through the deck, hover to highlight,
 click a slide to jump to it.
 
 Add `mouse-wheel: true` to the YAML and the wheel steps through the deck
-outside the grid as well, one increment or slide per notch. (reveal.js
-on its own throttles this to one step per second, which drops steps as
-soon as you scroll at any speed; lexis replaces that handler with one
-that keeps up.)
+outside the grid as well: one click, one increment or slide. (reveal.js
+on its own throttles this to one step per second and discards whatever
+arrives inside that second, so increments fall behind the moment you
+scroll at any speed; lexis replaces that handler with one that keeps
+up.)
+
+Press `r` to read the deck back as one long scrolling page. lexis makes
+that page **one screen per slide**, with every increment already showing
+— reveal on its own gives you one scroll step per increment, starting
+each slide blank. One click of the wheel moves one slide; a trackpad
+swipe still scrolls freely.
 
 Leaving the deck and coming back — clicking a link, then hitting the
 browser’s back button — returns you to the slide *and* the increment you

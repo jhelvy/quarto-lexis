@@ -98,3 +98,31 @@ they're overridden in the format rather than per deck:
   `document` in node and feed it synthetic `{deltaY, deltaMode}` at real
   timings — that's how the device matrix (notched mouse, hi-res wheel, Firefox
   line mode, trackpad swipe, momentum dregs, overview open) was checked.
+- **Scroll view (`r`) is covered by the same handler.** Its hang-up has a
+  different cause — not reveal's throttle but `scrollSnap: 'mandatory'`, whose
+  snap animation swallows wheel input that arrives while it runs. A click there
+  gets `preventDefault()` plus a normal `Reveal.next()`, which routes to
+  `scrollView.next()` and advances exactly one scroll trigger (one fragment, or
+  one slide); since triggers *are* the snap points, no animation to fight.
+  Streams are deliberately left to native scrolling — gliding through the deck
+  is the point of that mode. This is why the listener is registered
+  `{ passive: false }`: Chromium makes document-level wheel listeners passive
+  by default, which would silently no-op the `preventDefault()`.
+- **Scroll view is also flattened to one page per slide.** reveal builds it with
+  one scroll trigger *per fragment*, so an incremental deck becomes a page you
+  crawl through a bullet at a time with every slide starting out blank. Since
+  `r` is for reading the deck back — the `o` grid's job, where a slide is one
+  tile with all its content — `flattenScrollView()` strips the fragments out of
+  the DOM reveal just built, then calls `Reveal.layout()` to rebuild: no
+  triggers, one viewport-height page per slide. Two things make this work:
+  scrollview.js stashes the slides' `innerHTML` on activation and restores it on
+  exit (so presenting is unaffected, and no un-flattening is needed), and it
+  dispatches no events (so activation is detected from the viewport's
+  `reveal-scroll` class, which also catches `view: scroll` and the responsive
+  auto-activation). **Watch out for Quarto's line-highlight plugin**: stepped
+  `code-line-numbers` are implemented by *cloning the whole code block* per step
+  at runtime, each clone `.fragment`, so un-fragmenting them would stack N
+  copies — the clones are removed instead, keeping the original (step 1's
+  highlight). None of that is visible in the rendered `.html`; it's runtime-only.
+  Tested with jsdom (see the flatten tests in the session scratchpad pattern:
+  fake scroll-view DOM + stubbed Reveal, assert classes/clones/layout calls).

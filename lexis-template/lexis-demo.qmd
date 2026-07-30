@@ -436,11 +436,7 @@ bar <- function(y) {
 
 ---
 
-{{< middle >}}
-
 ## [Card grids]{.center}
-
-<br>
 
 ::: {.card .icon-left cols="2" color="dodgerblue"}
 {{< fa map >}}
@@ -512,10 +508,10 @@ library, since the shortcode has already expanded by the time lexis sees it.
 
 :::
 
-::: {.col width="45%" .font60}
+::: {.col width="45%" .font70}
 
 | Attribute | Effect |
-|---|-----------|
+|---|---|
 | first line | `{{< fa map >}}`, `{{< bi map >}}`, an emoji, `![](icon.svg)` |
 | `icon=` | Shorthand for an image file or an emoji |
 | `image=` | A cropped photo band across the card top |
@@ -523,8 +519,6 @@ library, since the shortcode has already expanded by the time lexis sees it.
 | `badge=` | Small accent flag in the top-right corner |
 | `cols=` | Cards per row (default: up to 4 in one row) |
 | `gap=` | Gutter between cards |
-
-<br>
 
 | Class | Effect |
 |---|---|
@@ -538,11 +532,7 @@ library, since the shortcode has already expanded by the time lexis sees it.
 
 ---
 
-{{< middle >}}
-
 ## [Eight cards, `cols="4"`]{.center}
-
-<br>
 
 ::: {.card .center cols="4" color="purple"}
 {{< fa code >}}
@@ -594,11 +584,7 @@ library, since the shortcode has already expanded by the time lexis sees it.
 
 ---
 
-{{< middle >}}
-
 ## [Cards with images: `image=`]{.center}
-
-<br>
 
 ::: {.card color="darkgreen" image="images/blue_ridge_mountains.jpg"}
 ### Blue Ridge
@@ -631,11 +617,8 @@ An `icon=` that isn't a file path is set as text in the tile.
 ---
 
 {{< inverse >}}
-{{< middle >}}
 
 ## [Cards on an inverse slide]{.center}
-
-<br>
 
 ::: {.card .icon-left cols="3" color="dodgerblue"}
 {{< fa map >}}

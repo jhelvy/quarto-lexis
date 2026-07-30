@@ -517,6 +517,11 @@ use the companion `lexis-clean` skill (`/lexis-clean`).
 - **Don't demote headings to make slides fit.** If you find yourself turning `#`
   into `##` to "make a new slide," stop — insert a `---` instead. Heading level is
   purely visual size here.
+- **A card icon must be the whole first line of the card.** `{{< fa map >}}` on
+  its own line becomes the icon tile; the same shortcode inside a sentence just
+  renders where it sits. And the library's extension has to be installed in the
+  deck (`_extensions/quarto-ext/fontawesome` for `{{< fa >}}`) — without it the
+  shortcode renders as literal text, with no render error to warn you.
 
 ## Porting an xaringan/remark `.Rmd` to lexis
 

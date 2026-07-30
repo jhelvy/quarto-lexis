@@ -6,7 +6,9 @@
 <script src="lexis-demo_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="lexis-demo_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="lexis-demo_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="lexis-demo_files/libs/quarto-html/quarto-syntax-highlighting-de63f62b328812d8e578a4d74e282472.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+<link href="lexis-demo_files/libs/quarto-html/quarto-syntax-highlighting-de63f62b328812d8e578a4d74e282472.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="lexis-demo_files/libs/quarto-contrib/fontawesome6-0.1.0/all.css" rel="stylesheet">
+<link href="lexis-demo_files/libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.9.38">
 
   <meta name="author" content="John Paul Helveston">
@@ -99,7 +101,7 @@
     code span.vs { color: #032f62; } /* VerbatimString */
     code span.wa { color: #ff5555; } /* Warning */
   </style>
-  <link rel="stylesheet" href="lexis-demo_files/libs/revealjs/dist/theme/quarto-1022f0380474e01544233dbd96a55ff2.css">
+  <link rel="stylesheet" href="lexis-demo_files/libs/revealjs/dist/theme/quarto-e5a934acb88329c8422b3f540c307657.css">
   <link href="lexis-demo_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="lexis-demo_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="lexis-demo_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -1169,11 +1171,325 @@ Output
 </section>
 <section class="slide level0">
 
+<section id="cards" class="center middle">
+<h1>Cards!</h1>
+<h2 id="grids-of-icon-text-boxes"><span class="gray">Grids of icon + text boxes</span></h2>
+</section>
+</section>
+<section class="slide level0">
+
+<section id="card-grids" class="middle">
+<h2><span class="center">Card grids</span></h2>
+<p><br></p>
+<div class="card-grid" style="--lexis-card-cols:2;">
+<div class="card icon-left" style="--lexis-card-accent:var(--lexis-color-dodgerblue, dodgerblue);">
+<div class="card-icon">
+<p><i class="fa-solid fa-map" aria-label="map"></i></p>
+</div>
+<div id="plan" class="h3">
+Plan
+</div>
+<p>Make a plan before doing big work.</p>
+<p><span class="tag">read-only</span></p>
+</div>
+<div class="card icon-left" style="--lexis-card-accent:var(--lexis-color-gray, gray);">
+<div class="card-icon">
+<p><i class="fa-solid fa-hand" aria-label="hand"></i></p>
+</div>
+<div id="manual" class="h3">
+Manual
+</div>
+<p>Approve or deny each edit.</p>
+<p><span class="tag">safe but slow</span></p>
+</div>
+<div class="card icon-left" style="--lexis-card-accent:var(--lexis-color-darkgreen, darkgreen);">
+<div class="card-icon">
+<p><i class="fa-solid fa-pen" aria-label="pen"></i></p>
+</div>
+<div id="accept-edits" class="h3">
+Accept Edits
+</div>
+<p>Auto-applies file edits.</p>
+<p><span class="tag">semi engagement</span></p>
+</div>
+<div class="card icon-left highlight" style="--lexis-card-accent:var(--lexis-color-orange, orange);">
+<div class="card-icon">
+<p><i class="fa-solid fa-bolt" aria-label="bolt"></i></p>
+</div>
+<div id="auto" class="h3">
+Auto
+</div>
+<p>Approves everything.</p>
+<p><span class="tag">use with care</span></p>
+</div>
+</div>
+</section>
+</section>
+<section class="slide level0">
+
+<h2><span class="center">Just write the boxes</span></h2>
+<div class="cols-row">
+<div class="col font80" style="flex:0 1 55%;width:55%">
+<p>Consecutive <code>::: {.card}</code> divs are grouped into a grid automatically — same idea as <code>.col</code>, no wrapper to write. The previous slide is just:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb13-1"><a href=""></a>::: {.card .icon-left color="dodgerblue"}</span>
+<span id="cb13-2"><a href=""></a></span>
+<span id="cb13-3"><a href=""></a></span>
+<span id="cb13-4"><a href=""></a><span class="fu">### Plan</span></span>
+<span id="cb13-5"><a href=""></a></span>
+<span id="cb13-6"><a href=""></a>Make a plan before doing big work.</span>
+<span id="cb13-7"><a href=""></a></span>
+<span id="cb13-8"><a href=""></a><span class="co">[</span><span class="ot">read-only</span><span class="co">]</span>{.tag}</span>
+<span id="cb13-9"><a href=""></a>:::</span>
+<span id="cb13-10"><a href=""></a></span>
+<span id="cb13-11"><a href=""></a>::: {.card .icon-left color="gray"}</span>
+<span id="cb13-12"><a href=""></a></span>
+<span id="cb13-13"><a href=""></a>...</span>
+<span id="cb13-14"><a href=""></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>An icon on the card’s <strong>first line</strong> becomes the tile — from any icon library, since the shortcode has already expanded by the time lexis sees it.</p>
+</div>
+<div class="col font60" style="flex:0 1 45%;width:45%">
+<table class="caption-top">
+<colgroup>
+<col style="width: 21%">
+<col style="width: 78%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Attribute</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>first line</td>
+<td><code></code>, <code>{{&lt; bi map &gt;}}</code>, an emoji, <code>![](icon.svg)</code></td>
+</tr>
+<tr class="even">
+<td><code>icon=</code></td>
+<td>Shorthand for an image file or an emoji</td>
+</tr>
+<tr class="odd">
+<td><code>image=</code></td>
+<td>A cropped photo band across the card top</td>
+</tr>
+<tr class="even">
+<td><code>color=</code></td>
+<td>Accent color: a palette name or any CSS color</td>
+</tr>
+<tr class="odd">
+<td><code>badge=</code></td>
+<td>Small accent flag in the top-right corner</td>
+</tr>
+<tr class="even">
+<td><code>cols=</code></td>
+<td>Cards per row (default: up to 4 in one row)</td>
+</tr>
+<tr class="odd">
+<td><code>gap=</code></td>
+<td>Gutter between cards</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Class</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>.icon-left</code></td>
+<td>Icon beside the heading instead of above it</td>
+</tr>
+<tr class="even">
+<td><code>.tint</code></td>
+<td>Paint the accent color through an SVG icon <em>file</em></td>
+</tr>
+<tr class="odd">
+<td><code>.highlight</code></td>
+<td>Accent fill + halo — “this one”</td>
+</tr>
+<tr class="even">
+<td><code>.center</code></td>
+<td>Center the card’s contents</td>
+</tr>
+<tr class="odd">
+<td><code>.fragment</code></td>
+<td>Reveal this card on its own click</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section class="slide level0">
+
+<section id="eight-cards-cols4" class="middle">
+<h2><span class="center">Eight cards, <code>cols="4"</code></span></h2>
+<p><br></p>
+<div class="card-grid" style="--lexis-card-cols:4;">
+<div class="card center" style="--lexis-card-accent:var(--lexis-color-purple, purple);">
+<div class="card-icon">
+<p><i class="fa-solid fa-code" aria-label="code"></i></p>
+</div>
+<div id="write-code" class="h3">
+Write code
+</div>
+</div>
+<div class="card center" style="--lexis-card-accent:var(--lexis-color-darkgreen, darkgreen);">
+<div class="card-icon">
+<p><i class="fa-solid fa-bug" aria-label="bug"></i></p>
+</div>
+<div id="debug" class="h3">
+Debug
+</div>
+</div>
+<div class="card center" style="--lexis-card-accent:var(--lexis-color-dodgerblue, dodgerblue);">
+<div class="card-icon">
+<p><i class="fa-solid fa-chart-column" aria-label="chart-column"></i></p>
+</div>
+<div id="analyze-data" class="h3">
+Analyze data
+</div>
+</div>
+<div class="card center" style="--lexis-card-accent:var(--lexis-color-purple, purple);">
+<div class="card-icon">
+<p><i class="fa-solid fa-image" aria-label="image"></i></p>
+</div>
+<div id="generate-images" class="h3">
+Generate images
+</div>
+</div>
+<div class="card center" style="--lexis-card-accent:var(--lexis-color-orange, orange);">
+<div class="card-icon">
+<p><i class="fa-solid fa-book-open" aria-label="book-open"></i></p>
+</div>
+<div id="summarize-docs" class="h3">
+Summarize docs
+</div>
+</div>
+<div class="card center" style="--lexis-card-accent:var(--lexis-color-darkgreen, darkgreen);">
+<div class="card-icon">
+<p><i class="fa-solid fa-pen" aria-label="pen"></i></p>
+</div>
+<div id="write-edit" class="h3">
+Write &amp; edit
+</div>
+</div>
+<div class="card center" style="--lexis-card-accent:var(--lexis-color-gray, gray);">
+<div class="card-icon">
+<p><i class="fa-solid fa-terminal" aria-label="terminal"></i></p>
+</div>
+<div id="automate-tasks" class="h3">
+Automate tasks
+</div>
+</div>
+<div class="card center highlight" style="--lexis-card-accent:var(--lexis-color-red, red);">
+<div class="card-badge">
+<p>today's focus</p>
+</div>
+<div class="card-icon">
+<p><i class="fa-solid fa-file-code" aria-label="file-code"></i></p>
+</div>
+<div id="build-html" class="h3">
+Build HTML
+</div>
+</div>
+</div>
+</section>
+</section>
+<section class="slide level0">
+
+<section id="cards-with-images-image" class="middle">
+<h2><span class="center">Cards with images: <code>image=</code></span></h2>
+<p><br></p>
+<div class="card-grid" style="--lexis-card-cols:4;">
+<div class="card" style="--lexis-card-accent:var(--lexis-color-darkgreen, darkgreen);">
+<div class="card-photo">
+<img data-src="images/blue_ridge_mountains.jpg">
+</div>
+<div id="blue-ridge" class="h3">
+Blue Ridge
+</div>
+<p><code>image=</code> crops a photo band across the top of the card, bled out to the rounded corners.</p>
+<p><span class="tag">morning</span></p>
+</div>
+<div class="card" style="--lexis-card-accent:var(--lexis-color-orange, orange);">
+<div class="card-photo">
+<img data-src="images/blue_ridge_sunset.jpg">
+</div>
+<div id="sunset" class="h3">
+Sunset
+</div>
+<p>The band is <code>object-fit: cover</code>, so any aspect ratio fills it without squashing.</p>
+<p><span class="tag">evening</span></p>
+</div>
+<div class="card center" style="--lexis-card-accent:var(--lexis-color-dodgerblue, dodgerblue);">
+<div class="card-icon">
+<p>🏔️</p>
+</div>
+<div id="emoji-work-too" class="h3">
+Emoji work too
+</div>
+<p>An <code>icon=</code> that isn’t a file path is set as text in the tile.</p>
+</div>
+<div class="card center tint" style="--lexis-card-accent:var(--lexis-color-purple, purple);--lexis-card-icon:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2224%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23333333%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E %3Cpath d=%22M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z%22/%3E %3Cpath d=%22M9 4v14M15 6v14%22/%3E %3C/svg%3E ');">
+<div class="card-icon">
+<img data-src="images/icons/map.svg">
+</div>
+<div id="so-do-svg-files" class="h3">
+So do SVG files
+</div>
+<p><code>.tint</code> paints the accent color through the file, so one gray icon set works with any color.</p>
+</div>
+</div>
+</section>
+</section>
+<section class="slide level0">
+
+<section id="cards-on-an-inverse-slide" class="inverse middle">
+<h2><span class="center">Cards on an inverse slide</span></h2>
+<p><br></p>
+<div class="card-grid" style="--lexis-card-cols:3;">
+<div class="card icon-left" style="--lexis-card-accent:var(--lexis-color-dodgerblue, dodgerblue);">
+<div class="card-icon">
+<p><i class="fa-solid fa-map" aria-label="map"></i></p>
+</div>
+<div id="plan-1" class="h3">
+Plan
+</div>
+<p>Same accent, mixed toward black instead of white.</p>
+</div>
+<div class="card icon-left" style="--lexis-card-accent:var(--lexis-color-orange, orange);">
+<div class="card-icon">
+<p><i class="fa-solid fa-bolt" aria-label="bolt"></i></p>
+</div>
+<div id="auto-1" class="h3">
+Auto
+</div>
+<p>No extra classes needed — the card reads the slide.</p>
+</div>
+<div class="card icon-left highlight" style="--lexis-card-accent:var(--lexis-color-green, green);">
+<div class="card-icon">
+<p><i class="fa-solid fa-pen" aria-label="pen"></i></p>
+</div>
+<div id="edit" class="h3">
+Edit
+</div>
+<p><code>.highlight</code> still marks one out.</p>
+</div>
+</div>
+</section>
+</section>
+<section class="slide level0">
+
 <section id="full-image-background" class="white center" data-background-image="images/blue_ridge_mountains.jpg">
 <h1 class="white"><span class="fancy">Full image background</span></h1>
 <p><br><br></p>
 <div class="col" style="flex:0 1 70%;width:70%">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a>{{<span class="sc">&lt;</span> bg<span class="sc">-</span>image <span class="st">"images/blue_ridge_mountains.jpg"</span> <span class="sc">&gt;</span>}}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href=""></a>{{<span class="sc">&lt;</span> bg<span class="sc">-</span>image <span class="st">"images/blue_ridge_mountains.jpg"</span> <span class="sc">&gt;</span>}}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 </section>
@@ -1183,7 +1499,7 @@ Output
 <h1><span class="fancy"><span class="white">Full background color</span></span></h1>
 <p><br><br><br></p>
 <div class="col" style="flex:0 1 40%;width:40%">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href=""></a>{{<span class="sc">&lt;</span> bg<span class="sc">-</span>color <span class="st">"#909099"</span> <span class="sc">&gt;</span>}}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href=""></a>{{<span class="sc">&lt;</span> bg<span class="sc">-</span>color <span class="st">"#909099"</span> <span class="sc">&gt;</span>}}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 </section>
@@ -1199,7 +1515,7 @@ Output
 <div class="cols-row">
 <div class="col" style="flex:0 1 60%;width:60%">
 <p>This code produces the image on the right:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb15-1"><a href=""></a><span class="al">![](images/blue_ridge_sunset.jpg)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb16-1"><a href=""></a><span class="al">![](images/blue_ridge_sunset.jpg)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="col" style="flex:0 1 40%;width:40%">
 <p><img data-src="images/blue_ridge_sunset.jpg"></p>
@@ -1212,9 +1528,9 @@ Output
 <div class="cols-row">
 <div class="col" style="flex:0 1 60%;width:60%">
 <p>This code produces the image on the right:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb16-1"><a href=""></a>::: {.border}</span>
-<span id="cb16-2"><a href=""></a><span class="al">![](images/blue_ridge_sunset.jpg)</span></span>
-<span id="cb16-3"><a href=""></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb17-1"><a href=""></a>::: {.border}</span>
+<span id="cb17-2"><a href=""></a><span class="al">![](images/blue_ridge_sunset.jpg)</span></span>
+<span id="cb17-3"><a href=""></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="col" style="flex:0 1 40%;width:40%">
 <div class="border">
@@ -1229,9 +1545,9 @@ Output
 <div class="cols-row">
 <div class="col" style="flex:0 1 60%;width:60%">
 <p>This code produces the image on the right:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb17-1"><a href=""></a>::: {.borderthick}</span>
-<span id="cb17-2"><a href=""></a><span class="al">![](images/blue_ridge_sunset.jpg)</span></span>
-<span id="cb17-3"><a href=""></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb18-1"><a href=""></a>::: {.borderthick}</span>
+<span id="cb18-2"><a href=""></a><span class="al">![](images/blue_ridge_sunset.jpg)</span></span>
+<span id="cb18-3"><a href=""></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="col" style="flex:0 1 40%;width:40%">
 <div class="borderthick">
@@ -1247,9 +1563,9 @@ Output
 <div class="cols-row">
 <div class="col" style="flex:0 1 60%;width:60%">
 <p>This code produces the image on the right:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb18-1"><a href=""></a>::: {.whiteborder}</span>
-<span id="cb18-2"><a href=""></a><span class="al">![](images/blue_ridge_sunset.jpg)</span></span>
-<span id="cb18-3"><a href=""></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb19-1"><a href=""></a>::: {.whiteborder}</span>
+<span id="cb19-2"><a href=""></a><span class="al">![](images/blue_ridge_sunset.jpg)</span></span>
+<span id="cb19-3"><a href=""></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="col" style="flex:0 1 40%;width:40%">
 <div class="whiteborder">
@@ -1266,9 +1582,9 @@ Output
 <div class="cols-row">
 <div class="col" style="flex:0 1 60%;width:60%">
 <p>This code produces the image on the right:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb19-1"><a href=""></a>::: {.whiteborderthick}</span>
-<span id="cb19-2"><a href=""></a><span class="al">![](images/blue_ridge_sunset.jpg)</span></span>
-<span id="cb19-3"><a href=""></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb20-1"><a href=""></a>::: {.whiteborderthick}</span>
+<span id="cb20-2"><a href=""></a><span class="al">![](images/blue_ridge_sunset.jpg)</span></span>
+<span id="cb20-3"><a href=""></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="col" style="flex:0 1 40%;width:40%">
 <div class="whiteborderthick">
@@ -1284,9 +1600,9 @@ Output
 <div class="cols-row">
 <div class="col" style="flex:0 1 60%;width:60%">
 <p>This code produces the image on the right:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb20-1"><a href=""></a>::: {.polaroid}</span>
-<span id="cb20-2"><a href=""></a><span class="al">![](images/blue_ridge_sunset.jpg)</span></span>
-<span id="cb20-3"><a href=""></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb21-1"><a href=""></a>::: {.polaroid}</span>
+<span id="cb21-2"><a href=""></a><span class="al">![](images/blue_ridge_sunset.jpg)</span></span>
+<span id="cb21-3"><a href=""></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="col" style="flex:0 1 40%;width:40%">
 <div class="polaroid">
@@ -1301,9 +1617,9 @@ Output
 <div class="cols-row">
 <div class="col" style="flex:0 1 60%;width:60%">
 <p>This code produces the image on the right:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb21-1"><a href=""></a>::: {.circle}</span>
-<span id="cb21-2"><a href=""></a><span class="al">![](images/blue_ridge_sunset.jpg)</span></span>
-<span id="cb21-3"><a href=""></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb22-1"><a href=""></a>::: {.circle}</span>
+<span id="cb22-2"><a href=""></a><span class="al">![](images/blue_ridge_sunset.jpg)</span></span>
+<span id="cb22-3"><a href=""></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="col" style="flex:0 1 40%;width:40%">
 <div class="circle">
@@ -1318,9 +1634,9 @@ Output
 <div class="cols-row">
 <div class="col" style="flex:0 1 60%;width:60%">
 <p>This code produces the image on the right:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb22-1"><a href=""></a>::: {.thumbnail}</span>
-<span id="cb22-2"><a href=""></a><span class="al">![](images/blue_ridge_sunset.jpg)</span></span>
-<span id="cb22-3"><a href=""></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb23-1"><a href=""></a>::: {.thumbnail}</span>
+<span id="cb23-2"><a href=""></a><span class="al">![](images/blue_ridge_sunset.jpg)</span></span>
+<span id="cb23-3"><a href=""></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="col" style="flex:0 1 40%;width:40%">
 <p><br><br><br><br></p>
@@ -1335,14 +1651,14 @@ Output
 <h1>Image classes work on rendered charts too</h1>
 <div class="cols-row">
 <div class="col">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb23-1"><a href=""></a>::: {.border}</span>
-<span id="cb23-2"><a href=""></a></span>
-<span id="cb23-3"><a href=""></a><span class="in">```{r}</span></span>
-<span id="cb23-4"><a href=""></a><span class="fu">ggplot</span>(mtcars, <span class="fu">aes</span>(mpg, hp)) <span class="sc">+</span></span>
-<span id="cb23-5"><a href=""></a>  <span class="fu">geom_point</span>()</span>
-<span id="cb23-6"><a href=""></a><span class="in">```</span></span>
-<span id="cb23-7"><a href=""></a></span>
-<span id="cb23-8"><a href=""></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb24-1"><a href=""></a>::: {.border}</span>
+<span id="cb24-2"><a href=""></a></span>
+<span id="cb24-3"><a href=""></a><span class="in">```{r}</span></span>
+<span id="cb24-4"><a href=""></a><span class="fu">ggplot</span>(mtcars, <span class="fu">aes</span>(mpg, hp)) <span class="sc">+</span></span>
+<span id="cb24-5"><a href=""></a>  <span class="fu">geom_point</span>()</span>
+<span id="cb24-6"><a href=""></a><span class="in">```</span></span>
+<span id="cb24-7"><a href=""></a></span>
+<span id="cb24-8"><a href=""></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="border">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
@@ -1356,14 +1672,14 @@ Output
 </div>
 </div>
 <div class="col">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb24-1"><a href=""></a>::: {.circle}</span>
-<span id="cb24-2"><a href=""></a></span>
-<span id="cb24-3"><a href=""></a><span class="in">```{r}</span></span>
-<span id="cb24-4"><a href=""></a><span class="fu">ggplot</span>(mtcars, <span class="fu">aes</span>(mpg, hp)) <span class="sc">+</span></span>
-<span id="cb24-5"><a href=""></a>  <span class="fu">geom_point</span>()</span>
-<span id="cb24-6"><a href=""></a><span class="in">```</span></span>
-<span id="cb24-7"><a href=""></a></span>
-<span id="cb24-8"><a href=""></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb25-1"><a href=""></a>::: {.circle}</span>
+<span id="cb25-2"><a href=""></a></span>
+<span id="cb25-3"><a href=""></a><span class="in">```{r}</span></span>
+<span id="cb25-4"><a href=""></a><span class="fu">ggplot</span>(mtcars, <span class="fu">aes</span>(mpg, hp)) <span class="sc">+</span></span>
+<span id="cb25-5"><a href=""></a>  <span class="fu">geom_point</span>()</span>
+<span id="cb25-6"><a href=""></a><span class="in">```</span></span>
+<span id="cb25-7"><a href=""></a></span>
+<span id="cb25-8"><a href=""></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="circle">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">

@@ -44,8 +44,9 @@ check below assumes its rules.
 - **Literal ```` ```{r} ```` inside a display fence** without the `` `r ''` ``
   knitr escape — renders as a real (often duplicate-label) chunk.
 - **Duplicate chunk labels.**
-- **Broken image paths** — every `![](path)` and `{{< bg-image "path" >}}`
-  must exist on disk (skip URLs).
+- **Broken image paths** — every `![](path)`, `{{< bg-image "path" >}}`, and
+  `icon=` / `image=` on a `.card` must exist on disk (skip URLs). A missing
+  `icon=` renders as an empty tile, with nothing in the render log.
 - **Malformed or unknown shortcodes** — only `inverse`, `center`, `middle`,
   `bg-color`, `bg-image`, `no-slide-number` exist; anything else (typo, wrong
   quoting, shortcode not on its own line) silently does nothing or prints
@@ -60,6 +61,19 @@ check below assumes its rules.
 - **Column widths that sum past 100%** across one `.col` run.
 - **xaringan-era `.codeNN` classes** (`.code70` etc.) — no longer exist;
   convert to `.fontNN`.
+- **`. . .` between `.card` divs** — splits one card grid into two; reveal cards
+  with `::: {.card .fragment}` instead.
+- **`.tint` on a card whose icon is a font glyph** (`{{< fa >}}` / `{{< bi >}}`)
+  — it only applies to SVG icon *files*; glyphs already take the accent. Also
+  flag a non-SVG `icon=` under `.tint` (masking a photo paints a solid blob).
+- **An icon shortcode not on its own line** at the top of a card — it has to be
+  the whole first line to become the icon tile; inline in a sentence it just
+  renders where it sits.
+- **`{{< fa >}}` used with no fontawesome extension** in `_extensions/` (same
+  for `{{< bi >}}` / `{{< iconify >}}`) — renders as literal text.
+- **A color class inside a card** (`[Plan]{.blue}`, `::: {.card .red}`) where
+  `color="blue"` is meant — the card's accent is one attribute that drives the
+  heading, tile, border, and chip together.
 
 ### Legacy xaringan syntax (from ported decks)
 

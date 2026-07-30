@@ -128,6 +128,86 @@ left, so usually you set it on only one side:
 `gap="3em"` or `valign="middle"` on any `.col` in a row and it applies to the
 whole row.
 
+## Cards
+
+A grid of icon-and-text boxes. Same ergonomics as columns: write **consecutive
+`::: {.card}` divs with no outer wrapper** and any run is grouped into a grid.
+
+```markdown
+::: {.card .icon-left color="dodgerblue"}
+{{< fa map >}}
+
+### Plan
+
+Make a plan before doing big work.
+
+[read-only]{.tag}
+:::
+
+::: {.card .icon-left color="orange"}
+{{< fa bolt >}}
+
+### Auto
+
+Approves everything.
+
+[use with care]{.tag}
+:::
+```
+
+Up to four cards go in one row; more wrap into a balanced grid (8 → 4×2). Set
+`cols=` on any card in the run to choose, e.g. `cols="2"` for a 2×2 of four
+cards.
+
+**The icon is the card's first line**, and it can come from any icon library —
+lexis only sees it after the shortcode has expanded, so it needs to know
+nothing about them:
+
+| Written as | Needs |
+|---|---|
+| `{{< fa map >}}` | `quarto-ext/fontawesome` (ships with the template) |
+| `{{< bi map >}}` | `shafayetShafee/bsicons` |
+| `{{< iconify mdi:map >}}` | `mcanouil/quarto-iconify` |
+| `` `r fontawesome::fa("map")` `` | the R package |
+| `🏔️` / `![](images/icons/map.svg)` | nothing |
+
+Icon *fonts* inherit the card's accent color automatically — don't set a color
+on them. **Prefer `{{< fa … >}}` over shipping SVG files** unless the user
+already has icon files or asks for one.
+
+| Attribute | Effect |
+|---|---|
+| `icon=` | Shorthand for an image file or emoji, instead of a first line |
+| `image=` | Cropped photo band across the top of the card |
+| `color=` | Accent color: a palette name (`green`, `dodgerblue`) or any CSS color |
+| `badge=` | Small accent flag in the top-right corner |
+| `cols=` | Cards per row (set on any card in the run) |
+| `gap=` | Gutter between cards (set on any card in the run) |
+
+| Class | Effect |
+|---|---|
+| `.icon-left` | Icon beside the heading instead of above it |
+| `.tint` | Paint the accent color through an SVG icon *file* |
+| `.highlight` | Accent fill and halo — "this one" |
+| `.center` | Center the card's contents (including the icon tile) |
+| `.fragment` | Reveal this card on its own click |
+
+Notes worth having:
+
+- **One `color=` per card drives everything** — heading, icon tile, border,
+  `.tag` chip, badge. Don't hand-set colors inside a card; set the accent.
+- **`.tint` is for icon *files* only** — it paints the accent through the SVG
+  instead of showing the file's own colors, so one plain line-art set serves a
+  whole deck. Icon-font glyphs already take the accent; `.tint` on a card whose
+  icon is a `{{< fa >}}` glyph does nothing.
+- `[text]{.tag}` is a chip; usable anywhere, but inside a card it takes the
+  accent and sits on the card's bottom edge, so chips line up across a row
+  whatever the prose length.
+- **Reveal cards one at a time with `::: {.card .fragment}`, not `. . .`** — a
+  pause between cards splits the run into two separate grids.
+- Everything is sized in `em`, so `::: {.font80}` around a grid scales the
+  boxes, tiles and chips together.
+
 ## One div, many classes
 
 Classes combine on a single fenced div — **never nest a div just to add a
@@ -225,6 +305,32 @@ three or four columns, just add more `.col` divs — the row splits evenly.
 ```
 :::
 ````
+
+**Card grid** ("cards", "grid of boxes", "feature grid"):
+
+```markdown
+---
+
+# Title
+
+::: {.card .icon-left color="dodgerblue"}
+{{< fa map >}}
+
+### 
+
+:::
+
+::: {.card .icon-left color="orange"}
+{{< fa bolt >}}
+
+### 
+
+:::
+```
+
+Add more `.card` divs for more boxes; `cols="2"` on any of them for a 2×2. Use
+a Font Awesome name that actually exists; only reference an `icon=` file that
+exists, otherwise leave the attribute off.
 
 **Full-bleed image slide**:
 

@@ -8,7 +8,7 @@
 
 Written: July 08 2026
 
-Updated: July 28 2026
+Updated: July 30 2026
 
 λέξις (lexis) is a **template** for making slides with
 [Quarto](https://quarto.org)’s
@@ -177,6 +177,75 @@ remember (this replaces xaringan’s `.leftcol55`, `.rightcol70`,
 `.cols3`, and friends). You can also set `gap="3em"` or
 `valign="middle"` on any `.col` in a row and it applies to the whole
 row.
+
+### Cards
+
+For a grid of icon-and-text boxes, write consecutive `::: {.card}` divs
+— same deal as `.col`, no wrapper:
+
+``` markdown
+::: {.card .icon-left color="dodgerblue"}
+{{< fa map >}}
+
+### Plan
+
+Make a plan before doing big work.
+
+[read-only]{.tag}
+:::
+
+::: {.card .icon-left color="orange"}
+{{< fa bolt >}}
+
+### Auto
+
+Approves everything.
+
+[use with care]{.tag}
+:::
+```
+
+Up to four cards go in one row; more wrap into a balanced grid. Set
+`cols="2"` (or any number) on any card in the run to say it yourself,
+and `gap=` for the gutter.
+
+**An icon on the card’s first line becomes the icon tile** — and it can
+come from any icon library, because lexis sees it only after the
+shortcode has already expanded: `{{< fa map >}}` (Font Awesome),
+`{{< bi map >}}` (Bootstrap Icons), `{{< iconify mdi:map >}}`, ``, an
+emoji, or `![](images/icons/map.svg)`. Icon *fonts* take the card’s
+accent color automatically. The starter template ships the
+[fontawesome](https://github.com/quarto-ext/fontawesome) extension, so
+`{{< fa >}}` works in a new deck with nothing to install.
+
+| Attribute | Effect |
+|----|----|
+| `icon=` | Shorthand for an image file or an emoji, instead of a first line |
+| `image=` | Cropped photo band across the top of the card |
+| `color=` | Accent color: a palette name (`green`) or any CSS color |
+| `badge=` | Small accent flag in the top-right corner |
+| `cols=` | Cards per row |
+| `gap=` | Gutter between cards |
+
+| Class        | Effect                                            |
+|--------------|---------------------------------------------------|
+| `.icon-left` | Icon beside the heading instead of above it       |
+| `.tint`      | Paint the accent color through an SVG icon *file* |
+| `.highlight` | Accent fill and halo — “this one”                 |
+| `.center`    | Center the card’s contents                        |
+| `.fragment`  | Reveal this card on its own click                 |
+
+One `color=` drives the whole box: heading, icon tile, border, chip,
+badge. The `[text]{.tag}` chip works anywhere on a slide, and inside a
+card it picks up that accent and sits on the card’s bottom edge, so a
+row of cards lines its chips up however much prose each one has.
+
+`.tint` is for icon *files*: it lets one set of plain line-art SVGs
+serve a whole deck, each card painting its own accent through the file
+instead of showing the file’s colors. Icon-font glyphs don’t need it —
+they take the accent on their own. Everything is sized in `em`, so
+wrapping a grid in `::: {.font80}` scales the boxes, tiles, and chips
+together.
 
 ### Images
 

@@ -428,6 +428,225 @@ bar <- function(y) {
 ---
 
 {{< center >}}
+{{< middle >}}
+
+# Cards!
+
+## [Grids of icon + text boxes]{.gray}
+
+---
+
+## [Card grids]{.center}
+
+::: {.card .icon-left cols="2" color="dodgerblue"}
+{{< fa map >}}
+
+### Plan
+
+Make a plan before doing big work.
+
+[read-only]{.tag}
+:::
+
+::: {.card .icon-left color="gray"}
+{{< fa hand >}}
+
+### Manual
+
+Approve or deny each edit.
+
+[safe but slow]{.tag}
+:::
+
+::: {.card .icon-left color="darkgreen"}
+{{< fa pen >}}
+
+### Accept Edits
+
+Auto-applies file edits.
+
+[semi engagement]{.tag}
+:::
+
+::: {.card .icon-left .highlight color="orange"}
+{{< fa bolt >}}
+
+### Auto
+
+Approves everything.
+
+[use with care]{.tag}
+:::
+
+---
+
+## [Just write the boxes]{.center}
+
+::: {.col width="55%" .font80}
+
+Consecutive `::: {.card}` divs are grouped into a grid automatically — same idea as `.col`, no wrapper to write. The previous slide is just:
+
+```markdown
+::: {.card .icon-left color="dodgerblue"}
+{{< fa map >}}
+
+### Plan
+
+Make a plan before doing big work.
+
+[read-only]{.tag}
+:::
+
+::: {.card .icon-left color="gray"}
+{{< fa hand >}}
+...
+:::
+```
+
+An icon on the card's **first line** becomes the tile — from any icon
+library, since the shortcode has already expanded by the time lexis sees it.
+
+:::
+
+::: {.col width="45%" .font70}
+
+| Attribute | Effect |
+|---|---|
+| first line | `{{< fa map >}}`, `{{< bi map >}}`, an emoji, `![](icon.svg)` |
+| `icon=` | Shorthand for an image file or an emoji |
+| `image=` | A cropped photo band across the card top |
+| `color=` | Accent color: a palette name or any CSS color |
+| `badge=` | Small accent flag in the top-right corner |
+| `cols=` | Cards per row (default: up to 4 in one row) |
+| `gap=` | Gutter between cards |
+
+| Class | Effect |
+|---|---|
+| `.icon-left` | Icon beside the heading instead of above it |
+| `.tint` | Paint the accent color through an SVG icon *file* |
+| `.highlight` | Accent fill + halo — "this one" |
+| `.center` | Center the card's contents |
+| `.fragment` | Reveal this card on its own click |
+
+:::
+
+---
+
+## [Eight cards, `cols="4"`]{.center}
+
+::: {.card .center cols="4" color="purple"}
+{{< fa code >}}
+
+### Write code
+:::
+
+::: {.card .center color="darkgreen"}
+{{< fa bug >}}
+
+### Debug
+:::
+
+::: {.card .center color="dodgerblue"}
+{{< fa chart-column >}}
+
+### Analyze data
+:::
+
+::: {.card .center color="purple"}
+{{< fa image >}}
+
+### Generate images
+:::
+
+::: {.card .center color="orange"}
+{{< fa book-open >}}
+
+### Summarize docs
+:::
+
+::: {.card .center color="darkgreen"}
+{{< fa pen >}}
+
+### Write & edit
+:::
+
+::: {.card .center color="gray"}
+{{< fa terminal >}}
+
+### Automate tasks
+:::
+
+::: {.card .center .highlight color="red" badge="today's focus"}
+{{< fa file-code >}}
+
+### Build HTML
+:::
+
+---
+
+## [Cards with images: `image=`]{.center}
+
+::: {.card color="darkgreen" image="images/blue_ridge_mountains.jpg"}
+### Blue Ridge
+
+`image=` crops a photo band across the top of the card, bled out to the rounded corners.
+
+[morning]{.tag}
+:::
+
+::: {.card color="orange" image="images/blue_ridge_sunset.jpg"}
+### Sunset
+
+The band is `object-fit: cover`, so any aspect ratio fills it without squashing.
+
+[evening]{.tag}
+:::
+
+::: {.card .center color="dodgerblue" icon="🏔️"}
+### Emoji work too
+
+An `icon=` that isn't a file path is set as text in the tile.
+:::
+
+::: {.card .center .tint color="purple" icon="images/icons/map.svg"}
+### So do SVG files
+
+`.tint` paints the accent color through the file, so one gray icon set works with any color.
+:::
+
+---
+
+{{< inverse >}}
+
+## [Cards on an inverse slide]{.center}
+
+::: {.card .icon-left cols="3" color="dodgerblue"}
+{{< fa map >}}
+
+### Plan
+
+Same accent, mixed toward black instead of white.
+:::
+
+::: {.card .icon-left color="orange"}
+{{< fa bolt >}}
+
+### Auto
+
+No extra classes needed — the card reads the slide.
+:::
+
+::: {.card .icon-left .highlight color="green"}
+{{< fa pen >}}
+
+### Edit
+
+`.highlight` still marks one out.
+:::
+
+---
+
+{{< center >}}
 
 {{< bg-image "images/blue_ridge_mountains.jpg" >}}
 

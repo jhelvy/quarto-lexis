@@ -22,8 +22,15 @@ brief.
   removes the marker. This was the whole technical crux of the project.
 - Inline styling uses Quarto spans (`[text]{.class}`) and fenced divs
   (`::: {.class}`) for colors, columns (`.col` with optional `width=`),
-  image treatments (`.border`, `.polaroid`, `.circle`, etc.), and panels
+  card grids (`.card` with `icon=`/`image=`/`color=`), image treatments
+  (`.border`, `.polaroid`, `.circle`, etc.), and panels
   (`::: {.panel-tabset}`).
+- **Auto-grouping is the house pattern for layout.** `.col` and `.card` are
+  both written as bare runs of consecutive divs, which `lexis.lua` wraps in a
+  `.cols-row` / `.card-grid` container, hoisting run-wide settings (`gap=`,
+  `valign=`, `cols=`) off whichever div in the run set them. Nothing to
+  memorize and no wrapper div to write; any new multi-box layout should follow
+  it rather than inventing a wrapper class.
 
 Full authoring conventions for end users (shortcode table, column syntax,
 image treatments, title-slide pattern, code-line-highlighting convention)
@@ -59,6 +66,32 @@ index.qmd / index.html    # published docs site
 
 ## Notes for future work here
 
+- **Card icons come from the card's first line, not an attribute** — that's what
+  makes every icon library work (`{{< fa >}}`, `{{< bi >}}`, `{{< iconify >}}`,
+  `fa()`) without lexis knowing any of them: the filter runs `post-quarto`, so
+  the shortcode has already expanded to its own markup *and* registered its own
+  CSS dependency. Synthesizing `<i class="fa-solid fa-x">` from an `icon=`
+  string would skip that registration and render an empty tile. `icon=` stays
+  as the shorthand for the two cases with no library behind them — an image
+  file and an emoji.
+- **Two reveal defaults that quietly break cards**, both fixed in the `.card`
+  rules: `.reveal section img { max-width: 95% }` cut 5% off the right of an
+  `image=` photo band, and a real CSS `border` on the card made a bleeding band
+  stop short and square its corners (`overflow` clips at the *padding* edge) —
+  hence the ring drawn with `box-shadow` instead.
+- **`.tint` cards inline their icon as a data: URI, on purpose.** They color the
+  icon by using it as a CSS `mask`, and a mask image must be same-origin —
+  Chrome gives every `file://` URL its own opaque origin, so
+  `mask: url(images/icons/x.svg)` renders *nothing* in a deck opened by
+  double-clicking the `.html` (fine over `quarto preview` / Pages, which is the
+  trap). `svg_data_uri()` in lexis.lua reads the file at render time and
+  percent-encodes it into the custom property instead. Don't "simplify" it back
+  to a path.
+- The palette lives once, in `$lexis-palette` (lexis.scss), and is re-exported
+  as `--lexis-color-NAME` custom properties so authoring attributes can name a
+  color (`color="green"`) without lexis.lua carrying a copy of the hexes. Add
+  colors there, not in the filter.
+
 - `README.md` is generated from `README.qmd` via `build.R` — edit the
   `.qmd`, not the `.md`, then rebuild.
 - The project deliberately diverges from Quarto's standard `##`-per-slide
@@ -73,6 +106,13 @@ index.qmd / index.html    # published docs site
 - `build.R` opens with `unlink("lexis-template")`, so everything under it is
   regenerated — nothing in there is a source file. `*.knit.md` is gitignored
   for that reason (knitr intermediates got committed by accident once).
+- **Stop any `quarto preview` of `lexis-template/lexis-demo.qmd` before running
+  `build.R`.** The preview holds a knitr execution daemon whose working
+  directory is that folder; `unlink()` deletes it out from under the daemon, and
+  the next render dies with `cannot open file 'lexis-demo.qmd'` — nothing to do
+  with the deck. Re-running succeeds (the daemon respawns), which is why this
+  looks intermittent. `--execute-daemon-restart` does not help while the preview
+  is up.
 
 ## Presenting / navigation
 

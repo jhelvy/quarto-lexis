@@ -79,6 +79,23 @@ $code-block-bg:        #ffffff;
 // Default gutter between `.col` columns (override per-row with `gap=`).
 $cols-gap: 1.5em;
 
+// Default gutter between `.card` boxes in a grid (override with `gap=`).
+$cards-gap: 0.7em;
+
+// The palette by name, re-exported as CSS custom properties in the rules below.
+// It is what lets an authoring attribute NAME a color — `::: {.card
+// color="green"}` — without lexis.lua having to carry a copy of these hexes.
+$lexis-palette: (
+  white: $color-white,          red: $color-red,
+  orange: $color-orange,        yellow: $color-yellow,
+  gold: $color-gold,            green: $color-green,
+  darkgreen: $color-darkgreen,  blue: $color-blue,
+  lightblue: $color-lightblue,  dodgerblue: $color-dodgerblue,
+  darkblue: $color-darkblue,    purple: $color-purple,
+  black: $color-black,          graylight: $color-graylight,
+  gray: $color-gray,            tan: $color-tan,
+);
+
 // Reveal's bottom progress-bar fill color (its default is plain white).
 // To turn the bar off entirely, no theme edit needed: set `progress: false`
 // in the document's YAML — it's a native Quarto/reveal.js option.
@@ -86,6 +103,14 @@ $progress-color: $color-blue;
 
 
 /*-- scss:rules --*/
+
+// ---- Palette as CSS custom properties --------------------------------------
+// See $lexis-palette above for why these exist.
+:root {
+  @each $name, $hex in $lexis-palette {
+    --lexis-color-#{$name}: #{$hex};
+  }
+}
 
 // ---- Slide letterbox (xaringan "card" look) -------------------------------
 // reveal scales `.reveal .slides` to exactly the deck's 16:9 box and centers
@@ -751,6 +776,293 @@ $progress-color: $color-blue;
   // `.reveal .center` (0,0,2) and the column stays left-aligned; `.col.center`
   // (0,0,4) wins it back.
   > .col.center { text-align: center; }
+}
+
+// ===========================================================================
+// CARD GRIDS
+// `::: {.card icon="images/icons/plan.svg" color="dodgerblue"}` — a grid of
+// bordered boxes, each one an optional icon (or photo) plus a heading, some
+// prose, and an optional `[tag]{.tag}` chip. lexis.lua's group_cards wraps any
+// run of consecutive `.card` Divs in a `.card-grid` and turns the attributes
+// into the markup and custom properties used below (see its header for the
+// full contract).
+//
+// NOTE ON THE NAME: comments elsewhere in this file call the SLIDE surface the
+// "card" (the xaringan light box inside the gray letterbox). These are the
+// author-facing content boxes — unrelated, and always `.card` / `.card-grid` /
+// `.card-*` as a real class.
+//
+// Everything is sized in `em` off the grid's own font-size, so one card scales
+// as a unit: drop the whole grid in `::: {.font80}` (or set `font-size` on the
+// card) and the icon tile, padding, radius and chip all follow.
+//
+// One accent color drives the whole box — heading, icon tile, border, chip,
+// badge — via `--lexis-card-accent`, mixed against white/black with
+// `color-mix()` rather than hand-picked tints so any color the author names
+// works. Cards are transparent-to-content: a `.fragment`, `.font70` or
+// `.center` class on a `::: {.card}` behaves as it would anywhere else, which
+// is also how a card grid reveals one box at a time (`::: {.card .fragment}`)
+// — a `. . .` pause between cards would instead split the run into two grids.
+// ===========================================================================
+.reveal .card-grid {
+  display: grid;
+  // group_cards writes --lexis-card-cols; the fallback is only for a
+  // hand-written `.card-grid` div.
+  grid-template-columns: repeat(var(--lexis-card-cols, 2), minmax(0, 1fr));
+  gap: $cards-gap;
+  align-items: stretch;   // every card in a row is as tall as the tallest
+  margin: 0.5em 0;
+  text-align: left;
+}
+
+.reveal .card {
+  --lexis-card-accent: #{$color-blue};
+  position: relative;     // for the absolutely-positioned .card-badge
+  display: flex;
+  flex-direction: column;
+  padding: 0.75em 0.85em;
+  font-size: 0.8em;
+  line-height: 1.3;
+  background-color: $color-white;
+  border-radius: 0.6em;
+  overflow: hidden;       // clips the `image=` photo band to the rounded corners
+  // The outline is a RING, not a `border` — deliberately. `overflow` clips at
+  // the PADDING edge, so with a real border an `image=` band bleeding out
+  // through the padding stops 2px short of the card's visual edge and squares
+  // off its corners against the border's inner radius. A ring is painted
+  // outside the padding box, follows the radius, and is never clipped, so the
+  // band reaches the true edge with the full corner. Variants (below) recolor
+  // it by setting --lexis-card-ring, not by restating the shadow.
+  --lexis-card-ring: color-mix(in srgb, var(--lexis-card-accent) 30%, #{$color-white});
+  box-shadow: 0 0 0 2px var(--lexis-card-ring), 0 2px 6px rgba(0, 0, 0, 0.07);
+
+  // The heading is `.h1`..`.h6` here, not a real `<h_>`: lexis.lua's demote()
+  // rewrites any Div-nested heading (see its comment). Match both so a card
+  // built by hand in raw HTML looks the same.
+  h1, h2, h3, h4, h5, h6,
+  .h1, .h2, .h3, .h4, .h5, .h6 {
+    color: var(--lexis-card-accent);
+    font-size: 1.35em;
+    margin: 0 0 0.2em;
+  }
+
+  p { margin: 0 0 0.35em; }
+  > :last-child { margin-bottom: 0; }
+  ul, ol { margin: 0 0 0.35em; }
+  // reveal.css caps every slide image at `max-width: 95%` (so a stray big image
+  // never blows out a slide). Inside a card the images are ours and already
+  // sized exactly — leaving the cap on made an `image=` band stop 5% short of
+  // the card's right edge, which reads as a misaligned photo.
+  img {
+    box-shadow: none;
+    max-width: none;
+    max-height: none;
+  }
+}
+
+// ---- Card icon tile --------------------------------------------------------
+// Holds whatever the author gave as the icon: an icon-font glyph from any
+// library ({{< fa >}}, {{< bi >}}, {{< iconify >}}, `fa()`), an emoji, or an
+// image file. lexis.lua builds this Div from `icon=` or from an icon-only first
+// line of the card.
+//
+// The tile's own font-size is never touched — `width`/`height` are in `em`, so
+// changing it here would resize the box. Glyph and emoji sizing goes on the
+// inner `<p>` instead; `color` is inherited by font icons, which is what makes
+// them take the card's accent with no `.tint` needed.
+.reveal .card .card-icon {
+  flex: 0 0 auto;
+  align-self: flex-start;
+  width: 2.3em;
+  height: 2.3em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.4em;
+  border-radius: 0.45em;
+  color: var(--lexis-card-accent);
+  background-color: color-mix(in srgb, var(--lexis-card-accent) 15%, #{$color-white});
+
+  > p {
+    margin: 0;
+    font-size: 1.35em;
+    line-height: 1;
+  }
+  // ...but an image is sized as a picture, not as text, so it must not inherit
+  // that bump — it may or may not sit inside a <p> depending on how it was
+  // written, hence the :has() rather than a structural assumption.
+  > p:has(> img) { font-size: inherit; }
+  img {
+    width: 1.45em;
+    height: 1.45em;
+    object-fit: contain;
+    border: 0;
+    margin: 0;
+  }
+}
+// `::: {.card .center}` centers the tile along with the text (the generic
+// `.center` only handles text-align, and the tile is a flex item).
+.reveal .card.center .card-icon { align-self: center; }
+
+// `.tint` — paint the accent color THROUGH the icon file instead of showing the
+// file's own colors, so one gray line-art SVG can serve every card in a deck.
+// The tile itself can't be the masked element (it would take the mask's shape
+// and lose its tinted square), so the mask goes on a pseudo-element sized like
+// the <img> it replaces. --lexis-card-icon is the url(), written by lexis.lua.
+.reveal .card.tint .card-icon img { display: none; }
+.reveal .card.tint .card-icon::after {
+  content: "";
+  width: 1.45em;
+  height: 1.45em;
+  background-color: var(--lexis-card-accent);
+  -webkit-mask: var(--lexis-card-icon) center / contain no-repeat;
+  mask: var(--lexis-card-icon) center / contain no-repeat;
+}
+
+// ---- Card photo band -------------------------------------------------------
+// `image="path.jpg"` — a cropped strip across the top of the card. The negative
+// margins bleed it out through the card's padding to the (clipped) corners;
+// they're in the same `em` as the padding they cancel, so this survives a
+// font-size change on the card.
+.reveal .card .card-photo {
+  margin: -0.75em -0.85em 0.55em;
+  // Per-card override, e.g. `::: {.card image="x.jpg"
+  // style="--lexis-card-photo-height:8em"}`.
+  height: var(--lexis-card-photo-height, 5em);
+  overflow: hidden;
+
+  p { margin: 0; }
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;   // fills the strip at any aspect ratio, no squashing
+    border: 0;
+    margin: 0;
+  }
+}
+// ---- Card badge ------------------------------------------------------------
+// `badge="TODAY'S FOCUS"` — a small accent flag in the card's top-right corner.
+.reveal .card .card-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.25em 0.6em;
+  font-family: $font-header;
+  font-size: 0.62em;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: $color-white;
+  background-color: var(--lexis-card-accent);
+  border-bottom-left-radius: 0.5em;
+
+  p { margin: 0; }
+}
+// The badge is out of flow, so make room for it rather than letting it land on
+// the content: extra top padding on a badged card. UNLESS the card also has a
+// photo band — that bleeds up through the padding (its negative margin is tied
+// to the default value) and the badge is meant to sit over it anyway.
+.reveal .card:has(> .card-badge) { padding-top: 1.6em; }
+.reveal .card:has(> .card-badge):has(> .card-photo) { padding-top: 0.75em; }
+
+// ---- Tag chip --------------------------------------------------------------
+// `[read-only]{.tag}` — a monospace chip. Usable anywhere on a slide; inside a
+// card it picks up the card's accent (the var is set on `.card`, so outside one
+// it is unset and the fallback gray applies). As the last thing in a card it is
+// pushed to the bottom edge so a row of cards lines its chips up regardless of
+// how much prose each one has.
+.reveal .tag {
+  display: inline-block;
+  padding: 0.1em 0.45em;
+  border-radius: 0.3em;
+  font-family: $font-mono;
+  font-size: 0.85em;
+  background-color: color-mix(in srgb, var(--lexis-card-accent, #{$color-gray}) 14%, #{$color-white});
+  color: color-mix(in srgb, var(--lexis-card-accent, #{$color-gray}) 80%, #{$color-black});
+}
+.reveal .card > p:last-child:has(> .tag),
+.reveal .card > .tag:last-child { margin-top: auto; }
+
+// ---- Icon beside the heading ----------------------------------------------
+// `::: {.card .icon-left}` — the two-column card look: icon and heading share a
+// row, everything after it spans the full width. The card becomes a grid, so
+// the default is set first and the two exceptions (same specificity, later
+// source order) win it back for the icon and whatever follows it.
+.reveal .card.icon-left {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 0.55em;
+  align-items: center;
+  // Stack the rows from the top. A card stretched to match a taller neighbour
+  // would otherwise have grid's default `align-content: stretch` inflate its
+  // auto rows, pushing the icon/heading row down out of line with the others.
+  align-content: start;
+
+  > * { grid-column: 1 / -1; }
+  > .card-icon { grid-column: 1; grid-row: 1; margin-bottom: 0; }
+  > .card-icon + * { grid-column: 2; grid-row: 1; margin-bottom: 0; }
+}
+
+// ---- Highlighted card ------------------------------------------------------
+// `::: {.card .highlight}` — the "this one" card: accent-tinted fill, full
+// accent border, and a soft accent halo (the box's own shadow isn't clipped by
+// its `overflow: hidden`, only its children are).
+.reveal .card.highlight {
+  background-color: color-mix(in srgb, var(--lexis-card-accent) 12%, #{$color-white});
+  --lexis-card-ring: var(--lexis-card-accent);
+  box-shadow:
+    0 0 0 2px var(--lexis-card-ring),
+    0 0 0 0.28em color-mix(in srgb, var(--lexis-card-accent) 20%, transparent);
+}
+// The tile inverts on a highlighted card — solid accent, so whatever is in it
+// (glyph, emoji, masked SVG) has to flip to white to stay visible.
+.reveal .card.highlight .card-icon {
+  color: $color-white;
+  background-color: var(--lexis-card-accent);
+}
+// The card is already accent-tinted, so the chip's usual tint would vanish into
+// it — go the other way and lift it toward white.
+.reveal .card.highlight .tag {
+  background-color: color-mix(in srgb, var(--lexis-card-accent) 22%, #{$color-white});
+}
+.reveal .card.highlight.tint .card-icon::after { background-color: $color-white; }
+
+// ---- Cards on inverse / dark slides ---------------------------------------
+// Same accent, mixed toward black instead of white. The heading needs `.card`
+// in its selector to out-specify the `.inverse` block's blanket white headings.
+.reveal section.inverse .card,
+.reveal .inverse .card {
+  color: $color-white;
+  background-color: color-mix(in srgb, var(--lexis-card-accent) 8%, #{$color-black});
+  --lexis-card-ring: color-mix(in srgb, var(--lexis-card-accent) 50%, #{$color-black});
+
+  .card-icon {
+    background-color: color-mix(in srgb, var(--lexis-card-accent) 22%, #{$color-black});
+  }
+  .tag {
+    background-color: color-mix(in srgb, var(--lexis-card-accent) 22%, #{$color-black});
+    color: color-mix(in srgb, var(--lexis-card-accent) 45%, #{$color-white});
+  }
+}
+.reveal section.inverse .card,
+.reveal .inverse .card {
+  h1, h2, h3, h4, h5, h6,
+  .h1, .h2, .h3, .h4, .h5, .h6 {
+    color: color-mix(in srgb, var(--lexis-card-accent) 60%, #{$color-white});
+  }
+}
+.reveal section.inverse .card.highlight,
+.reveal .inverse .card.highlight {
+  background-color: color-mix(in srgb, var(--lexis-card-accent) 20%, #{$color-black});
+}
+// Solid accent tile, same as on a light slide. Stated explicitly because the
+// generic inverse tile rule above matches at equal specificity and would
+// otherwise win this on source order alone.
+.reveal section.inverse .card.highlight .card-icon,
+.reveal .inverse .card.highlight .card-icon {
+  color: $color-white;
+  background-color: var(--lexis-card-accent);
 }
 
 // ===========================================================================

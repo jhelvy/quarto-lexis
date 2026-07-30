@@ -2216,6 +2216,7 @@ vertical-align: -.125em;
   <li><a href="#slide-modifiers" id="toc-slide-modifiers" class="nav-link" data-scroll-target="#slide-modifiers">Slide modifiers</a></li>
   <li><a href="#inline-text-styling" id="toc-inline-text-styling" class="nav-link" data-scroll-target="#inline-text-styling">Inline text styling</a></li>
   <li><a href="#columns" id="toc-columns" class="nav-link" data-scroll-target="#columns">Columns</a></li>
+  <li><a href="#cards" id="toc-cards" class="nav-link" data-scroll-target="#cards">Cards</a></li>
   <li><a href="#images" id="toc-images" class="nav-link" data-scroll-target="#images">Images</a></li>
   <li><a href="#panels-tabs" id="toc-panels-tabs" class="nav-link" data-scroll-target="#panels-tabs">Panels / tabs</a></li>
   <li><a href="#incremental-content" id="toc-incremental-content" class="nav-link" data-scroll-target="#incremental-content">Incremental content</a></li>
@@ -2308,7 +2309,7 @@ border-radius: 4px;
 <section id="by-john-paul-helveston" class="level2">
 <h2 class="anchored" data-anchor-id="by-john-paul-helveston">by John Paul Helveston</h2>
 <p>Written: July 08 2026</p>
-<p>Updated: July 28 2026</p>
+<p>Updated: July 30 2026</p>
 <p>λέξις (lexis) is a <strong>template</strong> for making slides with <a href="https://quarto.org">Quarto</a>’s <a href="https://quarto.org/docs/presentations/revealjs/">reveal.js</a> format. It is a port of the original <a href="https://github.com/jhelvy/lexis">lexis xaringan theme</a>, and it preserves that theme’s authoring conventions: <strong>every <code>---</code> starts a new slide</strong>, headings are just <em>text sizes within</em> a slide, and slide modifiers like <code>inverse</code> / <code>center</code> / <code>middle</code> are short declarative shortcodes.</p>
 <p>It also adds a <strong>slide grid</strong> that reveal.js doesn’t have. Press <code>o</code> and, instead of reveal’s single sideways row of slides, you get xaringan’s tile view: a scrollable grid of thumbnails you can spin through with the mouse wheel or the arrow keys, highlighting whatever is selected. Click a slide or press <code>Enter</code> to jump to it.</p>
 <p>It has a light gray background and uses <a href="https://fonts.google.com/specimen/Fira+Sans+Condensed">Fira Sans Condensed</a> for headers, <a href="https://fonts.google.com/specimen/Inter">Inter</a> for body text, <a href="https://fonts.google.com/specimen/Lobster+Two">Lobster Two</a> for fancy text, and <a href="https://developer.apple.com/fonts/">SFMono-Regular</a> for mono text (i.e. code). The theme copies ideas from several other themes, most notably from <a href="https://alison.rbind.io/">Allison Hill</a>’s xaringan <a href="https://github.com/rstudio-education/arm-workshop-rsc2019">workshop</a>.</p>
@@ -2439,12 +2440,107 @@ border-radius: 4px;
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><code>width</code> takes any percentage, so there is no fixed set of splits to remember (this replaces xaringan’s <code>.leftcol55</code>, <code>.rightcol70</code>, <code>.cols3</code>, and friends). You can also set <code>gap=&quot;3em&quot;</code> or <code>valign=&quot;middle&quot;</code> on any <code>.col</code> in a row and it applies to the whole row.</p>
 </section>
+<section id="cards" class="level3">
+<h3 class="anchored" data-anchor-id="cards">Cards</h3>
+<p>For a grid of icon-and-text boxes, write consecutive <code>::: {.card}</code> divs — same deal as <code>.col</code>, no wrapper:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>::: {.card .icon-left color=&quot;dodgerblue&quot;}</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>{{&lt; fa map &gt;}}</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">### Plan</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>Make a plan before doing big work.</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">read-only</span><span class="co">]</span>{.tag}</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>::: {.card .icon-left color=&quot;orange&quot;}</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>{{&lt; fa bolt &gt;}}</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="fu">### Auto</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>Approves everything.</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">use with care</span><span class="co">]</span>{.tag}</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Up to four cards go in one row; more wrap into a balanced grid. Set <code>cols=&quot;2&quot;</code> (or any number) on any card in the run to say it yourself, and <code>gap=</code> for the gutter.</p>
+<p><strong>An icon on the card’s first line becomes the icon tile</strong> — and it can come from any icon library, because lexis sees it only after the shortcode has already expanded: <code>{{&lt; fa map &gt;}}</code> (Font Awesome), <code>{{&lt; bi map &gt;}}</code> (Bootstrap Icons), <code>{{&lt; iconify mdi:map &gt;}}</code>, <code>`&lt;svg aria-hidden=&quot;true&quot; role=&quot;img&quot; viewBox=&quot;0 0 576 512&quot; style=&quot;height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:currentColor;overflow:visible;position:relative;&quot;&gt;&lt;path d=&quot;M565.6 36.2C572.1 40.7 576 48.1 576 56V392c0 10-6.2 18.9-15.5 22.4l-168 64c-5.2 2-10.9 2.1-16.1 .3L192.5 417.5l-160 61c-7.4 2.8-15.7 1.8-22.2-2.7S0 463.9 0 456V120c0-10 6.1-18.9 15.5-22.4l168-64c5.2-2 10.9-2.1 16.1-.3L383.5 94.5l160-61c7.4-2.8 15.7-1.8 22.2 2.7zM48 136.5V421.2l120-45.7V90.8L48 136.5zM360 422.7V137.3l-144-48V374.7l144 48zm48-1.5l120-45.7V90.8L408 136.5V421.2z&quot;/&gt;&lt;/svg&gt;`{=html}</code>, an emoji, or <code>![](images/icons/map.svg)</code>. Icon <em>fonts</em> take the card’s accent color automatically. The starter template ships the <a href="https://github.com/quarto-ext/fontawesome">fontawesome</a> extension, so <code>{{&lt; fa &gt;}}</code> works in a new deck with nothing to install.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Attribute</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>icon=</code></td>
+<td>Shorthand for an image file or an emoji, instead of a first line</td>
+</tr>
+<tr class="even">
+<td><code>image=</code></td>
+<td>Cropped photo band across the top of the card</td>
+</tr>
+<tr class="odd">
+<td><code>color=</code></td>
+<td>Accent color: a palette name (<code>green</code>) or any CSS color</td>
+</tr>
+<tr class="even">
+<td><code>badge=</code></td>
+<td>Small accent flag in the top-right corner</td>
+</tr>
+<tr class="odd">
+<td><code>cols=</code></td>
+<td>Cards per row</td>
+</tr>
+<tr class="even">
+<td><code>gap=</code></td>
+<td>Gutter between cards</td>
+</tr>
+</tbody>
+</table>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Class</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>.icon-left</code></td>
+<td>Icon beside the heading instead of above it</td>
+</tr>
+<tr class="even">
+<td><code>.tint</code></td>
+<td>Paint the accent color through an SVG icon <em>file</em></td>
+</tr>
+<tr class="odd">
+<td><code>.highlight</code></td>
+<td>Accent fill and halo — “this one”</td>
+</tr>
+<tr class="even">
+<td><code>.center</code></td>
+<td>Center the card’s contents</td>
+</tr>
+<tr class="odd">
+<td><code>.fragment</code></td>
+<td>Reveal this card on its own click</td>
+</tr>
+</tbody>
+</table>
+<p>One <code>color=</code> drives the whole box: heading, icon tile, border, chip, badge. The <code>[text]{.tag}</code> chip works anywhere on a slide, and inside a card it picks up that accent and sits on the card’s bottom edge, so a row of cards lines its chips up however much prose each one has.</p>
+<p><code>.tint</code> is for icon <em>files</em>: it lets one set of plain line-art SVGs serve a whole deck, each card painting its own accent through the file instead of showing the file’s colors. Icon-font glyphs don’t need it — they take the accent on their own. Everything is sized in <code>em</code>, so wrapping a grid in <code>::: {.font80}</code> scales the boxes, tiles, and chips together.</p>
+</section>
 <section id="images" class="level3">
 <h3 class="anchored" data-anchor-id="images">Images</h3>
 <p>Wrap an image in a treatment div:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>::: {.border}</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/photo.jpg)</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>::: {.border}</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/photo.jpg)</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Available treatments are <code>.border</code> <code>.borderthick</code> <code>.whiteborder</code> <code>.whiteborderthick</code> <code>.polaroid</code> <code>.circle</code> <code>.thumbnail</code> <code>.noborder</code> (the default is no border). Each one works the same way around a rendered plot — wrap the code cell instead of the <code>![]()</code>.</p>
 </section>
 <section id="panels-tabs" class="level3">
@@ -2454,34 +2550,34 @@ border-radius: 4px;
 <section id="incremental-content" class="level3">
 <h3 class="anchored" data-anchor-id="incremental-content">Incremental content</h3>
 <p><code>. . .</code> on its own line is xaringan’s <code>--</code>: everything after it on the slide arrives on the next click. Use it as many times as you want steps.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Findings</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>The headline number.</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>. . .</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu"># But look closer</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>The caveat.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Findings</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>The headline number.</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>. . .</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="fu"># But look closer</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>The caveat.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Headings step just like anything else, since in lexis they’re only text. For finer control, <code>::: {.incremental}</code> around a list steps through its items, and <code>::: {.fragment}</code> reveals one specific block.</p>
 </section>
 <section id="title-slide" class="level3">
 <h3 class="anchored" data-anchor-id="title-slide">Title slide</h3>
 <p>There is no auto-generated title slide. You author it like any other slide, using Quarto’s built-in <code>meta</code> shortcode to pull values from your YAML front matter instead of retyping them:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>{{&lt; inverse &gt;}}</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>{{&lt; center &gt;}}</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>{{&lt; middle &gt;}}</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>{{&lt; no-slide-number &gt;}}</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="fu"># {{&lt; meta title &gt;}}</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="fu">## [{{&lt; meta subtitle &gt;}}]{.fancy}</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">{{&lt; meta author &gt;}}</span><span class="co">]</span>{.large}</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>{{&lt; meta date &gt;}}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>{{&lt; inverse &gt;}}</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>{{&lt; center &gt;}}</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>{{&lt; middle &gt;}}</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>{{&lt; no-slide-number &gt;}}</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu"># {{&lt; meta title &gt;}}</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="fu">## [{{&lt; meta subtitle &gt;}}]{.fancy}</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">{{&lt; meta author &gt;}}</span><span class="co">]</span>{.large}</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>{{&lt; meta date &gt;}}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Drop any line you don’t need and restyle the rest — it’s just markdown.</p>
 </section>
 <section id="footers" class="level3">
@@ -2491,9 +2587,9 @@ border-radius: 4px;
 <section id="code-line-highlighting" class="level3">
 <h3 class="anchored" data-anchor-id="code-line-highlighting">Code line highlighting</h3>
 <p>xaringan’s trailing <code>#&lt;&lt;</code> comment becomes the <code>code-line-numbers</code> cell option:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-line-numbers: &quot;4,5&quot;</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-line-numbers: &quot;4,5&quot;</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="presenting" class="level3">
 <h3 class="anchored" data-anchor-id="presenting">Presenting</h3>
@@ -2547,7 +2643,7 @@ border-radius: 4px;
 <li><strong>A deck created from the template</strong> — both <code>quarto use template jhelvy/quarto-lexis</code> and the zip download include <code>.claude/skills/</code> alongside the extension, so every new deck comes with the skills and Claude picks them up when you open that folder.</li>
 </ul>
 <p>To use them across <strong>all</strong> your decks regardless of how they were made, copy the folders into your user-level skills once:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="at">-r</span> .claude/skills/lexis .claude/skills/lexis-clean ~/.claude/skills/</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="at">-r</span> .claude/skills/lexis .claude/skills/lexis-clean ~/.claude/skills/</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Each skill is a single self-contained <code>SKILL.md</code> — nothing to build or install. They’re only relevant if you use Claude Code; if you don’t, the <code>.claude/</code> directory is inert and can be deleted.</p>
 </section>
 <section id="notes" class="level2">

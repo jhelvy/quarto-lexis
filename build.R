@@ -20,7 +20,13 @@ file.copy("template.qmd", file.path(out, "lexis-demo.qmd"))
 file.copy("_extensions", out, recursive = TRUE)
 file.copy("images", out, recursive = TRUE)
 file.copy(".claude", out, recursive = TRUE) # Claude Code skills (lexis, lexis-clean)
-unlink(list.files(out, ".DS_Store", recursive = TRUE, all.files = TRUE, full.names = TRUE))
+unlink(list.files(
+  out,
+  ".DS_Store",
+  recursive = TRUE,
+  all.files = TRUE,
+  full.names = TRUE
+))
 
 # Render the demo deck in place
 render_quarto(file.path(out, "lexis-demo.qmd"))
@@ -42,3 +48,9 @@ zip::zip(
 # Landing page (GitHub Pages) and README
 render_quarto("index.qmd")
 render_quarto("README.qmd")
+
+# Save demo slides as pdf
+renderthis::to_pdf(
+  file.path(out, "lexis-demo.html"),
+  file.path(out, "lexis-demo.pdf")
+)

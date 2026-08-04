@@ -553,6 +553,19 @@ $progress-color: $color-blue;
   a:hover, a:focus { color: $color-purple; }
 
   :not(pre) > code { color: $color-orange; background-color: transparent; }
+
+  // Tables go plain on dark slides. The light theme's tan zebra striping
+  // (and tan thead/tfoot) reads as gray blocks behind white text, so drop it
+  // entirely: every row gets the same transparent background and white text.
+  // Only the header hairline survives, lightened from #666 so it's visible
+  // on black. Selectors here out-specify the `.reveal table` block above.
+  table {
+    color: $color-white;
+
+    thead, tfoot, tr, tr:nth-child(even) { background: transparent; }
+    th, td { color: $color-white; }
+    thead th { border-bottom: 1px solid rgba($color-white, .4); }
+  }
 }
 
 // ===========================================================================

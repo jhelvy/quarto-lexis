@@ -33,6 +33,11 @@ contributes:
       # that reloading — or clicking a link and coming back — lands on the slide
       # AND the increment you left off on, instead of resetting the reveals.
       fragment-in-url: true
+      # Open external links in a new tab. Following a link in place unloads the
+      # deck mid-presentation, and coming back re-runs reveal's setup; a new tab
+      # leaves the deck exactly where it was. Internal links (`#/12`, relative
+      # paths) are unaffected, so slide-to-slide navigation still works.
+      link-external-newwindow: true
       # Turns reveal's overview (`o`) into a scrollable grid of thumbnails like
       # the xaringan tile view. The layout is CSS (lexis.scss); this is the
       # handful of measurements CSS can't make on its own. lexis-nav.html

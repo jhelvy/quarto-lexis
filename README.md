@@ -8,7 +8,7 @@
 
 Written: July 08 2026
 
-Updated: July 30 2026
+Updated: August 04 2026
 
 λέξις (lexis) is a **template** for making slides with
 [Quarto](https://quarto.org)’s

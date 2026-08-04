@@ -116,13 +116,19 @@ index.qmd / index.html    # published docs site
 
 ## Presenting / navigation
 
-Both of these are reveal.js defaults that fight how John actually presents, so
-they're overridden in the format rather than per deck:
+These are reveal.js defaults that fight how John actually presents, so they're
+overridden in the format rather than per deck:
 
 - **`fragment-in-url: true`** (`_extension.yml`). Quarto defaults it off, so the
   hash only recorded the slide — click a link, come back, and every increment on
   that slide was collapsed again. With it on the hash is `#/12/0/2` and
   `location.readURL()` restores the fragment too.
+- **`link-external-newwindow: true`** (`_extension.yml`). Following a link in
+  place unloads the deck mid-presentation, and coming back re-runs reveal's
+  setup; a new tab leaves the deck exactly where it was. This is Quarto's own
+  option and it only tags *external* links — `#/12` and relative paths stay in
+  the tab, so slide navigation is unaffected. (`link-external-filter` can widen
+  it to every link; that would break in-deck navigation, so don't.)
 - **`lexis-nav.html` replaces reveal's mouse-wheel handler**, which throttles to
   one step per second (hard-coded `1000` in `js/controllers/pointer.js`) and
   *discards* rather than queues everything inside that second — incremental

@@ -2225,6 +2225,7 @@ vertical-align: -.125em;
   <li><a href="#code-line-highlighting" id="toc-code-line-highlighting" class="nav-link" data-scroll-target="#code-line-highlighting">Code line highlighting</a></li>
   <li><a href="#presenting" id="toc-presenting" class="nav-link" data-scroll-target="#presenting">Presenting</a></li>
   </ul></li>
+  <li><a href="#exporting-to-pdf" id="toc-exporting-to-pdf" class="nav-link" data-scroll-target="#exporting-to-pdf">Exporting to PDF</a></li>
   <li><a href="#claude-code-skill" id="toc-claude-code-skill" class="nav-link" data-scroll-target="#claude-code-skill">Claude Code skill</a></li>
   <li><a href="#notes" id="toc-notes" class="nav-link" data-scroll-target="#notes">Notes</a>
   <ul class="collapse">
@@ -2630,6 +2631,18 @@ border-radius: 4px;
 <p>Leaving the deck and coming back — clicking a link, then hitting the browser’s back button — returns you to the slide <em>and</em> the increment you left off on, rather than resetting the reveals: lexis keeps the fragment index in the URL (<code>#/12/0/2</code>).</p>
 </section>
 </section>
+<section id="exporting-to-pdf" class="level2">
+<h2 class="anchored" data-anchor-id="exporting-to-pdf">Exporting to PDF</h2>
+<p>Press <code>e</code> in a deck to flip reveal.js into PDF export mode, then print from the browser (<code>Cmd</code>/<code>Ctrl</code> + <code>P</code>, “Save as PDF”, background graphics on). You get one page per slide, laid out exactly like the slides on screen.</p>
+<p>To do the whole deck from R without touching the browser:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>renderthis<span class="sc">::</span><span class="fu">to_pdf</span>(<span class="st">&quot;my-slides.html&quot;</span>, <span class="st">&quot;my-slides.pdf&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Point it at the <strong>rendered <code>.html</code></strong>, not the <code>.qmd</code> — it drives headless Chrome through the same export mode.</p>
+<p>Two things necessarily differ from presenting:</p>
+<ul>
+<li>Incremental content (<code>. . .</code>, <code>.fragment</code>) prints fully revealed, so nothing is missing from the page.</li>
+<li>A <code>::: {.panel-tabset}</code> prints only the tab that’s open. Put anything that has to survive the export on its own slide.</li>
+</ul>
+</section>
 <section id="claude-code-skill" class="level2">
 <h2 class="anchored" data-anchor-id="claude-code-skill">Claude Code skill</h2>
 <p>The repo ships two <strong>Claude Code skills</strong> in <code>.claude/skills/</code>:</p>
@@ -2643,7 +2656,7 @@ border-radius: 4px;
 <li><strong>A deck created from the template</strong> — both <code>quarto use template jhelvy/quarto-lexis</code> and the zip download include <code>.claude/skills/</code> alongside the extension, so every new deck comes with the skills and Claude picks them up when you open that folder.</li>
 </ul>
 <p>To use them across <strong>all</strong> your decks regardless of how they were made, copy the folders into your user-level skills once:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="at">-r</span> .claude/skills/lexis .claude/skills/lexis-clean ~/.claude/skills/</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="at">-r</span> .claude/skills/lexis .claude/skills/lexis-clean ~/.claude/skills/</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Each skill is a single self-contained <code>SKILL.md</code> — nothing to build or install. They’re only relevant if you use Claude Code; if you don’t, the <code>.claude/</code> directory is inert and can be deleted.</p>
 </section>
 <section id="notes" class="level2">

@@ -114,6 +114,49 @@ index.qmd / index.html    # published docs site
   looks intermittent. `--execute-daemon-restart` does not help while the preview
   is up.
 
+## PDF export
+
+`renderthis::to_pdf()` (what `build.R` runs), `pagedown::chrome_print()`, and the
+`e` shortcut all end up in the same place: reveal's **print view**, reached by
+`?print-pdf` on the URL. pagedown already navigates there for you, so a
+bad-looking PDF is never a missing `?print-pdf` — it's the theme. The print view
+doesn't print the deck as it stands, it **rebuilds the DOM**: every leaf
+`<section>` is lifted out of `.slides` into its own `div.pdf-page`, one per page,
+stacked in a single tall column, and `html` gets `reveal-print print-pdf`. Five
+things lexis relies on broke in that rebuild; all five fixes live in the
+`html.print-pdf` block at the bottom of `lexis.scss`, each commented with what it
+looked like when broken. The big ones:
+
+- **`.pdf-page`'s background is copied off `.reveal-viewport`** by reveal at the
+  moment the print view activates — and our viewport is the *gray letterbox*, so
+  every light slide printed on #696969. On paper there's no letterbox (the page
+  IS the card), so the print block repaints the viewport with `$body-bg` and
+  pins `--lexis-lb-x/y` to 0.
+- **reveal zeroes section padding** (`html.reveal-print .reveal .slides section
+  { padding: 0 !important }`) and forces `display: block !important`, which
+  killed the xaringan insets and `.middle`'s flex column. Both are restored with
+  `!important`; the winning specificity comes from `.pdf-page` being one class
+  more than reveal's selector.
+- **reveal vertically offsets slides it thinks are "centered"** by writing an
+  inline `top` — and it reads the `center` CLASS, which in lexis means
+  *horizontal* centering. Hence `top: 0 !important` on every printed section.
+- **Anything keyed on "the current slide" mis-fires**, because print marks every
+  section `.present` and mirrors state onto `.reveal-viewport` once, forever.
+  That silently broke both slide-number rules (`{{< no-slide-number >}}` on the
+  title slide blanked all 35 pages; one `.inverse` slide turned every number
+  white). They're re-decided per `.pdf-page` with `:has()`. Watch for this in
+  any future rule that uses `.present` or a `data-state` mirror.
+- `pdf-max-pages-per-slide: 1` in `_extension.yml` keeps it one page per slide.
+  Reveal otherwise spills an over-long slide onto a second page, but lexis
+  *clips* that overflow on screen, so the extra page showed content the
+  presenter never sees.
+
+Verified by rendering `lexis-template/lexis-demo.qmd` and diffing the PDF against
+headless screenshots of the same slides at 1600x900. To inspect the print DOM,
+serve the folder and load `lexis-demo.html?print-pdf` (chromote's
+`CSS.getMatchedStylesForNode` is how the `padding: 0` culprit was found —
+computed styles alone just say "0px").
+
 ## Presenting / navigation
 
 These are reveal.js defaults that fight how John actually presents, so they're

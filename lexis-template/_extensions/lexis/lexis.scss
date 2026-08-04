@@ -1202,3 +1202,104 @@ $progress-color: $color-blue;
 .reveal .progress {
   color: $progress-color;
 }
+
+// ===========================================================================
+// PDF EXPORT (`?print-pdf`)
+//
+// This is the mode behind every route to a PDF: the `e` shortcut, the browser's
+// own Print dialog on a `?print-pdf` URL, and `renderthis::to_pdf()` /
+// `pagedown::chrome_print()` (which navigate to `?print-pdf` for you before
+// printing — so the fix for a bad-looking PDF lives HERE, not in the build
+// script).
+//
+// reveal doesn't print the deck as it stands; it REBUILDS the DOM. Every leaf
+// <section> is lifted out of `.slides` and re-parented into its own
+// `div.pdf-page` — one PDF page each, stacked in a single tall column — and
+// `html` picks up `reveal-print print-pdf`. Three things lexis relies on are
+// casualties of that rebuild, and all three were visible in the exported PDF.
+// ===========================================================================
+html.print-pdf {
+
+  // ---- 1. The page color ---------------------------------------------------
+  // reveal paints each `.pdf-page` with an inline `background` COPIED from the
+  // computed background of `.reveal-viewport` at the moment the print view
+  // activates. On screen that element is the GRAY LETTERBOX around the card, so
+  // out of the box every light slide printed on a #696969 page — the single
+  // biggest reason the export looked nothing like Chrome. On paper there is no
+  // letterbox (the page IS the 1600x900 card), so hand it the card color and
+  // let `.inverse` / `{{< bg-color >}}` slides paint over it as they always do.
+  .reveal-viewport {
+    background-color: $body-bg;
+
+    // Same reason: the letterbox band is zero here. Its screen value is derived
+    // from `vw`/`vh`, which during an export are whatever the printing browser's
+    // viewport happened to be — pin it instead of letting a stale band shove the
+    // footer bar and the slide number off the edge of the page.
+    --lexis-lb-x: 0px;
+    --lexis-lb-y: 0px;
+  }
+
+  // ---- 2. The content insets -----------------------------------------------
+  // reveal's print stylesheet zeroes every section's padding with `!important`
+  // (`html.reveal-print .reveal .slides section { padding: 0 !important }`),
+  // which threw away the xaringan insets set way above and ran every headline
+  // into the top-left corner of the page. Restore them — `!important` is
+  // REQUIRED to beat reveal's own.
+  .reveal .slides section:not(.stack) {
+    padding: 45px 90px 60px !important;
+  }
+
+  // ---- 3. The vertical offset ----------------------------------------------
+  // reveal vertically centers slides it considers "centered" by writing an
+  // inline `top` on the section — and the flag it reads is the `center` CLASS.
+  // In lexis (like xaringan) `center` means HORIZONTAL centering and
+  // `{{< middle >}}` does the vertical kind itself, so that offset is pure
+  // damage: the title slide printed shoved a third of a page down, its black
+  // card hanging off the bottom edge with a gray band above it. Pin every
+  // section to the top of its page and let `.middle` center exactly as on
+  // screen. (`.pdf-page > section` only exists in this mode, so this can't
+  // leak into the deck.)
+  .reveal .slides .pdf-page > section {
+    top: 0 !important;
+  }
+
+  // ---- 4. `{{< middle >}}` -------------------------------------------------
+  // ...and now that the section is pinned to the top, `.middle` has to do the
+  // vertical centering itself — which it can't, because the same reveal print
+  // rule that zeroed the padding also forces `display: block !important` onto
+  // every section, collapsing the flex column `.middle` is built on. Both
+  // declarations are `!important`, so this is decided on specificity: reveal's
+  // selector carries three classes, and `.pdf-page` is the fourth here, which
+  // is exactly why this rule is written against it.
+  .reveal .slides .pdf-page > section.middle {
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  // ---- 5. The slide number -------------------------------------------------
+  // reveal doesn't print the live slide number; it builds a fresh
+  // `.slide-number-pdf` inside every `.pdf-page`. Two lexis rules written
+  // against "the CURRENT slide" mis-fire on those, because in print every slide
+  // is current at once:
+  //   * `{{< no-slide-number >}}` hides the number through the
+  //     `no-slide-number` state that reveal mirrors onto `.reveal-viewport`.
+  //     Mirrored once and never cleared here, so that one shortcode on the
+  //     title slide blanked the number on every page of the export.
+  //   * the white-on-dark override keys off `:has(section.present.inverse)`,
+  //     and the print view marks EVERY section `.present`, so a single inverse
+  //     slide anywhere turned all of them white — invisible on the light pages.
+  // Decide both per page instead. `.pdf-page` is the extra class that lets
+  // these outrank the originals, `!important` included.
+  .reveal .slides .pdf-page > .slide-number-pdf {
+    display: block !important;
+    color: $color-gray;
+  }
+  .reveal .slides .pdf-page:has(> section.inverse) > .slide-number-pdf,
+  .reveal .slides .pdf-page:has(> section[data-background-color]) > .slide-number-pdf {
+    color: $color-white;
+  }
+  .reveal .slides .pdf-page:has(> section[data-state~="no-slide-number"]) > .slide-number-pdf {
+    display: none !important;
+  }
+}

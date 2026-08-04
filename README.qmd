@@ -45,6 +45,10 @@ _extensions/lexis/
 template.qmd             # the starter deck: a full port of the lexis demo
 ```
 
+## Exporting to PDF
+
+{{< include _pdf.qmd >}}
+
 ## Using with Claude Code
 
 {{< include _claude.qmd >}}

@@ -112,6 +112,10 @@ the arrow keys, press `o` for the slide grid, or open it
 
 {{< include _conventions.qmd >}}
 
+## Exporting to PDF
+
+{{< include _pdf.qmd >}}
+
 ## Claude Code skill
 
 {{< include _claude.qmd >}}

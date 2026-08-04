@@ -377,6 +377,29 @@ index in the URL (`#/12/0/2`).
       lexis-nav.html         # snappier mouse-wheel navigation
     template.qmd             # the starter deck: a full port of the lexis demo
 
+## Exporting to PDF
+
+Press `e` in a deck to flip reveal.js into PDF export mode, then print
+from the browser (`Cmd`/`Ctrl` + `P`, “Save as PDF”, background graphics
+on). You get one page per slide, laid out exactly like the slides on
+screen.
+
+To do the whole deck from R without touching the browser:
+
+``` r
+renderthis::to_pdf("my-slides.html", "my-slides.pdf")
+```
+
+Point it at the **rendered `.html`**, not the `.qmd` — it drives
+headless Chrome through the same export mode.
+
+Two things necessarily differ from presenting:
+
+- Incremental content (`. . .`, `.fragment`) prints fully revealed, so
+  nothing is missing from the page.
+- A `::: {.panel-tabset}` prints only the tab that’s open. Put anything
+  that has to survive the export on its own slide.
+
 ## Using with Claude Code
 
 The repo ships two **Claude Code skills** in `.claude/skills/`:

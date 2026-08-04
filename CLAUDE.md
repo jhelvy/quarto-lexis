@@ -13,7 +13,7 @@ brief.
   text instead of slide breaks — matching xaringan/remark behavior.
 - **Slide modifiers are shortcodes**, not heading attributes, because a
   `---`-delimited slide has no heading to hang attributes on:
-  `{{< inverse >}}`, `{{< center >}}`, `{{< middle >}}`,
+  `{{< inverse >}}`, `{{< center >}}`, `{{< middle >}}`, `{{< tight >}}`,
   `{{< bg-color "#hex" >}}`, `{{< bg-image "path" >}}`,
   `{{< no-slide-number >}}`. A Lua filter (`_extensions/lexis/lexis.lua`)
   splits the doc into slide regions on `HorizontalRule`, finds each
@@ -44,7 +44,7 @@ _extensions/lexis/
                          #  fragment-in-url — see navigation notes below)
   lexis.scss             # theme (fonts, palette, helper classes)
   lexis.lua              # slide-modifier filter — the core mechanism
-  lexis-shortcodes.lua   # inverse / center / middle / bg-color / bg-image / no-slide-number
+  lexis-shortcodes.lua   # inverse / center / middle / tight / bg-color / bg-image / no-slide-number
   title-slide.html       # empty partial — suppresses Quarto's built-in title slide
   lexis-overview.html    # include-in-header script: xaringan tile grid for `o`
                          # (the layout is CSS in lexis.scss; this is the few

@@ -511,6 +511,22 @@ $progress-color: $color-blue;
   border: none;
 }
 
+// Wide printed output (e.g. head() of a wide data frame with options(width = 250))
+// must scroll sideways inside its gray box rather than wrap or get clipped. The
+// <pre> is the scroll container; the inner <code> must NOT wrap so the line
+// actually overflows and triggers the scrollbar.
+.reveal .cell-output pre,
+.reveal .cell-output-stdout pre,
+.reveal pre.text-output {
+  overflow-x: auto;
+}
+.reveal .cell-output pre code,
+.reveal .cell-output-stdout pre code,
+.reveal pre.text-output code {
+  white-space: pre;
+  word-wrap: normal;
+}
+
 // ---- Blockquotes ----------------------------------------------------------
 .reveal blockquote {
   width: auto;
@@ -593,6 +609,22 @@ $progress-color: $color-blue;
     > .right  { display: block; text-align: right; }
   }
 }
+
+// ---- Breathing room below a slide title -----------------------------------
+// The default gap under a slide title runs tight; open it up so body content
+// doesn't crowd the header (replaces hand-adding `<br>` after titles). Covers
+// title levels h1-h3. Only DIRECT-child titles are targeted, so column
+// sub-headings (inside `::: {.col}`) are left alone. The amount lives in the
+// `--title-gap` custom property, which inherits down the slide, so any slide can
+// retune it without a specificity fight — `{{< tight >}}` opts a slide out. The
+// gap holds on centered ({{< middle >}}) section slides too. To add EVEN MORE
+// space on a slide, an explicit `<br>` after the title still stacks on top.
+.reveal .slides section > h1,
+.reveal .slides section > h2,
+.reveal .slides section > h3 {
+  margin-bottom: var(--title-gap, 0.9em);
+}
+.reveal .slides section.tight { --title-gap: 0; }
 
 // ---- Black border around plot output --------------------------------------
 // The old deck wrapped rendered ggplots in `.blackborder[...]`. Alias of
@@ -1301,5 +1333,20 @@ html.print-pdf {
   }
   .reveal .slides .pdf-page:has(> section[data-state~="no-slide-number"]) > .slide-number-pdf {
     display: none !important;
+  }
+
+  // ---- 6. Tall images near the page bottom ---------------------------------
+  // Chrome's print-to-PDF rasterizer silently DROPS any image whose bottom edge
+  // lands in roughly the bottom ~15% of the page. Verified headlessly against a
+  // real export: the identical image prints when positioned higher and vanishes
+  // once its bottom is pushed past ~780px of the 900px page — independent of the
+  // background, the ICC profile, and z-order (it renders fine on screen and even
+  // in print-media emulation; only the PDF rasterizer culls it). The usual way
+  // into that zone is a title stacked above a tall, centered image, e.g. a
+  // {{< bg-color >}} hero slide. Cap image height in the export so the bottom
+  // edge stays clear of the cull band; the live deck is untouched. 600px keeps a
+  // title+image slide's image bottom around 748px, with margin below the cliff.
+  .reveal .slides section img {
+    max-height: 600px !important;
   }
 }

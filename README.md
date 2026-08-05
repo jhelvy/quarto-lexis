@@ -8,7 +8,7 @@
 
 Written: July 08 2026
 
-Updated: August 04 2026
+Updated: August 05 2026
 
 λέξις (lexis) is a **template** for making slides with
 [Quarto](https://quarto.org)’s
@@ -118,6 +118,7 @@ They replace xaringan’s `class:` / `background-*` lines:
 | `{{< inverse >}}` | Dark slide: `#121212` background, white text, orange inline code |
 | `{{< center >}}` | Center all content horizontally |
 | `{{< middle >}}` | Center all content vertically |
+| `{{< tight >}}` | Remove the automatic gap beneath this slide’s title |
 | `{{< bg-color "#909099" >}}` | Full-slide background color |
 | `{{< bg-image "images/x.jpg" >}}` | Full-slide background image (optional `size=` / `position=`) |
 | `{{< no-slide-number >}}` | Hide the slide number on this slide |
@@ -131,6 +132,16 @@ They stack, so a section-divider slide is just:
 
 # Section title
 ```
+
+### Title spacing
+
+An `h1`/`h2` slide title carries an automatic gap beneath it, so body
+content doesn’t crowd the header — no more hand-adding `<br>` after a
+title. Only a slide’s *direct* title is spaced; sub-headings inside a
+column are left alone. Vertically centered slides (`{{< middle >}}`)
+drop the gap so a section title stays tight and centered, and
+`{{< tight >}}` opts any one slide out of it. To add *even more* room,
+an explicit `<br>` after the title still stacks on top.
 
 ### Inline text styling
 
@@ -330,6 +341,13 @@ option:
 ```
 ````
 
+### Wide output
+
+Printed output wider than the slide — a wide data frame, or anything
+under `options(width = 250)` — scrolls sideways inside its gray box
+instead of wrapping or spilling off the edge. Nothing to author; it
+applies to any code-cell output.
+
 ### Presenting
 
 Press `o` for the slide grid — lexis replaces reveal.js’s single
@@ -393,12 +411,17 @@ renderthis::to_pdf("my-slides.html", "my-slides.pdf")
 Point it at the **rendered `.html`**, not the `.qmd` — it drives
 headless Chrome through the same export mode.
 
-Two things necessarily differ from presenting:
+A few things necessarily differ from presenting:
 
 - Incremental content (`. . .`, `.fragment`) prints fully revealed, so
   nothing is missing from the page.
 - A `::: {.panel-tabset}` prints only the tab that’s open. Put anything
   that has to survive the export on its own slide.
+- Very tall images render slightly shorter than on screen. Chrome’s PDF
+  rasterizer silently drops any image whose bottom edge reaches the last
+  ~15% of the page (a title above a tall, centered image is the usual
+  trigger), so lexis caps image height in the export to keep them clear
+  of that band — the image prints reliably instead of vanishing.
 
 ## Using with Claude Code
 

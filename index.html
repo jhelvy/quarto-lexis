@@ -2214,6 +2214,7 @@ vertical-align: -.125em;
   <ul class="collapse">
   <li><a href="#slides" id="toc-slides" class="nav-link" data-scroll-target="#slides">Slides</a></li>
   <li><a href="#slide-modifiers" id="toc-slide-modifiers" class="nav-link" data-scroll-target="#slide-modifiers">Slide modifiers</a></li>
+  <li><a href="#title-spacing" id="toc-title-spacing" class="nav-link" data-scroll-target="#title-spacing">Title spacing</a></li>
   <li><a href="#inline-text-styling" id="toc-inline-text-styling" class="nav-link" data-scroll-target="#inline-text-styling">Inline text styling</a></li>
   <li><a href="#columns" id="toc-columns" class="nav-link" data-scroll-target="#columns">Columns</a></li>
   <li><a href="#cards" id="toc-cards" class="nav-link" data-scroll-target="#cards">Cards</a></li>
@@ -2223,6 +2224,7 @@ vertical-align: -.125em;
   <li><a href="#title-slide" id="toc-title-slide" class="nav-link" data-scroll-target="#title-slide">Title slide</a></li>
   <li><a href="#footers" id="toc-footers" class="nav-link" data-scroll-target="#footers">Footers</a></li>
   <li><a href="#code-line-highlighting" id="toc-code-line-highlighting" class="nav-link" data-scroll-target="#code-line-highlighting">Code line highlighting</a></li>
+  <li><a href="#wide-output" id="toc-wide-output" class="nav-link" data-scroll-target="#wide-output">Wide output</a></li>
   <li><a href="#presenting" id="toc-presenting" class="nav-link" data-scroll-target="#presenting">Presenting</a></li>
   </ul></li>
   <li><a href="#exporting-to-pdf" id="toc-exporting-to-pdf" class="nav-link" data-scroll-target="#exporting-to-pdf">Exporting to PDF</a></li>
@@ -2310,7 +2312,7 @@ border-radius: 4px;
 <section id="by-john-paul-helveston" class="level2">
 <h2 class="anchored" data-anchor-id="by-john-paul-helveston">by John Paul Helveston</h2>
 <p>Written: July 08 2026</p>
-<p>Updated: August 04 2026</p>
+<p>Updated: August 05 2026</p>
 <p>λέξις (lexis) is a <strong>template</strong> for making slides with <a href="https://quarto.org">Quarto</a>’s <a href="https://quarto.org/docs/presentations/revealjs/">reveal.js</a> format. It is a port of the original <a href="https://github.com/jhelvy/lexis">lexis xaringan theme</a>, and it preserves that theme’s authoring conventions: <strong>every <code>---</code> starts a new slide</strong>, headings are just <em>text sizes within</em> a slide, and slide modifiers like <code>inverse</code> / <code>center</code> / <code>middle</code> are short declarative shortcodes.</p>
 <p>It also adds a <strong>slide grid</strong> that reveal.js doesn’t have. Press <code>o</code> and, instead of reveal’s single sideways row of slides, you get xaringan’s tile view: a scrollable grid of thumbnails you can spin through with the mouse wheel or the arrow keys, highlighting whatever is selected. Click a slide or press <code>Enter</code> to jump to it.</p>
 <p>It has a light gray background and uses <a href="https://fonts.google.com/specimen/Fira+Sans+Condensed">Fira Sans Condensed</a> for headers, <a href="https://fonts.google.com/specimen/Inter">Inter</a> for body text, <a href="https://fonts.google.com/specimen/Lobster+Two">Lobster Two</a> for fancy text, and <a href="https://developer.apple.com/fonts/">SFMono-Regular</a> for mono text (i.e. code). The theme copies ideas from several other themes, most notably from <a href="https://alison.rbind.io/">Allison Hill</a>’s xaringan <a href="https://github.com/rstudio-education/arm-workshop-rsc2019">workshop</a>.</p>
@@ -2392,14 +2394,18 @@ border-radius: 4px;
 <td>Center all content vertically</td>
 </tr>
 <tr class="even">
+<td><code>{{&lt; tight &gt;}}</code></td>
+<td>Remove the automatic gap beneath this slide’s title</td>
+</tr>
+<tr class="odd">
 <td><code>{{&lt; bg-color &quot;#909099&quot; &gt;}}</code></td>
 <td>Full-slide background color</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>{{&lt; bg-image &quot;images/x.jpg&quot; &gt;}}</code></td>
 <td>Full-slide background image (optional <code>size=</code> / <code>position=</code>)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>{{&lt; no-slide-number &gt;}}</code></td>
 <td>Hide the slide number on this slide</td>
 </tr>
@@ -2411,6 +2417,10 @@ border-radius: 4px;
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>{{&lt; middle &gt;}}</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu"># Section title</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="title-spacing" class="level3">
+<h3 class="anchored" data-anchor-id="title-spacing">Title spacing</h3>
+<p>An <code>h1</code>/<code>h2</code> slide title carries an automatic gap beneath it, so body content doesn’t crowd the header — no more hand-adding <code>&lt;br&gt;</code> after a title. Only a slide’s <em>direct</em> title is spaced; sub-headings inside a column are left alone. Vertically centered slides (<code>{{&lt; middle &gt;}}</code>) drop the gap so a section title stays tight and centered, and <code>{{&lt; tight &gt;}}</code> opts any one slide out of it. To add <em>even more</em> room, an explicit <code>&lt;br&gt;</code> after the title still stacks on top.</p>
 </section>
 <section id="inline-text-styling" class="level3">
 <h3 class="anchored" data-anchor-id="inline-text-styling">Inline text styling</h3>
@@ -2592,6 +2602,10 @@ border-radius: 4px;
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-line-numbers: &quot;4,5&quot;</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
+<section id="wide-output" class="level3">
+<h3 class="anchored" data-anchor-id="wide-output">Wide output</h3>
+<p>Printed output wider than the slide — a wide data frame, or anything under <code>options(width = 250)</code> — scrolls sideways inside its gray box instead of wrapping or spilling off the edge. Nothing to author; it applies to any code-cell output.</p>
+</section>
 <section id="presenting" class="level3">
 <h3 class="anchored" data-anchor-id="presenting">Presenting</h3>
 <p>Press <code>o</code> for the slide grid — lexis replaces reveal.js’s single sideways row of slides with xaringan’s tile view, a scrollable grid of thumbnails that opens on wherever you are in the deck.</p>
@@ -2637,10 +2651,11 @@ border-radius: 4px;
 <p>To do the whole deck from R without touching the browser:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>renderthis<span class="sc">::</span><span class="fu">to_pdf</span>(<span class="st">&quot;my-slides.html&quot;</span>, <span class="st">&quot;my-slides.pdf&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Point it at the <strong>rendered <code>.html</code></strong>, not the <code>.qmd</code> — it drives headless Chrome through the same export mode.</p>
-<p>Two things necessarily differ from presenting:</p>
+<p>A few things necessarily differ from presenting:</p>
 <ul>
 <li>Incremental content (<code>. . .</code>, <code>.fragment</code>) prints fully revealed, so nothing is missing from the page.</li>
 <li>A <code>::: {.panel-tabset}</code> prints only the tab that’s open. Put anything that has to survive the export on its own slide.</li>
+<li>Very tall images render slightly shorter than on screen. Chrome’s PDF rasterizer silently drops any image whose bottom edge reaches the last ~15% of the page (a title above a tall, centered image is the usual trigger), so lexis caps image height in the export to keep them clear of that band — the image prints reliably instead of vanishing.</li>
 </ul>
 </section>
 <section id="claude-code-skill" class="level2">

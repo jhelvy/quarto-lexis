@@ -15,7 +15,6 @@ format:
 ---
 
 ```{r setup, include=FALSE}
-library(fontawesome)
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 dateWritten <- format(as.Date('2026-07-08'), format = "%B %d %Y")
 today <- format(Sys.Date(), format = "%B %d %Y")
@@ -99,14 +98,14 @@ the arrow keys, press `o` for the slide grid, or open it
 </div>
 ```
 
-<a href="lexis-template/lexis-template.zip" class="button">`r fa("file-zipper", height = "20px", fill = "white")` Download zip file</a>
-<a href="lexis-template/lexis-demo.qmd" class="button">`r fa("file-code", height = "20px", fill = "white")` View the source</a>
+<a href="lexis-template/lexis-template.zip" class="button">{{< fa file-zipper size=lg >}} Download zip file</a>
+<a href="lexis-template/lexis-demo.qmd" class="button">{{< fa file-code size=lg >}} View the source</a>
 
 ## Installation
 
 {{< include _install.qmd >}}
 
-<a href="lexis-template/lexis-template.zip" class="button">`r fa("file-zipper", height = "20px", fill = "white")` Download zip file</a>
+<a href="lexis-template/lexis-template.zip" class="button">{{< fa file-zipper size=lg >}} Download zip file</a>
 
 ## Authoring conventions
 

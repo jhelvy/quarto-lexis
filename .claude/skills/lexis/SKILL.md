@@ -168,7 +168,6 @@ nothing about them:
 | `{{< fa map >}}` | `quarto-ext/fontawesome` (ships with the template) |
 | `{{< bi map >}}` | `shafayetShafee/bsicons` |
 | `{{< iconify mdi:map >}}` | `mcanouil/quarto-iconify` |
-| `` `r fontawesome::fa("map")` `` | the R package |
 | `🏔️` / `![](images/icons/map.svg)` | nothing |
 
 Icon *fonts* inherit the card's accent color automatically — don't set a color

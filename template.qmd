@@ -43,7 +43,6 @@ conditional.
 #| label: setup
 #| include: false
 library(tidyverse)
-library(fontawesome)
 knitr::opts_chunk$set(
   fig.width = 7.252,
   fig.height = 4,
@@ -914,8 +913,8 @@ ggplot(mtcars, aes(x = mpg, y = hp)) +
 
 ::: {.footer-large}
 ::: {.right}
-[jhelvy.com `r fa("link", fill = "white")`](https://www.jhelvy.com)<br>
-[jph@gwu.edu `r fa("paper-plane", fill = "white")`](mailto:jph@gwu.edu)<br>
-[@jhelvy `r fa("github", fill = "white")`](http://github.com/jhelvy)
+[jhelvy.com [{{< fa link >}}]{.white}](https://www.jhelvy.com)<br>
+[jph@gwu.edu [{{< fa paper-plane >}}]{.white}](mailto:jph@gwu.edu)<br>
+[@jhelvy [{{< fa brands github >}}]{.white}](http://github.com/jhelvy)
 :::
 :::

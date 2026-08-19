@@ -67,8 +67,8 @@ index.qmd / index.html    # published docs site
 ## Notes for future work here
 
 - **Card icons come from the card's first line, not an attribute** — that's what
-  makes every icon library work (`{{< fa >}}`, `{{< bi >}}`, `{{< iconify >}}`,
-  `fa()`) without lexis knowing any of them: the filter runs `post-quarto`, so
+  makes every icon library work (`{{< fa >}}`, `{{< bi >}}`, `{{< iconify >}}`)
+  without lexis knowing any of them: the filter runs `post-quarto`, so
   the shortcode has already expanded to its own markup *and* registered its own
   CSS dependency. Synthesizing `<i class="fa-solid fa-x">` from an `icon=`
   string would skip that registration and render an empty tile. `icon=` stays

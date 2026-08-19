@@ -8,7 +8,7 @@
 
 Written: July 08 2026
 
-Updated: August 06 2026
+Updated: August 19 2026
 
 λέξις (lexis) is a **template** for making slides with
 [Quarto](https://quarto.org)’s
@@ -223,9 +223,9 @@ and `gap=` for the gutter.
 **An icon on the card’s first line becomes the icon tile** — and it can
 come from any icon library, because lexis sees it only after the
 shortcode has already expanded: `{{< fa map >}}` (Font Awesome),
-`{{< bi map >}}` (Bootstrap Icons), `{{< iconify mdi:map >}}`, ``, an
-emoji, or `![](images/icons/map.svg)`. Icon *fonts* take the card’s
-accent color automatically. The starter template ships the
+`{{< bi map >}}` (Bootstrap Icons), `{{< iconify mdi:map >}}`, an emoji,
+or `![](images/icons/map.svg)`. Icon *fonts* take the card’s accent
+color automatically. The starter template ships the
 [fontawesome](https://github.com/quarto-ext/fontawesome) extension, so
 `{{< fa >}}` works in a new deck with nothing to install.
 

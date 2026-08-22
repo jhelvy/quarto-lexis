@@ -61,6 +61,11 @@ _extensions/lexis/
                          # "Handheld portrait" block in lexis.scss); this
                          # re-runs reveal's layout after a flip and remaps
                          # swipes onto the rotated axes
+  lexis-controls.html    # include-after-body script: the bottom-left corner
+                         # controls — home/resume, overview, full screen in a
+                         # collapsible tray, plus the reveal.js-menu hamburger
+                         # ADOPTED into the group (the look is the
+                         # ".lexis-controls" block in lexis.scss)
   lexis-offline-icons.html # include-in-header script: registers the Quarto
                          # mark with the iconify web component locally, so
                          # `{{< quarto >}}` renders with no network

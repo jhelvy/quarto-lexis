@@ -60,6 +60,10 @@ contributes:
       # the "Handheld portrait" block in lexis.scss.
       include-after-body:
         - lexis-orientation.html
+        # The bottom-left corner controls: home, overview, full screen, and the
+        # reveal.js-menu hamburger adopted into the same group. After-body
+        # because it adopts a node the menu plugin builds at runtime.
+        - lexis-controls.html
       # BUILD reveal's edge arrows; lexis.scss then hides them everywhere except
       # a phone held upright, which is the only place they are wanted (tap to
       # advance). Quarto's default is `controls: auto`, which its quarto-support

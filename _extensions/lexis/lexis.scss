@@ -1326,29 +1326,205 @@ body.reveal-viewport {
   bottom: calc(var(--lexis-lb-y) + 28px);
 }
 
-// The reveal.js-menu hamburger button is `position: fixed` against the window —
-// same gray-band problem. Nudge it onto the card. footer.css also re-positions
-// it as `.reveal .slide-menu-button { left; bottom }` (equal specificity, loaded
-// later), so the `.reveal.reveal` bump is REQUIRED here too.
-.reveal.reveal .slide-menu-button {
-  left:   calc(var(--lexis-lb-x) + 22px);
-  bottom: calc(var(--lexis-lb-y) + 18px);
+// ---- Corner controls (the bottom-left button group) ------------------------
+// Built by lexis-controls.html, which appends `.lexis-controls` to <body> and
+// ADOPTS the reveal.js-menu hamburger into it. See that file for the mechanism;
+// this is the look. Bottom to top: the hamburger, an up-arrow handle, and a
+// collapsible tray holding Full screen, Slide overview and Home.
+//
+// Positioned like every other piece of lexis chrome — inset by the letterbox
+// band so it rides the CARD's bottom-left corner, not the window's, and
+// mirroring the slide number's 14px/12px offsets in the opposite corner.
+.lexis-controls {
+  position: fixed;
+  left:   calc(var(--lexis-lb-x) + 14px);
+  bottom: calc(var(--lexis-lb-y) + 12px);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  width: 42px;
+
+  &.is-hidden { display: none; }
 }
-// Recolor the bars to match the slide number (was theme link-blue). The `<a>`
-// color / hover-box come from `.reveal a`, so gray the anchor and kill the blue
-// hover background here...
-.reveal.reveal .slide-menu-button a {
+
+// With a footer bar present, lift clear of it — the same 28px the slide number
+// takes above.
+.reveal:has(> .footer) ~ .lexis-controls {
+  bottom: calc(var(--lexis-lb-y) + 28px);
+}
+
+// The arrow plus its tray: the hover/focus surface that expands the stack. The
+// hamburger sits OUTSIDE it, so hovering the hamburger expands nothing.
+.lexis-controls-flyout {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+// The tray collapses via the grid `0fr` -> `1fr` trick, so the hidden buttons
+// take no space — and no hover area — at all; the inner stack clips inside the
+// row.
+.lexis-controls-tray {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 200ms ease;
+}
+
+.lexis-controls-stack {
+  overflow: hidden;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  // The gap between the tray and the arrow lives INSIDE the stack and only in
+  // the open state: a `0fr` row clamps content but NOT padding, so a constant
+  // padding would leave a phantom 8px hover strip above the arrow while
+  // collapsed — hovering empty space would pop the tray open.
+  padding-bottom: 0;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 160ms ease, transform 200ms ease, padding-bottom 200ms ease;
+}
+
+// Open state. No `:hover` selector here on purpose: hovering is wired in JS
+// (`.is-open`), so that a click on the arrow can genuinely close the tray while
+// the cursor is still over it. A CSS `:hover` rule would force it back open and
+// make the click a no-op. `:focus-within` keeps it open for keyboard users
+// tabbing through the buttons.
+.lexis-controls-flyout:focus-within,
+.lexis-controls-flyout.is-open {
+  .lexis-controls-tray  { grid-template-rows: 1fr; }
+  .lexis-controls-stack { opacity: 1; transform: none; padding-bottom: 8px; }
+  .lexis-controls-arrow svg { transform: rotate(180deg); }
+}
+
+// The shared tile. Quiet at rest — the same gray as the slide number, on a
+// faint tinted surface — and flipping to the deck's link blue with a white
+// glyph on hover, so the group reads as chrome until you reach for it.
+.lexis-ctrl {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  // The adopted plugin button computes content-box (44px with its border), so
+  // pin the box model or that one tile comes out 2px wider than the rest.
+  box-sizing: border-box;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+
+  border: 1px solid rgba(105, 105, 105, 0.28);
+  border-radius: 8px;
+  background: rgba(105, 105, 105, 0.08);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
   color: $color-gray;
-  &:hover, &:focus { color: $color-gray; background: transparent; }
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    color 150ms ease,
+    transform 100ms ease;
+
+  svg {
+    display: block;
+    width: 22px;
+    height: 22px;
+    transition: transform 200ms ease;
+  }
+
+  &:hover {
+    background: $link-color;
+    border-color: $link-color;
+    color: $color-white;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $link-color;
+    outline-offset: 2px;
+  }
+
+  // Momentary press. A transform here is safe: the tile is its own layer and
+  // nothing else in the column moves with it.
+  &:active {
+    transform: scale(0.92);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+  }
 }
-// ...BUT the three bars themselves are not a font glyph — Quarto's reveal-menu
-// integration renders them as a background-image SVG with `$link-color` baked
-// into `fill=`, so `color`/`currentColor` can't reach them. Override the whole
-// image with the identical icon, gray fill. (Beats the theme's
-// `.reveal .slide-menu-button .fa-bars::before` with the `.reveal.reveal` bump.)
-.reveal.reveal .slide-menu-button .fa-bars::before {
-  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(105,105,105)" class="bi bi-list" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg>');
+
+// ---- The hamburger, once it is inside the group ----------------------------
+// The reveal.js-menu plugin ships its button as a `position: fixed` tile in the
+// bottom-left corner of `.reveal`. lexis-controls.html moves the node into
+// `.lexis-controls` and tags it `.lexis-ctrl`, at which point every one of the
+// plugin's positioning rules (all scoped under `.reveal`) stops matching. What
+// is left to do here: neutralize the fixed positioning as a fallback for the
+// blink before the move, and rebuild the glyph.
+//
+// The stock icon is a background-image data URI with `$link-color` baked into
+// its `fill=`, so `currentColor` can never reach it and it cannot follow the
+// hover flip. Replaced with the identical path as a MASK over `currentColor`,
+// which does. The `html` prefix outranks the plugin's own CSS (loaded after
+// this theme).
+html .lexis-controls .slide-menu-button {
+  position: static;
+  left: auto;
+  bottom: auto;
+
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    // `!important`: the deck's global link color (`.reveal a`, itself
+    // `!important`) would otherwise paint the glyph blue. `inherit` follows the
+    // button color, so the hover flip to white keeps working.
+    color: inherit !important;
+    &:hover, &:focus { color: inherit !important; background: transparent; }
+  }
+
+  // Flex-center the glyph: the plugin renders it as an inline-block `::before`
+  // sitting on the `<i>`'s text baseline, which lands it a hair off-center in
+  // the tile. Making the `<i>` a flex box and the `::before` a block takes the
+  // baseline out of the equation.
+  .fa-bars {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  .fa-bars::before {
+    // The plugin's own `::before` rules (which carried the `content`) are all
+    // scoped under `.reveal` and stop matching after the move, so the
+    // pseudo-element is declared from scratch.
+    content: "";
+    display: block;
+    width: 22px;
+    height: 22px;
+    vertical-align: 0;
+    background: currentColor;
+    -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg>');
+    mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg>');
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: 22px 22px;
+    mask-size: 22px 22px;
+  }
 }
+
+// Before the adoption runs — and on any page where it never does — keep the
+// stock button invisible so a stray hamburger never flashes in the corner.
+html .reveal .slide-menu-button { visibility: hidden; }
+
 // reveal's edge arrows are a HANDHELD affordance and nothing else. On a phone
 // they are the only visible way to move through the deck — tap to advance, with
 // nothing to guess at — but on a laptop they are chrome sitting on top of a
@@ -1382,14 +1558,24 @@ body.reveal-viewport {
 .reveal.reveal.has-dark-background .slide-number { color: #fff; }
 .reveal.reveal:has(.slides section.present.inverse) .controls,
 .reveal.reveal.has-dark-background .controls { color: #fff; }
-.reveal:has(.slides section.present.inverse) .slide-menu-button a,
-.reveal.reveal.has-dark-background .slide-menu-button a {
-  color: #fff;
-  &:hover, &:focus { color: #fff; }
-}
-.reveal:has(.slides section.present.inverse) .slide-menu-button .fa-bars::before,
-.reveal.reveal.has-dark-background .slide-menu-button .fa-bars::before {
-  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(255,255,255)" class="bi bi-list" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg>');
+// The corner controls take the same flip. They are a SIBLING of `.reveal` (the
+// script appends them to <body>), hence the `~` combinator. Light glass plus a
+// light glyph keeps them as quiet on a dark card as the gray tile is on a light
+// one; the hover flip to blue is restated because this selector outranks the
+// base `:hover` above.
+.reveal:has(.slides section.present.inverse) ~ .lexis-controls .lexis-ctrl,
+.reveal.has-dark-background ~ .lexis-controls .lexis-ctrl {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.14);
+  color: $color-white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.20);
+
+  &:hover {
+    background: $link-color;
+    border-color: $link-color;
+    color: $color-white;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.30);
+  }
 }
 
 .reveal div.footer-large {
@@ -1521,4 +1707,9 @@ html.print-pdf {
   .reveal .slides section img {
     max-height: 600px !important;
   }
+
+  // ---- 7. The corner controls ----------------------------------------------
+  // Live UI, meaningless on paper — and `position: fixed` would stamp the whole
+  // group over the first page of the export.
+  .lexis-controls { display: none !important; }
 }

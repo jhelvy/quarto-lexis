@@ -56,6 +56,14 @@ _extensions/lexis/
                          # size — macOS acceleration makes one click report
                          # anywhere from 4px to 50px. `?wheelDebug=1` on the
                          # deck URL shows the live readout used to tune it.
+  lexis-orientation.html # include-after-body script: on a phone held upright
+                         # the deck rotates 90deg (the CSS half is the
+                         # "Handheld portrait" block in lexis.scss); this
+                         # re-runs reveal's layout after a flip and remaps
+                         # swipes onto the rotated axes
+  lexis-offline-icons.html # include-in-header script: registers the Quarto
+                         # mark with the iconify web component locally, so
+                         # `{{< quarto >}}` renders with no network
 template.qmd              # starter deck: full port of the lexis xaringan demo
 lexis-template/           # packaged `quarto use template` output (demo + zip)
 .claude/skills/lexis/     # Claude Code skill teaching this authoring paradigm
@@ -172,6 +180,30 @@ overridden in the format rather than per deck:
   option and it only tags *external* links — `#/12` and relative paths stay in
   the tab, so slide navigation is unaffected. (`link-external-filter` can widen
   it to every link; that would break in-deck navigation, so don't.)
+- **`--lexis-lb-*` (the letterbox band) reads reveal's own numbers**, not
+  `vw`/`vh`. Everything card-anchored — footer bar, slide number, hamburger,
+  edge arrows, and the `.backgrounds` inset that keeps `{{< bg-color >}}` on the
+  card — is positioned off those two custom properties, so getting them from
+  `var(--slide-width) * var(--slide-scale)` (published by reveal's `layout()`)
+  instead of re-deriving the 16:9 fit from viewport units is what makes them
+  right in the two places viewport units lie: iOS Safari, where `100vh` is the
+  *large* viewport and the band collapsed to zero so a `{{< bg-color >}}` slide
+  bled edge to edge; and the portrait rotation, which swaps what `vw`/`vh` mean.
+  The percentage in them resolves against each user's containing block — the
+  window for the `position: fixed` chrome, `.reveal` for `.backgrounds` — which
+  is the same box either way. Don't "simplify" them back to `vw`/`vh`.
+- **`lexis-offline-icons.html` must not use `window.IconifyPreload`.** That is
+  iconify's documented offline hook, and it is the wrong tool from here on two
+  counts. It has to be *set* before iconify reads it, and iconify reads it
+  synchronously when its script runs — which Quarto's dependency system emits at
+  the very TOP of `<head>`, ahead of every `include-in-header`. And the
+  deck-level route to the same global, `extensions: iconify: preload:` (which
+  the iconify extension injects from a Lua filter), was found not to reach the
+  rendered HTML at all in a deck that had it configured. Registering through
+  `customElements.whenDefined('iconify-icon')` is order-independent, which is
+  why it's written that way. Verified by screenshotting the demo with
+  `--host-resolver-rules="MAP * 127.0.0.1:1, EXCLUDE localhost"`: the mark
+  disappears without this file and renders with it.
 - **`lexis-nav.html` replaces reveal's mouse-wheel handler**, which throttles to
   one step per second (hard-coded `1000` in `js/controllers/pointer.js`) and
   *discards* rather than queues everything inside that second — incremental

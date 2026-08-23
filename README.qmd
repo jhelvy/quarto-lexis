@@ -44,6 +44,7 @@ _extensions/lexis/
   lexis-nav.html         # snappier mouse-wheel navigation
   lexis-controls.html    # bottom-left corner controls (home, overview,
                          # full screen, hamburger)
+  lexis-print-footer.html # the deck's footer, on every page of the PDF export
 template.qmd             # the starter deck: a full port of the lexis demo
 ```
 

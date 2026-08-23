@@ -231,8 +231,42 @@ lexis-overview.html, which runs independently.
     return true;
   }
 
+  // ---- Jump-to-slide input (`g`) hardening ---------------------------------
+  // Reveal builds that box lazily, on the first `g` press, as a bare text
+  // input — so the browser happily offers form-history and contact autofill
+  // over a field that only ever takes a slide number, and a name-and-address
+  // dropdown lands on the slide mid-talk. `type="number"` is the decisive
+  // stroke: Safari-family autofill IGNORES `autocomplete="off"` but never
+  // attaches to a numeric field. The rest closes the remaining doors —
+  // `inputmode` also brings up a numeric keypad on touch, and the two data-
+  // attributes tell 1Password and LastPass to stay away. (The spinner arrows
+  // `type="number"` drags in are hidden in lexis.scss.)
+  function armJumpInput() {
+    var apply = function (input) {
+      input.type = "number";
+      input.min = "1";
+      input.setAttribute("autocomplete", "off");
+      input.setAttribute("autocorrect", "off");
+      input.setAttribute("autocapitalize", "off");
+      input.setAttribute("spellcheck", "false");
+      input.setAttribute("inputmode", "numeric");
+      input.setAttribute("data-lpignore", "true");
+      input.setAttribute("data-1p-ignore", "");
+    };
+    var existing = document.querySelector(".jump-to-slide-input");
+    if (existing) { apply(existing); return; }
+    // Not built yet: catch it the moment reveal inserts it.
+    var observer = new MutationObserver(function () {
+      var found = document.querySelector(".jump-to-slide-input");
+      if (found) { apply(found); observer.disconnect(); }
+    });
+    observer.observe(document.querySelector(".reveal") || document.body,
+      { childList: true, subtree: true });
+  }
+
   function wire() {
     if (!(window.Reveal && Reveal.isReady && Reveal.isReady())) return false;
+    armJumpInput();
     // Manually navigating off the home slide discards a pending resume. The
     // resume click itself raises suppressResumeClear before jumping, and the
     // jump home lands ON the home slide, so neither trips this.

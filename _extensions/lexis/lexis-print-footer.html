@@ -1,0 +1,37 @@
+<!--
+lexis print footer — the deck's footer text, once per exported page.
+
+The live footer is a single `position: fixed` bar. The PDF export is a block
+flow of `.pdf-page` boxes, so that one bar belongs to no page and lands on at
+most one of them. lexis.scss stamps every page with its own copy instead, as a
+`::after` on the page box (see "The footer, once per page" in the print
+section) — but CSS cannot read another element's text, so the `content:` has
+to be injected. That is this file's whole job.
+
+It reads whatever `footer:` in the deck's YAML rendered, flattens it to plain
+text (a footer with links prints as their text, since a link on paper is just
+text anyway), and writes one rule. `JSON.stringify` does the quoting, so an
+apostrophe or a quote in the footer cannot break out of the CSS string.
+
+Deliberately NOT event- or timing-based: the footer markup precedes this
+script in the document, so the read is synchronous at parse time, and the
+injected rule applies declaratively whenever reveal later builds the
+`.pdf-page` boxes. There is nothing to wait for and nothing to race.
+
+The `lexis-print-footer` class on <html> is what tells the stylesheet a bar
+will actually be there, so it can lift the printed slide number clear of it —
+set only when there was text, so a footerless deck is untouched.
+-->
+<script>
+(function () {
+  var footer = document.querySelector(".reveal > .footer");
+  var text = footer ? footer.textContent.replace(/\s+/g, " ").trim() : "";
+  if (!text) return;
+  document.documentElement.classList.add("lexis-print-footer");
+  var style = document.createElement("style");
+  style.textContent =
+    "html.print-pdf .reveal .slides .pdf-page::after{content:" +
+    JSON.stringify(text) + ";}";
+  document.head.appendChild(style);
+})();
+</script>

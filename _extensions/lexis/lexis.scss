@@ -160,6 +160,20 @@ $progress-color: $color-blue;
   // font size in a tile is multiplied by the scale, so anything that should
   // stay a fixed on-screen size has to be divided by it first.
   --lexis-ov-px: calc(1px / var(--lexis-ov-scale));
+
+  // One STAGE pixel for the FIXED chrome (the footer bar and the slide
+  // number). Those sit outside the scaled stage, so they hold their px size
+  // while reveal shrinks the slide to fit: squeeze the window's height and the
+  // deck gets smaller while a full-size footer bar keeps eating the same strip
+  // of it, until the bar is sitting on the content. Scaling them by reveal's
+  // own `--slide-scale` keeps their proportion of the card constant, exactly
+  // as if they were drawn on the slide.
+  //
+  // `min()` caps it at the design size: reveal scales UP as well (Quarto allows
+  // `max-scale: 2`), and chrome that grew past 1:1 on a large monitor would be
+  // a second bug rather than a fix. Read from reveal's measurement rather than
+  // from `vw`/`vh` for the same reason the letterbox band is — see above.
+  --lexis-chrome-px: min(1px, 1px * var(--slide-scale, 1));
 }
 .reveal .slides  { background-color: $body-bg; }
 
@@ -1289,7 +1303,8 @@ body.reveal-viewport {
   bottom: var(--lexis-lb-y);
   left:  var(--lexis-lb-x);
   right: var(--lexis-lb-x);
-  height: 20px; width: auto;
+  // Height, type and inset all scale with the stage; see --lexis-chrome-px.
+  height: calc(20 * var(--lexis-chrome-px)); width: auto;
   margin: 0; padding: 0;
   // Per-document override: set `footer-align: center` (or `left`/`right`)
   // in the YAML front matter; lexis.lua turns that into this custom
@@ -1297,10 +1312,14 @@ body.reveal-viewport {
   text-align: var(--lexis-footer-align, left);
   z-index: 10;
   color: $color-white;
-  font-size: 10pt;
-  line-height: 20px;
+  font-size: calc(13.33 * var(--lexis-chrome-px)); // 10pt at 1:1
+  line-height: calc(20 * var(--lexis-chrome-px));
 
-  p, span { margin: 0; padding-left: var(--lexis-footer-pad, 15px); color: $color-white; }
+  p, span {
+    margin: 0;
+    padding-left: var(--lexis-footer-pad, calc(15 * var(--lexis-chrome-px)));
+    color: $color-white;
+  }
   a { color: $color-white; text-decoration: none; }
 }
 
@@ -1312,9 +1331,11 @@ body.reveal-viewport {
 // `.reveal .slide-number { bottom; right }` at equal specificity, so a plain
 // `.reveal .slide-number` here silently loses on source order.
 .reveal.reveal .slide-number {
-  right:  calc(var(--lexis-lb-x) + 14px);
-  bottom: calc(var(--lexis-lb-y) + 12px);
-  font-size: 20px;    // a touch larger than footer.css's default 16px
+  right:  calc(var(--lexis-lb-x) + 14 * var(--lexis-chrome-px));
+  bottom: calc(var(--lexis-lb-y) + 12 * var(--lexis-chrome-px));
+  // Scaled with the stage like the footer bar (see --lexis-chrome-px); 20px at
+  // 1:1, a touch larger than footer.css's default 16px.
+  font-size: calc(20 * var(--lexis-chrome-px));
   color: $color-gray; // #696969, matching the old xaringan page number
 }
 
@@ -1323,7 +1344,7 @@ body.reveal-viewport {
 // out-specifies footer.css's plain `.reveal .slide-number`, but match the
 // `.reveal.reveal` bump above for consistency.
 .reveal.reveal:has(> .footer) .slide-number {
-  bottom: calc(var(--lexis-lb-y) + 28px);
+  bottom: calc(var(--lexis-lb-y) + 28 * var(--lexis-chrome-px));
 }
 
 // ---- Corner controls (the bottom-left button group) ------------------------
@@ -1525,6 +1546,81 @@ html .lexis-controls .slide-menu-button {
 // stock button invisible so a stray hamburger never flashes in the corner.
 html .reveal .slide-menu-button { visibility: hidden; }
 
+// ---- Jump-to-slide input (`g`) ---------------------------------------------
+// reveal ships the jump box as a bare transparent input pinned at 15px/15px,
+// which reads as a stray text field floating on the slide. Restyle it as a pill
+// in the same family as the corner controls: same 42px height, same radius,
+// border and surface, same blue accent — and anchored to the CARD's top-left
+// corner, mirroring the controls' 14px/12px in the corner below it.
+//
+// The size stays fixed rather than scaling with the stage (see
+// --lexis-chrome-px): this is something you click and type into, like the
+// control tiles, not something drawn on the slide.
+.reveal .jump-to-slide {
+  left: calc(var(--lexis-lb-x) + 14px);
+  top:  calc(var(--lexis-lb-y) + 12px);
+  font-size: 20px;
+}
+
+.reveal .jump-to-slide-input {
+  font-family: $font-body;
+  font-size: 18px;
+  line-height: 1;
+  box-sizing: border-box;
+  height: 42px;
+  // Snug around the "Jump to slide" placeholder plus the side padding.
+  width: 8.5em;
+  padding: 0 14px;
+  text-align: left;
+
+  // `!important`: reveal's own `.has-dark-background` rule otherwise flips the
+  // text to white on dark slides. The dark variant below re-flips it with its
+  // own `!important`, so the color is always stated explicitly rather than
+  // inherited from whichever rule happens to win.
+  color: $color-black !important;
+  caret-color: $link-color;
+  background: rgba(255, 255, 255, 0.85);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(105, 105, 105, 0.28);
+  border-radius: 8px;   // matches .lexis-ctrl
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+
+  &::placeholder { color: rgba(105, 105, 105, 0.75); opacity: 1; }
+
+  // While the placeholder is showing, hide the caret so it never overlaps the
+  // hint text; it comes back with the first typed digit.
+  &:placeholder-shown { caret-color: transparent; }
+
+  // lexis-controls.html flips the input to `type="number"` (which is what keeps
+  // browser contact-autofill off a box that only ever takes a slide number);
+  // hide the spinner arrows that come with that type.
+  -moz-appearance: textfield;
+  appearance: textfield;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $link-color;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18), 0 0 0 3px rgba(0, 123, 255, 0.25);
+  }
+}
+
+// Dark card: the same light-glass treatment the control tiles take there.
+.reveal:has(.slides section.present.inverse) .jump-to-slide-input,
+.reveal.has-dark-background .jump-to-slide-input {
+  color: $color-white !important;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.28);
+  &::placeholder { color: rgba(255, 255, 255, 0.7); }
+}
+
 // reveal's edge arrows are a HANDHELD affordance and nothing else. On a phone
 // they are the only visible way to move through the deck — tap to advance, with
 // nothing to guess at — but on a laptop they are chrome sitting on top of a
@@ -1627,6 +1723,12 @@ html.print-pdf {
     // footer bar and the slide number off the edge of the page.
     --lexis-lb-x: 0px;
     --lexis-lb-y: 0px;
+
+    // Same reasoning for the chrome scale: on paper the page IS the 1600x900
+    // card, so the footer bar and the slide number are drawn at 1:1. Pin it
+    // rather than trusting whatever `--slide-scale` the printing browser's
+    // viewport left behind.
+    --lexis-chrome-px: 1px;
   }
 
   // ---- 2. The content insets -----------------------------------------------
@@ -1708,8 +1810,63 @@ html.print-pdf {
     max-height: 600px !important;
   }
 
-  // ---- 7. The corner controls ----------------------------------------------
-  // Live UI, meaningless on paper — and `position: fixed` would stamp the whole
-  // group over the first page of the export.
+  // ---- 7. Live UI that has no place on paper -------------------------------
+  // `position: fixed` would stamp both of these over the first page.
   .lexis-controls { display: none !important; }
+  .reveal .jump-to-slide { display: none !important; }
+
+  // ---- 8. The footer, once per page ----------------------------------------
+  // The footer is a single `position: fixed` overlay: on screen it rides the
+  // card, but the export is a block flow of `.pdf-page` boxes, so the bar
+  // belongs to no page and lands on at most one of them. On paper it is just
+  // text, so hide the live one and stamp every page with its own copy as a
+  // `::after` on the page box.
+  //
+  // The TEXT comes from lexis-print-footer.html, which reads whatever `footer:`
+  // in the deck's YAML rendered (links flattened to plain text) and injects the
+  // matching `content:` rule — CSS cannot read another element's text. So this
+  // block is styling only, and a deck with no footer simply never gets a
+  // `content`, which means no box is generated at all rather than an empty bar.
+  .reveal .slides .pdf-page {
+    // reveal's print stylesheet already sets this; stated so the bar below
+    // cannot end up anchored to some outer box if that ever changes.
+    position: relative;
+  }
+
+  .reveal .slides .pdf-page::after {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 20px;
+    box-sizing: border-box;
+    background-color: $color-black;
+    color: $color-white;
+    font-size: 10pt;
+    line-height: 20px;
+    text-align: var(--lexis-footer-align, left);
+    padding-left: var(--lexis-footer-pad, 15px);
+    z-index: 10;
+  }
+
+  // With a bar stamped on the page, lift the number clear of it — the same move
+  // the live deck makes with `:has(> .footer)`. `lexis-print-footer` is set on
+  // <html> by the injector, and ONLY when there was footer text to inject, so a
+  // footerless deck keeps the number in the corner.
+  &.lexis-print-footer .reveal .slides .pdf-page > .slide-number-pdf {
+    bottom: 28px;
+  }
+}
+
+// ---- Shadows in every print path -------------------------------------------
+// Chromium's PDF backend cannot rasterize blur: every blurred `box-shadow`
+// prints as a SOLID offset rectangle, so a deck with card shadows exports with
+// gray blocks behind the cards. Drop them for the export and let borders and
+// fills carry the separation. Both classes are listed because the two routes
+// set different ones — `?print-pdf` gets both, but reveal's own print view sets
+// `reveal-print` alone.
+html.print-pdf *,
+html.reveal-print * {
+  box-shadow: none !important;
+  text-shadow: none !important;
 }

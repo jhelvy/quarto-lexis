@@ -64,6 +64,10 @@ contributes:
         # reveal.js-menu hamburger adopted into the same group. After-body
         # because it adopts a node the menu plugin builds at runtime.
         - lexis-controls.html
+        # Reads the deck's rendered footer and injects the per-page `content:`
+        # rule the PDF export stamps on every page. After-body so the footer
+        # markup it reads is already parsed.
+        - lexis-print-footer.html
       # BUILD reveal's edge arrows; lexis.scss then hides them everywhere except
       # a phone held upright, which is the only place they are wanted (tap to
       # advance). Quarto's default is `controls: auto`, which its quarto-support

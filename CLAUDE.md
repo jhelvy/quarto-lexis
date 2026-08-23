@@ -66,6 +66,10 @@ _extensions/lexis/
                          # collapsible tray, plus the reveal.js-menu hamburger
                          # ADOPTED into the group (the look is the
                          # ".lexis-controls" block in lexis.scss)
+  lexis-print-footer.html # include-after-body script: reads the deck's
+                         # rendered footer and injects the `content:` rule the
+                         # PDF export stamps on every page (CSS can't read
+                         # another element's text)
   lexis-offline-icons.html # include-in-header script: registers the Quarto
                          # mark with the iconify web component locally, so
                          # `{{< quarto >}}` renders with no network

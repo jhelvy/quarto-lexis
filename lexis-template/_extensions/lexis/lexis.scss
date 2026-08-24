@@ -121,16 +121,29 @@ $progress-color: $color-blue;
 // left/right, never all four sides at once.
 .reveal-viewport {
   background-color: $color-gray;
-  // Size of the gray letterbox band on each axis, in real window px. reveal
-  // scales the 1600x900 deck by margin:0 to exactly
-  //   min(100vw, 177.78vh) x min(100vh, 56.25vw)   (16/9 = 1.7778, 9/16 = .5625)
-  // and centers it, so half the leftover on each axis is the band width. The UI
-  // chrome (slide number, menu button, footer bar) is positioned against the
-  // full window, which drops it into that gray band — off the slide. Expose the
-  // band size so those elements can be nudged back onto the card, like the old
+  // Size of the gray letterbox band on each axis. reveal centers the scaled
+  // deck, so half the leftover on each axis is the band width. The UI chrome
+  // (slide number, menu button, footer bar) is positioned against the full
+  // window, which drops it into that gray band — off the slide. Expose the band
+  // size so those elements can be nudged back onto the card, like the old
   // xaringan deck where the page number lived inside the slide.
-  --lexis-lb-x: calc((100vw - min(100vw, 177.78vh)) / 2);
-  --lexis-lb-y: calc((100vh - min(100vh,  56.25vw)) / 2);
+  //
+  // The card size is read from REVEAL'S OWN measurements — it publishes
+  // `--slide-width`/`--slide-height`/`--slide-scale` on this element from
+  // `layout()` — rather than re-deriving it from `vw`/`vh`. Two places where
+  // the viewport-unit version was wrong:
+  //   * iOS Safari. `100vh` is the LARGE viewport (URL bar hidden) while reveal
+  //     scales to the visible height, so `177.78vh` overshot, `min()` clamped to
+  //     `100vw`, and the band computed to ZERO — a {{< bg-color >}} slide then
+  //     bled its color edge to edge instead of stopping at the card.
+  //   * The portrait rotation below, which swaps what `vw` and `vh` mean
+  //     relative to the stage but leaves reveal's own numbers correct.
+  // The percentage resolves against each user's containing block, which is the
+  // window for the `position: fixed` chrome and `.reveal` for `.backgrounds` —
+  // the same box either way. `max()` keeps the band non-negative in the modes
+  // where reveal never runs `layout()` and the scale falls back to 1.
+  --lexis-lb-x: max(0px, calc((100% - var(--slide-width,  1600px) * var(--slide-scale, 1)) / 2));
+  --lexis-lb-y: max(0px, calc((100% - var(--slide-height,  900px) * var(--slide-scale, 1)) / 2));
 
   // Overview-mode (`o`) tile grid; see the block below. lexis-overview.js
   // overwrites `--lexis-ov-scale` on THIS element (inline styles win the
@@ -147,8 +160,118 @@ $progress-color: $color-blue;
   // font size in a tile is multiplied by the scale, so anything that should
   // stay a fixed on-screen size has to be divided by it first.
   --lexis-ov-px: calc(1px / var(--lexis-ov-scale));
+
+  // One STAGE pixel for the FIXED chrome (the footer bar and the slide
+  // number). Those sit outside the scaled stage, so they hold their px size
+  // while reveal shrinks the slide to fit: squeeze the window's height and the
+  // deck gets smaller while a full-size footer bar keeps eating the same strip
+  // of it, until the bar is sitting on the content. Scaling them by reveal's
+  // own `--slide-scale` keeps their proportion of the card constant, exactly
+  // as if they were drawn on the slide.
+  //
+  // `min()` caps it at the design size: reveal scales UP as well (Quarto allows
+  // `max-scale: 2`), and chrome that grew past 1:1 on a large monitor would be
+  // a second bug rather than a fix. Read from reveal's measurement rather than
+  // from `vw`/`vh` for the same reason the letterbox band is — see above.
+  --lexis-chrome-px: min(1px, 1px * var(--slide-scale, 1));
 }
 .reveal .slides  { background-color: $body-bg; }
+
+// ---- Handheld portrait: turn the deck, not the reader ----------------------
+// The stage is 16:9, i.e. landscape. On a phone held upright reveal scales that
+// stage down to the narrow width and leaves most of the screen gray, so the
+// slide arrives as a stamp the reader has to pinch at. Rotate the whole document
+// 90deg clockwise, sized to the SWAPPED viewport, so the slide uses the screen's
+// long side; the reader turns the device and gets a full-bleed landscape deck.
+//
+// `pointer: coarse` restricts this to devices whose PRIMARY input is a finger,
+// which is the only case where turning the device is the answer to a rotated
+// page. A desktop window dragged narrow also matches `orientation: portrait`,
+// but there the rotation is a trap: the picture turns while the trackpad,
+// scrollbars and the overview grid keep working on the screen's real axes. Those
+// machines keep the deck upright and simply letterbox it. A no-touch laptop
+// reports `pointer: fine`; an iPad reports coarse even with a trackpad attached.
+//
+// Why <body> and not `.reveal`: reveal derives its scale from `.reveal`'s
+// offsetWidth/offsetHeight, which are PRE-transform layout values. Sizing body
+// to the swapped viewport makes `.reveal` (width/height 100%) report landscape
+// dimensions, so reveal lays out for a landscape viewport on its own — and
+// `--slide-scale`, which the letterbox above reads, comes out right with it.
+// Rotating `.reveal` directly would leave reveal measuring the portrait box and
+// scaling the stage to the narrow side, which is the bug this replaces.
+//
+// The CSS handles what the deck LOOKS like; lexis-orientation.html handles the
+// two things CSS cannot — re-running reveal's layout after a flip, and making
+// swipes follow the rotated picture instead of the raw screen axes.
+//
+// reveal's zoom plugin sets `body.style.transition = "transform 0.8s ease"`
+// INLINE at init to animate alt-click zoom, and the rotation below is also a
+// transform on body, so it inherits that easing and the flip visibly swings.
+// Killing it here rather than inside the media query covers BOTH directions: a
+// rule scoped to portrait only covers the flip into portrait, and the moment the
+// query stops matching the easing is back for the flip out of it. `!important`
+// is required to beat the plugin's inline style; the only cost is that alt-click
+// zoom becomes instant too.
+body,
+body.reveal-viewport {
+  transition: none !important;
+}
+
+@media screen and (orientation: portrait) and (pointer: coarse) {
+  // The selector must reach CLASS specificity: reveal puts `.reveal-viewport` on
+  // <body> and reveal.css sets `.reveal-viewport { height: 100%; position:
+  // relative }`, which a bare `body` rule loses to — width would apply, height
+  // would not, and the rotated deck comes out square. Both selectors are listed
+  // so the bare-body fallback survives a build without the class.
+  //
+  // `screen` keeps this away from print/PDF export, which must stay upright.
+  // `svh` is the toolbar-visible viewport height on iOS; the deck never scrolls,
+  // so it is the stable measure (`100vh` would push the far edge behind Safari's
+  // bottom toolbar). `vh` stays as the fallback for browsers without
+  // small-viewport units; on desktop the two are equal.
+  body,
+  body.reveal-viewport {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vh;
+    width: 100svh;
+    height: 100vw;
+    transform-origin: top left;
+    transform: translateX(100vw) rotate(90deg);
+  }
+
+  // reveal only switches its nav arrows to the "edges" layout (one arrow
+  // centered on each slide edge) inside `@media (min-width: 500px)`, and that
+  // query measures the PHYSICAL viewport. Rotated, the deck is laid out along
+  // the device's long side, which clears 500px on any phone, but the physical
+  // width does not — so the arrows collapse into reveal's tiny bottom-right
+  // cluster and read as missing. Re-apply the edges layout with reveal's own
+  // values so the arrows sit where the rotated slide's edges actually are. The
+  // container's own inset is not repeated here: the letterbox rule further down
+  // positions it in every mode, at a specificity that wins either way.
+  .reveal-viewport { --r-controls-spacing: 0.8em; }
+
+  // The one place the arrows are wanted. The `.reveal.reveal` bump is what makes
+  // this win: the global `display: none` further down is also `!important` and
+  // comes LATER in the file, so at equal specificity it would take the tie.
+  .reveal.reveal .controls { display: block !important; }
+
+  .reveal .controls[data-controls-layout='edges'] {
+    .navigate-left,
+    .navigate-right,
+    .navigate-up,
+    .navigate-down {
+      bottom: auto;
+      right: auto;
+    }
+
+    .navigate-left  { top: 50%; left: var(--r-controls-spacing); margin-top: -1.8em; }
+    .navigate-right { top: 50%; right: var(--r-controls-spacing); margin-top: -1.8em; }
+    .navigate-up    { top: var(--r-controls-spacing); left: 50%; margin-left: -1.8em; }
+    .navigate-down  { bottom: calc(var(--r-controls-spacing) - 1.4em + 0.3em); left: 50%; margin-left: -1.8em; }
+  }
+}
 
 // ---- Overview mode (`o`) — xaringan-style tile grid -------------------------
 // reveal's stock overview lays every slide out in ONE horizontal row on a 3D
@@ -1180,7 +1303,8 @@ $progress-color: $color-blue;
   bottom: var(--lexis-lb-y);
   left:  var(--lexis-lb-x);
   right: var(--lexis-lb-x);
-  height: 20px; width: auto;
+  // Height, type and inset all scale with the stage; see --lexis-chrome-px.
+  height: calc(20 * var(--lexis-chrome-px)); width: auto;
   margin: 0; padding: 0;
   // Per-document override: set `footer-align: center` (or `left`/`right`)
   // in the YAML front matter; lexis.lua turns that into this custom
@@ -1188,10 +1312,14 @@ $progress-color: $color-blue;
   text-align: var(--lexis-footer-align, left);
   z-index: 10;
   color: $color-white;
-  font-size: 10pt;
-  line-height: 20px;
+  font-size: calc(13.33 * var(--lexis-chrome-px)); // 10pt at 1:1
+  line-height: calc(20 * var(--lexis-chrome-px));
 
-  p, span { margin: 0; padding-left: var(--lexis-footer-pad, 15px); color: $color-white; }
+  p, span {
+    margin: 0;
+    padding-left: var(--lexis-footer-pad, calc(15 * var(--lexis-chrome-px)));
+    color: $color-white;
+  }
   a { color: $color-white; text-decoration: none; }
 }
 
@@ -1203,9 +1331,11 @@ $progress-color: $color-blue;
 // `.reveal .slide-number { bottom; right }` at equal specificity, so a plain
 // `.reveal .slide-number` here silently loses on source order.
 .reveal.reveal .slide-number {
-  right:  calc(var(--lexis-lb-x) + 14px);
-  bottom: calc(var(--lexis-lb-y) + 12px);
-  font-size: 20px;    // a touch larger than footer.css's default 16px
+  right:  calc(var(--lexis-lb-x) + 14 * var(--lexis-chrome-px));
+  bottom: calc(var(--lexis-lb-y) + 12 * var(--lexis-chrome-px));
+  // Scaled with the stage like the footer bar (see --lexis-chrome-px); 20px at
+  // 1:1, a touch larger than footer.css's default 16px.
+  font-size: calc(20 * var(--lexis-chrome-px));
   color: $color-gray; // #696969, matching the old xaringan page number
 }
 
@@ -1214,45 +1344,334 @@ $progress-color: $color-blue;
 // out-specifies footer.css's plain `.reveal .slide-number`, but match the
 // `.reveal.reveal` bump above for consistency.
 .reveal.reveal:has(> .footer) .slide-number {
+  bottom: calc(var(--lexis-lb-y) + 28 * var(--lexis-chrome-px));
+}
+
+// ---- Corner controls (the bottom-left button group) ------------------------
+// Built by lexis-controls.html, which appends `.lexis-controls` to <body> and
+// ADOPTS the reveal.js-menu hamburger into it. See that file for the mechanism;
+// this is the look. Bottom to top: the hamburger, an up-arrow handle, and a
+// collapsible tray holding Full screen, Slide overview and Home.
+//
+// Positioned like every other piece of lexis chrome — inset by the letterbox
+// band so it rides the CARD's bottom-left corner, not the window's, and
+// mirroring the slide number's 14px/12px offsets in the opposite corner.
+.lexis-controls {
+  position: fixed;
+  left:   calc(var(--lexis-lb-x) + 14px);
+  bottom: calc(var(--lexis-lb-y) + 12px);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  width: 42px;
+
+  &.is-hidden { display: none; }
+}
+
+// With a footer bar present, lift clear of it — the same 28px the slide number
+// takes above.
+.reveal:has(> .footer) ~ .lexis-controls {
   bottom: calc(var(--lexis-lb-y) + 28px);
 }
 
-// The reveal.js-menu hamburger button is `position: fixed` against the window —
-// same gray-band problem. Nudge it onto the card. footer.css also re-positions
-// it as `.reveal .slide-menu-button { left; bottom }` (equal specificity, loaded
-// later), so the `.reveal.reveal` bump is REQUIRED here too.
-.reveal.reveal .slide-menu-button {
-  left:   calc(var(--lexis-lb-x) + 22px);
-  bottom: calc(var(--lexis-lb-y) + 18px);
+// The arrow plus its tray: the hover/focus surface that expands the stack. The
+// hamburger sits OUTSIDE it, so hovering the hamburger expands nothing.
+.lexis-controls-flyout {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
-// Recolor the bars to match the slide number (was theme link-blue). The `<a>`
-// color / hover-box come from `.reveal a`, so gray the anchor and kill the blue
-// hover background here...
-.reveal.reveal .slide-menu-button a {
+
+// The tray collapses via the grid `0fr` -> `1fr` trick, so the hidden buttons
+// take no space — and no hover area — at all; the inner stack clips inside the
+// row.
+.lexis-controls-tray {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 200ms ease;
+}
+
+.lexis-controls-stack {
+  overflow: hidden;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  // The gap between the tray and the arrow lives INSIDE the stack and only in
+  // the open state: a `0fr` row clamps content but NOT padding, so a constant
+  // padding would leave a phantom 8px hover strip above the arrow while
+  // collapsed — hovering empty space would pop the tray open.
+  padding-bottom: 0;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 160ms ease, transform 200ms ease, padding-bottom 200ms ease;
+}
+
+// Open state. No `:hover` selector here on purpose: hovering is wired in JS
+// (`.is-open`), so that a click on the arrow can genuinely close the tray while
+// the cursor is still over it. A CSS `:hover` rule would force it back open and
+// make the click a no-op. `:focus-within` keeps it open for keyboard users
+// tabbing through the buttons.
+.lexis-controls-flyout:focus-within,
+.lexis-controls-flyout.is-open {
+  .lexis-controls-tray  { grid-template-rows: 1fr; }
+  .lexis-controls-stack { opacity: 1; transform: none; padding-bottom: 8px; }
+  .lexis-controls-arrow svg { transform: rotate(180deg); }
+}
+
+// The shared tile. Quiet at rest — the same gray as the slide number, on a
+// faint tinted surface — and flipping to the deck's link blue with a white
+// glyph on hover, so the group reads as chrome until you reach for it.
+.lexis-ctrl {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  // The adopted plugin button computes content-box (44px with its border), so
+  // pin the box model or that one tile comes out 2px wider than the rest.
+  box-sizing: border-box;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+
+  border: 1px solid rgba(105, 105, 105, 0.28);
+  border-radius: 8px;
+  background: rgba(105, 105, 105, 0.08);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
   color: $color-gray;
-  &:hover, &:focus { color: $color-gray; background: transparent; }
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    color 150ms ease,
+    transform 100ms ease;
+
+  svg {
+    display: block;
+    width: 22px;
+    height: 22px;
+    transition: transform 200ms ease;
+  }
+
+  &:hover {
+    background: $link-color;
+    border-color: $link-color;
+    color: $color-white;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $link-color;
+    outline-offset: 2px;
+  }
+
+  // Momentary press. A transform here is safe: the tile is its own layer and
+  // nothing else in the column moves with it.
+  &:active {
+    transform: scale(0.92);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+  }
 }
-// ...BUT the three bars themselves are not a font glyph — Quarto's reveal-menu
-// integration renders them as a background-image SVG with `$link-color` baked
-// into `fill=`, so `color`/`currentColor` can't reach them. Override the whole
-// image with the identical icon, gray fill. (Beats the theme's
-// `.reveal .slide-menu-button .fa-bars::before` with the `.reveal.reveal` bump.)
-.reveal.reveal .slide-menu-button .fa-bars::before {
-  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(105,105,105)" class="bi bi-list" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg>');
+
+// ---- The hamburger, once it is inside the group ----------------------------
+// The reveal.js-menu plugin ships its button as a `position: fixed` tile in the
+// bottom-left corner of `.reveal`. lexis-controls.html moves the node into
+// `.lexis-controls` and tags it `.lexis-ctrl`, at which point every one of the
+// plugin's positioning rules (all scoped under `.reveal`) stops matching. What
+// is left to do here: neutralize the fixed positioning as a fallback for the
+// blink before the move, and rebuild the glyph.
+//
+// The stock icon is a background-image data URI with `$link-color` baked into
+// its `fill=`, so `currentColor` can never reach it and it cannot follow the
+// hover flip. Replaced with the identical path as a MASK over `currentColor`,
+// which does. The `html` prefix outranks the plugin's own CSS (loaded after
+// this theme).
+html .lexis-controls .slide-menu-button {
+  position: static;
+  left: auto;
+  bottom: auto;
+
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    // `!important`: the deck's global link color (`.reveal a`, itself
+    // `!important`) would otherwise paint the glyph blue. `inherit` follows the
+    // button color, so the hover flip to white keeps working.
+    color: inherit !important;
+    &:hover, &:focus { color: inherit !important; background: transparent; }
+  }
+
+  // Flex-center the glyph: the plugin renders it as an inline-block `::before`
+  // sitting on the `<i>`'s text baseline, which lands it a hair off-center in
+  // the tile. Making the `<i>` a flex box and the `::before` a block takes the
+  // baseline out of the equation.
+  .fa-bars {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  .fa-bars::before {
+    // The plugin's own `::before` rules (which carried the `content`) are all
+    // scoped under `.reveal` and stop matching after the move, so the
+    // pseudo-element is declared from scratch.
+    content: "";
+    display: block;
+    width: 22px;
+    height: 22px;
+    vertical-align: 0;
+    background: currentColor;
+    -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg>');
+    mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg>');
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: 22px 22px;
+    mask-size: 22px 22px;
+  }
 }
-// Flip BOTH the hamburger and the slide number to white on inverse / dark-
-// background slides so they stay visible (and matching) on dark cards — the
+
+// Before the adoption runs — and on any page where it never does — keep the
+// stock button invisible so a stray hamburger never flashes in the corner.
+html .reveal .slide-menu-button { visibility: hidden; }
+
+// ---- Jump-to-slide input (`g`) ---------------------------------------------
+// reveal ships the jump box as a bare transparent input pinned at 15px/15px,
+// which reads as a stray text field floating on the slide. Restyle it as a pill
+// in the same family as the corner controls: same 42px height, same radius,
+// border and surface, same blue accent — and anchored to the CARD's top-left
+// corner, mirroring the controls' 14px/12px in the corner below it.
+//
+// The size stays fixed rather than scaling with the stage (see
+// --lexis-chrome-px): this is something you click and type into, like the
+// control tiles, not something drawn on the slide.
+.reveal .jump-to-slide {
+  left: calc(var(--lexis-lb-x) + 14px);
+  top:  calc(var(--lexis-lb-y) + 12px);
+  font-size: 20px;
+}
+
+.reveal .jump-to-slide-input {
+  font-family: $font-body;
+  font-size: 18px;
+  line-height: 1;
+  box-sizing: border-box;
+  height: 42px;
+  // Snug around the "Jump to slide" placeholder plus the side padding.
+  width: 8.5em;
+  padding: 0 14px;
+  text-align: left;
+
+  // `!important`: reveal's own `.has-dark-background` rule otherwise flips the
+  // text to white on dark slides. The dark variant below re-flips it with its
+  // own `!important`, so the color is always stated explicitly rather than
+  // inherited from whichever rule happens to win.
+  color: $color-black !important;
+  caret-color: $link-color;
+  background: rgba(255, 255, 255, 0.85);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(105, 105, 105, 0.28);
+  border-radius: 8px;   // matches .lexis-ctrl
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+
+  &::placeholder { color: rgba(105, 105, 105, 0.75); opacity: 1; }
+
+  // While the placeholder is showing, hide the caret so it never overlaps the
+  // hint text; it comes back with the first typed digit.
+  &:placeholder-shown { caret-color: transparent; }
+
+  // lexis-controls.html flips the input to `type="number"` (which is what keeps
+  // browser contact-autofill off a box that only ever takes a slide number);
+  // hide the spinner arrows that come with that type.
+  -moz-appearance: textfield;
+  appearance: textfield;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $link-color;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18), 0 0 0 3px rgba(0, 123, 255, 0.25);
+  }
+}
+
+// Dark card: the same light-glass treatment the control tiles take there.
+.reveal:has(.slides section.present.inverse) .jump-to-slide-input,
+.reveal.has-dark-background .jump-to-slide-input {
+  color: $color-white !important;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.28);
+  &::placeholder { color: rgba(255, 255, 255, 0.7); }
+}
+
+// reveal's edge arrows are a HANDHELD affordance and nothing else. On a phone
+// they are the only visible way to move through the deck — tap to advance, with
+// nothing to guess at — but on a laptop they are chrome sitting on top of a
+// slide next to a keyboard that already does the job, and they show up in
+// screenshots and in the PDF export. So `controls: true` in _extension.yml
+// builds them, and this hides them everywhere except the handheld-portrait
+// block above, which turns them back on.
+//
+// `!important` is load-bearing: reveal writes `display` as an INLINE style on
+// the container from its own config, so a plain rule here never wins.
+.reveal .controls { display: none !important; }
+
+// Reveal pins the container to the four edges of `.reveal`, i.e. the WINDOW, so
+// the left/right arrows land out in the gray band whenever the window is wider
+// than 16:9. Same fix as the footer and the slide number: inset the container by
+// the letterbox so the arrows ride the card's edges.
+.reveal.reveal .controls[data-controls-layout='edges'] {
+  top:    var(--lexis-lb-y);
+  right:  var(--lexis-lb-x);
+  bottom: var(--lexis-lb-y);
+  left:   var(--lexis-lb-x);
+}
+// ...and match the slide number's gray rather than reveal's black. `color` is
+// enough: the arrows are SVGs drawn with `fill: currentColor`.
+.reveal.reveal .controls { color: $color-gray; }
+
+// Flip the hamburger, the slide number AND the arrows to white on inverse /
+// dark-background slides so they stay visible (and matching) on dark cards — the
 // hardcoded gray above would otherwise be invisible there.
 .reveal:has(.slides section.present.inverse) .slide-number,
 .reveal.reveal.has-dark-background .slide-number { color: #fff; }
-.reveal:has(.slides section.present.inverse) .slide-menu-button a,
-.reveal.reveal.has-dark-background .slide-menu-button a {
-  color: #fff;
-  &:hover, &:focus { color: #fff; }
-}
-.reveal:has(.slides section.present.inverse) .slide-menu-button .fa-bars::before,
-.reveal.reveal.has-dark-background .slide-menu-button .fa-bars::before {
-  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(255,255,255)" class="bi bi-list" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg>');
+.reveal.reveal:has(.slides section.present.inverse) .controls,
+.reveal.reveal.has-dark-background .controls { color: #fff; }
+// The corner controls take the same flip. They are a SIBLING of `.reveal` (the
+// script appends them to <body>), hence the `~` combinator. Light glass plus a
+// light glyph keeps them as quiet on a dark card as the gray tile is on a light
+// one; the hover flip to blue is restated because this selector outranks the
+// base `:hover` above.
+.reveal:has(.slides section.present.inverse) ~ .lexis-controls .lexis-ctrl,
+.reveal.has-dark-background ~ .lexis-controls .lexis-ctrl {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.14);
+  color: $color-white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.20);
+
+  &:hover {
+    background: $link-color;
+    border-color: $link-color;
+    color: $color-white;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.30);
+  }
 }
 
 .reveal div.footer-large {
@@ -1304,6 +1723,12 @@ html.print-pdf {
     // footer bar and the slide number off the edge of the page.
     --lexis-lb-x: 0px;
     --lexis-lb-y: 0px;
+
+    // Same reasoning for the chrome scale: on paper the page IS the 1600x900
+    // card, so the footer bar and the slide number are drawn at 1:1. Pin it
+    // rather than trusting whatever `--slide-scale` the printing browser's
+    // viewport left behind.
+    --lexis-chrome-px: 1px;
   }
 
   // ---- 2. The content insets -----------------------------------------------
@@ -1384,4 +1809,64 @@ html.print-pdf {
   .reveal .slides section img {
     max-height: 600px !important;
   }
+
+  // ---- 7. Live UI that has no place on paper -------------------------------
+  // `position: fixed` would stamp both of these over the first page.
+  .lexis-controls { display: none !important; }
+  .reveal .jump-to-slide { display: none !important; }
+
+  // ---- 8. The footer, once per page ----------------------------------------
+  // The footer is a single `position: fixed` overlay: on screen it rides the
+  // card, but the export is a block flow of `.pdf-page` boxes, so the bar
+  // belongs to no page and lands on at most one of them. On paper it is just
+  // text, so hide the live one and stamp every page with its own copy as a
+  // `::after` on the page box.
+  //
+  // The TEXT comes from lexis-print-footer.html, which reads whatever `footer:`
+  // in the deck's YAML rendered (links flattened to plain text) and injects the
+  // matching `content:` rule — CSS cannot read another element's text. So this
+  // block is styling only, and a deck with no footer simply never gets a
+  // `content`, which means no box is generated at all rather than an empty bar.
+  .reveal .slides .pdf-page {
+    // reveal's print stylesheet already sets this; stated so the bar below
+    // cannot end up anchored to some outer box if that ever changes.
+    position: relative;
+  }
+
+  .reveal .slides .pdf-page::after {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 20px;
+    box-sizing: border-box;
+    background-color: $color-black;
+    color: $color-white;
+    font-size: 10pt;
+    line-height: 20px;
+    text-align: var(--lexis-footer-align, left);
+    padding-left: var(--lexis-footer-pad, 15px);
+    z-index: 10;
+  }
+
+  // With a bar stamped on the page, lift the number clear of it — the same move
+  // the live deck makes with `:has(> .footer)`. `lexis-print-footer` is set on
+  // <html> by the injector, and ONLY when there was footer text to inject, so a
+  // footerless deck keeps the number in the corner.
+  &.lexis-print-footer .reveal .slides .pdf-page > .slide-number-pdf {
+    bottom: 28px;
+  }
+}
+
+// ---- Shadows in every print path -------------------------------------------
+// Chromium's PDF backend cannot rasterize blur: every blurred `box-shadow`
+// prints as a SOLID offset rectangle, so a deck with card shadows exports with
+// gray blocks behind the cards. Drop them for the export and let borders and
+// fills carry the separation. Both classes are listed because the two routes
+// set different ones — `?print-pdf` gets both, but reveal's own print view sets
+// `reveal-print` alone.
+html.print-pdf *,
+html.reveal-print * {
+  box-shadow: none !important;
+  text-shadow: none !important;
 }

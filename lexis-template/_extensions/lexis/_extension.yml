@@ -53,6 +53,31 @@ contributes:
       include-in-header:
         - lexis-overview.html
         - lexis-nav.html
+        # Hands the iconify web component the Quarto mark locally, so
+        # `{{< quarto >}}` still renders with no network. See the file.
+        - lexis-offline-icons.html
+      # Rotation + swipe remap for a phone held upright; the look it goes with is
+      # the "Handheld portrait" block in lexis.scss.
+      include-after-body:
+        - lexis-orientation.html
+        # The bottom-left corner controls: home, overview, full screen, and the
+        # reveal.js-menu hamburger adopted into the same group. After-body
+        # because it adopts a node the menu plugin builds at runtime.
+        - lexis-controls.html
+        # Reads the deck's rendered footer and injects the per-page `content:`
+        # rule the PDF export stamps on every page. After-body so the footer
+        # markup it reads is already parsed.
+        - lexis-print-footer.html
+      # BUILD reveal's edge arrows; lexis.scss then hides them everywhere except
+      # a phone held upright, which is the only place they are wanted (tap to
+      # advance). Quarto's default is `controls: auto`, which its quarto-support
+      # plugin resolves at runtime to `(inIframe && !localhost) ||
+      # hasVerticalSlides` — so a deck opened directly, or served from localhost
+      # during preview, never gets them at all. The visibility decision belongs
+      # to a media query, not to that expression, so pin the arrows on here and
+      # let the CSS choose. See "reveal's edge arrows" in lexis.scss.
+      controls: true
+      controls-layout: edges
       # Run AFTER Quarto expands the {{< inverse >}}/etc. shortcodes into markers.
       filters:
         - at: post-quarto

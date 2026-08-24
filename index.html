@@ -7697,6 +7697,7 @@ font-size: 2.5em;
   <li><a href="#notes" id="toc-notes" class="nav-link" data-scroll-target="#notes">Notes</a>
   <ul class="collapse">
   <li><a href="#what-does-λέξις-mean" id="toc-what-does-λέξις-mean" class="nav-link" data-scroll-target="#what-does-λέξις-mean">What does “λέξις” mean?</a></li>
+  <li><a href="#credits" id="toc-credits" class="nav-link" data-scroll-target="#credits">Credits</a></li>
   <li><a href="#license" id="toc-license" class="nav-link" data-scroll-target="#license">License</a></li>
   </ul></li>
   </ul>
@@ -7777,7 +7778,7 @@ border-radius: 4px;
 <section id="by-john-paul-helveston" class="level2">
 <h2 class="anchored" data-anchor-id="by-john-paul-helveston">by John Paul Helveston</h2>
 <p>Written: July 08 2026</p>
-<p>Updated: August 19 2026</p>
+<p>Updated: August 24 2026</p>
 <p>λέξις (lexis) is a <strong>template</strong> for making slides with <a href="https://quarto.org">Quarto</a>’s <a href="https://quarto.org/docs/presentations/revealjs/">reveal.js</a> format. It is a port of the original <a href="https://github.com/jhelvy/lexis">lexis xaringan theme</a>, and it preserves that theme’s authoring conventions: <strong>every <code>---</code> starts a new slide</strong>, headings are just <em>text sizes within</em> a slide, and slide modifiers like <code>inverse</code> / <code>center</code> / <code>middle</code> are short declarative shortcodes.</p>
 <p>It also adds a <strong>slide grid</strong> that reveal.js doesn’t have. Press <code>o</code> and, instead of reveal’s single sideways row of slides, you get xaringan’s tile view: a scrollable grid of thumbnails you can spin through with the mouse wheel or the arrow keys, highlighting whatever is selected. Click a slide or press <code>Enter</code> to jump to it.</p>
 <p>It has a light gray background and uses <a href="https://fonts.google.com/specimen/Fira+Sans+Condensed">Fira Sans Condensed</a> for headers, <a href="https://fonts.google.com/specimen/Inter">Inter</a> for body text, <a href="https://fonts.google.com/specimen/Lobster+Two">Lobster Two</a> for fancy text, and <a href="https://developer.apple.com/fonts/">SFMono-Regular</a> for mono text (i.e. code). The theme copies ideas from several other themes, most notably from <a href="https://alison.rbind.io/">Allison Hill</a>’s xaringan <a href="https://github.com/rstudio-education/arm-workshop-rsc2019">workshop</a>.</p>
@@ -8148,6 +8149,19 @@ border-radius: 4px;
 <section id="what-does-λέξις-mean" class="level3">
 <h3 class="anchored" data-anchor-id="what-does-λέξις-mean">What does “λέξις” mean?</h3>
 <p>When communicating an idea to others, there is a fundamental difference between the <em>content</em> of what is be communicated and the <em>form</em> of how it is communicated. Aristotle phrased this as the difference between <a href="https://en.wikipedia.org/wiki/Logos">λόγος (logos)</a>, the logical content of a speech, and <a href="https://en.wikipedia.org/wiki/Lexis_(Aristotle)">λέξις (lexis)</a>, the style and delivery of a speech (see also <a href="http://rhetoric.byu.edu/Encompassing%20Terms/Content%20and%20Form.htm">this article</a> on content versus form). Since the entire purpose of making a slide theme is to customize the <em>form</em> of how content is delivered, “lexis” seemed like an appropriate name.</p>
+<hr>
+</section>
+<section id="credits" class="level3">
+<h3 class="anchored" data-anchor-id="credits">Credits</h3>
+<p>The original xaringan CSS this theme is ported from was adapted from <a href="https://www.apreshill.com/">Allison Hill</a> and <a href="https://silvia.rbind.io/">Silvia Canelón</a>.</p>
+<p>Several pieces of the deck’s chrome were ported from <a href="https://github.com/pingfan-hu">Pingfan Hu</a>’s <code>touhou-revealjs</code> Quarto template, whose solutions to these were better than what lexis had:</p>
+<ul>
+<li>the bottom-left corner controls (home/resume, slide overview, full screen, and the reveal.js-menu hamburger adopted into the same group);</li>
+<li>turning the deck 90° on a phone held upright, sized to the swapped viewport, so the slide uses the screen’s long side;</li>
+<li>restyling reveal’s jump-to-slide box (<code>g</code>) as a pill, and hardening it so browser autofill stops offering your contact card over a field that only takes a slide number;</li>
+<li>scaling the footer bar and slide number with reveal’s stage, so they stop colliding with the content on a short window;</li>
+<li>stamping the deck’s footer onto every page of the PDF export, and dropping blurred shadows there (Chromium’s PDF backend renders them as solid blocks).</li>
+</ul>
 <hr>
 </section>
 <section id="license" class="level3">

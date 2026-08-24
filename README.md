@@ -8,7 +8,7 @@
 
 Written: July 08 2026
 
-Updated: August 19 2026
+Updated: August 24 2026
 
 λέξις (lexis) is a **template** for making slides with
 [Quarto](https://quarto.org)’s
@@ -393,6 +393,9 @@ index in the URL (`#/12/0/2`).
       title-slide.html       # empty — suppresses Quarto's built-in title slide
       lexis-overview.html    # the slide grid (`o`), with lexis.scss
       lexis-nav.html         # snappier mouse-wheel navigation
+      lexis-controls.html    # bottom-left corner controls (home, overview,
+                             # full screen, hamburger)
+      lexis-print-footer.html # the deck's footer, on every page of the PDF export
     template.qmd             # the starter deck: a full port of the lexis demo
 
 ## Exporting to PDF
@@ -484,6 +487,31 @@ article](http://rhetoric.byu.edu/Encompassing%20Terms/Content%20and%20Form.htm)
 on content versus form). Since the entire purpose of making a slide
 theme is to customize the *form* of how content is delivered, “lexis”
 seemed like an appropriate name.
+
+------------------------------------------------------------------------
+
+### Credits
+
+The original xaringan CSS this theme is ported from was adapted from
+[Allison Hill](https://www.apreshill.com/) and [Silvia
+Canelón](https://silvia.rbind.io/).
+
+Several pieces of the deck’s chrome were ported from [Pingfan
+Hu](https://github.com/pingfan-hu)’s `touhou-revealjs` Quarto template,
+whose solutions to these were better than what lexis had:
+
+- the bottom-left corner controls (home/resume, slide overview, full
+  screen, and the reveal.js-menu hamburger adopted into the same group);
+- turning the deck 90° on a phone held upright, sized to the swapped
+  viewport, so the slide uses the screen’s long side;
+- restyling reveal’s jump-to-slide box (`g`) as a pill, and hardening it
+  so browser autofill stops offering your contact card over a field that
+  only takes a slide number;
+- scaling the footer bar and slide number with reveal’s stage, so they
+  stop colliding with the content on a short window;
+- stamping the deck’s footer onto every page of the PDF export, and
+  dropping blurred shadows there (Chromium’s PDF backend renders them as
+  solid blocks).
 
 ------------------------------------------------------------------------
 

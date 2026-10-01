@@ -66,6 +66,12 @@ $presentation-heading-font:        $font-header;
 $presentation-heading-color:       #000000;
 $presentation-heading-font-weight: 400;
 $presentation-heading-line-height: 1.1;
+// h1/h2 are almost always short single-line titles, where the tight default
+// reads as intentional. h3/h4 are frequently used as wrapped, multi-line text
+// (`. . .`-separated list items, card copy), where 1.1 looks cramped once a
+// line wraps — loosen just those, both as real headings and as the .h3/.h4
+// heading-as-text classes lexis.lua produces inside columns/cards.
+$presentation-heading-line-height-loose: 1.3;
 $presentation-h1-font-size: 2.10em;
 $presentation-h2-font-size: 1.70em;
 $presentation-h3-font-size: 1.35em;
@@ -781,6 +787,22 @@ body.reveal-viewport {
 }
 .reveal .slides section.tight { --title-gap: 0; }
 
+// A direct-child heading immediately followed by a `.fragment` div whose OWN
+// first child is a heading of the same level isn't a title — it's the first
+// item of a `. . .`-separated same-level heading list (the rest got wrapped
+// in `.fragment` divs by the pause split, which is why only the first one
+// was ever a bare direct child in the first place). Give it the same margin
+// its siblings get instead of title breathing room, so the whole list reads
+// as evenly spaced. A title followed by body content/an image doesn't match
+// (the fragment's first child isn't a matching heading), so real titles
+// before a pause are untouched.
+.reveal .slides section > h1:has(+ .fragment > h1:first-child),
+.reveal .slides section > h2:has(+ .fragment > h2:first-child),
+.reveal .slides section > h3:has(+ .fragment > h3:first-child),
+.reveal .slides section > h4:has(+ .fragment > h4:first-child) {
+  margin: var(--r-heading-margin);
+}
+
 // ---- Black border around plot output --------------------------------------
 // The old deck wrapped rendered ggplots in `.blackborder[...]`. Alias of
 // `.border` above, kept by name so ported slides read like the originals.
@@ -814,6 +836,8 @@ body.reveal-viewport {
   .h4 { font-size: $presentation-h4-font-size; }
   .h5 { font-size: 1.0em; }
   .h6 { font-size: 0.9em; }
+
+  h3, h4, .h3, .h4 { line-height: $presentation-heading-line-height-loose; }
 }
 
 // ---- Fancy display font ---------------------------------------------------
